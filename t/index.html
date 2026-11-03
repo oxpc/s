@@ -82,11 +82,11 @@ code{font:.88em ui-monospace,monospace;background:var(--bg);padding:.1em .35em;b
 /* =====================================================================
    PASSWORD / PIN PROTECTION:
    - Set PIN to '123' (or any password).
-   - Set PIN = ''; (empty quotes) to turn the password OFF.
+   - Set PIN = ''; to turn the password OFF.
    ===================================================================== */
 const PIN = '123';
 
-/* Repo configuration */
+/* Default repo settings */
 const DEFAULT_REPO = 'oxpc/s';
 const DEFAULT_BRANCH = 'main';
 
@@ -103,13 +103,8 @@ function toast(m){ const t=$('#toast'); t.textContent=m; t.hidden=false; clearTi
 function setStatus(id, msg, type='info'){ const e=$('#'+id); if(e){ e.textContent=msg; e.className='status '+type; } }
 
 /* ---------- PIN Gate check ---------- */
-function isProtected(){
-  return PIN && PIN.trim().length > 0;
-}
-function isUnlocked(){
-  if(!isProtected()) return true;
-  return lsGet('qm-t-pin', true) === 'ok';
-}
+function isProtected(){ return PIN && PIN.trim().length > 0; }
+function isUnlocked(){ return !isProtected() || lsGet('qm-t-pin', true) === 'ok'; }
 
 function checkAccess(){
   if(isUnlocked()){
@@ -134,8 +129,7 @@ function renderLockScreen(){
   $('#pin-val').focus();
   $('#lock-form').onsubmit = e => {
     e.preventDefault();
-    const val = $('#pin-val').value;
-    if(val === PIN){
+    if($('#pin-val').value === PIN){
       lsSet('qm-t-pin', 'ok', true);
       checkAccess();
     } else {
@@ -145,7 +139,7 @@ function renderLockScreen(){
   };
 }
 
-/* ---------- Teacher Dashboard & Quiz Editor ---------- */
+/* ---------- Parser ---------- */
 const OPT=/^\(?([A-Ha-h])(?:\)|[.:]\s|\s[-–—]\s)\s*(.+)$/,
   QN=/^(?:q(?:uestion)?\.?\s*)?(\d+)\s*[.):\-]\s*(.+)$/i,
   BN=/^(?:q(?:uestion)?\.?\s*(\d+)\s*[.):\-]?|(\d+)\s*[.):])$/i,
@@ -241,6 +235,7 @@ async function docxText(f){
   return (first>0?lines.slice(first):lines).join('\n');
 }
 
+/* ---------- GitHub API Integration ---------- */
 let cfg={ repo:lsGet('qm-repo')||DEFAULT_REPO, branch:lsGet('qm-branch')||DEFAULT_BRANCH, token:lsGet('qm-token',true)||lsGet('qm-token')||'' };
 let D={ title:'', id:null, qs:[] };
 let ghList=null;
@@ -249,15 +244,42 @@ let src;
 const b64=s=>{ const b=new TextEncoder().encode(s); let r=''; b.forEach(x=>r+=String.fromCharCode(x)); return btoa(r); };
 const unb64=s=>new TextDecoder().decode(Uint8Array.from(atob(s.replace(/\s/g,'')),c=>c.charCodeAt(0)));
 
-async function gh(path,opt={}){
-  const r=await fetch(`https://api.github.com/repos/${cfg.repo}/${path}`,{...opt,headers:{Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28',Authorization:'Bearer '+cfg.token,...(opt.headers||{})}});
-  if(r.status===404&&opt.allow404) return null;
-  if(!r.ok){
-    let m=''; try { m=(await r.json()).message; } catch(e){}
-    throw new Error(m||('GitHub error '+r.status));
+async function gh(path, opt = {}) {
+  // Fix: Avoid trailing slashes so GitHub API does not return 301 redirects that trigger CORS fetch failures
+  const cleanPath = path ? '/' + path.replace(/^\/+/, '') : '';
+  const url = `https://api.github.com/repos/${cfg.repo}${cleanPath}`;
+  
+  let r;
+  try {
+    r = await fetch(url, {
+      ...opt,
+      headers: {
+        'Accept': 'application/vnd.github+json',
+        'X-GitHub-Api-Version': '2022-11-28',
+        'Authorization': 'Bearer ' + cfg.token.trim(),
+        ...(opt.headers || {})
+      }
+    });
+  } catch (err) {
+    throw new Error('Connection failed. If you use Brave or an ad-blocker, please disable shields for this page.');
   }
-  return r.status===204?null:r.json();
+
+  if (r.status === 404 && opt.allow404) return null;
+  if (!r.ok) {
+    let m = '';
+    try { m = (await r.json()).message; } catch (_) {}
+    const why = {
+      401: 'Invalid or expired GitHub token. Please create a new token.',
+      403: 'Token lacks permission. It needs "Contents: Read and write" on repository ' + cfg.repo,
+      404: `Repository "${cfg.repo}" or branch "${cfg.branch}" was not found.`,
+      409: 'The repository changed while saving. Try again.',
+      422: 'GitHub refused change: ' + m
+    }[r.status];
+    throw new Error(why || m || ('GitHub error ' + r.status));
+  }
+  return r.status === 204 ? null : r.json();
 }
+
 async function getFile(path){
   const j=await gh(`contents/${path}?ref=${encodeURIComponent(cfg.branch)}`,{allow404:true,cache:'no-store'});
   return j?{sha:j.sha,text:unb64(j.content)}:null;
@@ -332,19 +354,41 @@ function drawConn(){
   <label class="chk" style="margin-top:.7rem"><input type="checkbox" id="c-rem" ${lsGet('qm-token')?'checked':''}> Remember on this device</label>
   <div class="row" style="margin-top:.8rem"><button class="btn primary" id="c-go">Connect</button></div>`}
   <p class="status info" id="c-st" aria-live="polite"></p>`;
+  
   const g=id=>$('#'+id);
   if(g('c-edit')) g('c-edit').onclick=()=>{ $('#p-conn').dataset.open='1'; drawConn(); };
   if(g('c-out')) g('c-out').onclick=()=>{ cfg.token=''; lsDel('qm-token'); ghList=null; delete $('#p-conn').dataset.open; drawConn(); drawPublished(); drawEditor(); };
+  
   if(g('c-go')) g('c-go').onclick=async()=>{
-    cfg={ repo:g('c-repo').value.trim()||DEFAULT_REPO, branch:g('c-br').value.trim()||DEFAULT_BRANCH, token:g('c-tok').value.trim() };
-    setStatus('c-st','Checking…');
-    try{
-      await gh('');
-      lsSet('qm-repo',cfg.repo); lsSet('qm-branch',cfg.branch);
-      if(g('c-rem').checked) lsSet('qm-token',cfg.token); else lsSet('qm-token',cfg.token,true);
-      delete $('#p-conn').dataset.open; drawConn(); drawPublished(); drawEditor();
-      setStatus('c-st','Connected successfully.','ok');
-    }catch(e){ setStatus('c-st',e.message,'err'); }
+    // Fix: Automatically clean repository input if full URL was pasted
+    const rawRepo = g('c-repo').value.trim();
+    const repo = rawRepo.replace(/^https?:\/\/github\.com\//i, '').replace(/\.git$/i, '').replace(/^\/+|\/+$/g, '') || DEFAULT_REPO;
+    const branch = g('c-br').value.trim() || DEFAULT_BRANCH;
+    const token = g('c-tok').value.trim();
+
+    if(!token) return setStatus('c-st', 'Please paste your GitHub token.', 'err');
+    if(!/^[\w.-]+\/[\w.-]+$/.test(repo)) return setStatus('c-st', 'Repository must be in "owner/name" format (e.g. oxpc/s).', 'err');
+
+    cfg = { repo, branch, token };
+    setStatus('c-st', 'Connecting to GitHub…', 'info');
+
+    try {
+      await gh(''); // Test connection
+      lsSet('qm-repo', cfg.repo);
+      lsSet('qm-branch', cfg.branch);
+      if(g('c-rem').checked) {
+        lsSet('qm-token', cfg.token);
+      } else {
+        lsSet('qm-token', cfg.token, true);
+      }
+      delete $('#p-conn').dataset.open;
+      drawConn();
+      drawPublished();
+      drawEditor();
+      setStatus('c-st', 'Connected successfully!', 'ok');
+    } catch(e) {
+      setStatus('c-st', e.message, 'err');
+    }
   };
 }
 
