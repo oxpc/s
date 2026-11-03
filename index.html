@@ -148,10 +148,7 @@ pre{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding
 <body>
 <header class="top"><div class="bar">
   <a class="brand" href="#/"><span class="logo" aria-hidden="true">Q</span><span id="brand">Quiz hub</span></a>
-  <nav aria-label="Main">
-    <a href="#/" id="nav-s">Quizzes</a>
-    <a href="#/teacher" id="nav-t">Teacher</a>
-  </nav>
+  <nav aria-label="Main" id="nav" hidden><a href="#/" id="nav-s">Student page</a></nav>
 </div></header>
 <main id="app"></main>
 <div class="toast" id="toast" role="status" hidden></div>
@@ -327,7 +324,7 @@ async function viewLibrary(){
   const SZ={s:'.95rem',m:'1.1rem',l:'1.3rem'};
   app.innerHTML=`
   <h1>${esc(SITE_TITLE)}</h1><p class="lede">${esc(SITE_TAGLINE)}</p>
-  ${indexErr?`<p class="notice">No quizzes have been published yet, so this is a sample quiz. Teachers: open the Teacher page to add the first one.</p>`:''}
+  ${indexErr?`<p class="notice">No quizzes have been published yet, so this is a sample quiz.</p>`:''}
   <div class="tools">
     <input class="search" type="search" id="find" placeholder="Search quizzes" aria-label="Search quizzes">
     <label class="chk"><input type="checkbox" id="shuf" ${p.shuf?'checked':''}> Shuffle questions</label>
@@ -661,10 +658,7 @@ async function drawPublished(){
 /* =====================================================================
    ROUTER + shared events
    ===================================================================== */
-function setNav(w){
-  $('#nav-s').toggleAttribute('aria-current',w==='s');if(w==='s')$('#nav-s').setAttribute('aria-current','page');else $('#nav-s').removeAttribute('aria-current');
-  if(w==='t')$('#nav-t').setAttribute('aria-current','page');else $('#nav-t').removeAttribute('aria-current');
-}
+function setNav(w){$('#nav').hidden=w!=='t'}
 function route(){
   R=R&&location.hash.startsWith('#/teacher')?null:R;
   if(location.hash.startsWith('#/teacher'))return viewTeacher();
