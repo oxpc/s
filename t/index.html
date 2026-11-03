@@ -15,14 +15,7 @@
 [hidden]{display:none!important}
 body{margin:0;background:var(--bg);color:var(--ink);font:400 1rem/1.55 Figtree,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;min-height:100vh}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-header.top{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
-.bar{max-width:980px;margin:0 auto;padding:.7rem 1.1rem;display:flex;align-items:center;gap:1rem}
-.brand{font-weight:700;letter-spacing:-.02em;font-size:1.15rem;color:var(--ink);text-decoration:none;display:flex;align-items:center;gap:.55rem}
-.logo{width:28px;height:28px;border-radius:8px;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-size:.95rem}
-nav{margin-left:auto;display:flex;gap:.5rem;align-items:center}
-nav a{color:var(--muted);text-decoration:none;font-weight:600;padding:.4rem .8rem;border-radius:9px}
-nav a:hover{background:var(--soft);color:var(--ink)}
-main{max-width:980px;margin:0 auto;padding:clamp(1.25rem,4vw,2.5rem) 1.1rem 3rem}
+main{max-width:980px;margin:0 auto;padding:clamp(1.5rem,5vw,3rem) 1.1rem 3rem}
 h1{font-size:clamp(1.9rem,6vw,2.7rem);line-height:1.08;letter-spacing:-.03em;margin:0 0 .5rem;font-weight:700}
 h2{font-size:1.2rem;margin:0 0 .6rem;letter-spacing:-.01em}
 .lede{color:var(--muted);margin:0 0 1.6rem;max-width:56ch}
@@ -72,22 +65,14 @@ label.f small{font-weight:400;color:var(--muted)}
 .sticky{position:sticky;bottom:0;background:var(--panel);padding:.8rem 0 .2rem;margin-top:1rem;border-top:1px solid var(--line)}
 .toast{position:fixed;left:50%;bottom:1.2rem;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:.65rem 1.1rem;border-radius:12px;font-weight:600;box-shadow:0 8px 30px rgba(0,0,0,.25);z-index:20;max-width:90vw}
 .foot{margin-top:2rem;color:var(--muted);font-size:.85rem;text-align:center}
-.foot a{color:inherit}
 details{color:var(--muted);font-size:.92rem;margin-top:.8rem}
 summary{cursor:pointer;font-weight:600;color:var(--ink)}
 code{font:.88em ui-monospace,monospace;background:var(--bg);padding:.1em .35em;border-radius:5px}
-.reg{max-width:420px;margin:clamp(1rem,10vh,4rem) auto 0}
+.reg{max-width:420px;margin:clamp(2rem,14vh,6rem) auto 0}
 .steps>.panel.nonum>h2::before{display:none}
 </style>
 </head>
 <body>
-<header class="top"><div class="bar">
-  <a class="brand" href="../"><span class="logo">Q</span><span>Quiz hub</span></a>
-  <nav aria-label="Main">
-    <button class="btn ghost sm" id="btn-lock" hidden type="button">Lock</button>
-    <a href="../">Student page</a>
-  </nav>
-</div></header>
 
 <main id="app"></main>
 <div class="toast" id="toast" role="status" hidden></div>
@@ -128,10 +113,8 @@ function isUnlocked(){
 
 function checkAccess(){
   if(isUnlocked()){
-    if(isProtected()) $('#btn-lock').hidden = false;
     renderTeacherDashboard();
   } else {
-    $('#btn-lock').hidden = true;
     renderLockScreen();
   }
 }
@@ -161,11 +144,6 @@ function renderLockScreen(){
     }
   };
 }
-
-$('#btn-lock').onclick = () => {
-  lsDel('qm-t-pin');
-  checkAccess();
-};
 
 /* ---------- Teacher Dashboard & Quiz Editor ---------- */
 const OPT=/^\(?([A-Ha-h])(?:\)|[.:]\s|\s[-–—]\s)\s*(.+)$/,
@@ -300,7 +278,10 @@ const hasToken=()=>cfg.repo&&cfg.token;
 
 function renderTeacherDashboard(){
   $('#app').innerHTML = `
-  <h1>Teacher</h1>
+  <div class="row" style="justify-content:space-between;align-items:baseline;margin-bottom:.4rem">
+    <h1 style="margin:0">Teacher</h1>
+    ${isProtected() ? `<button class="btn ghost sm danger" id="btn-lock" type="button">Lock</button>` : ''}
+  </div>
   <p class="lede">Upload a Word or text file, check the answers, and publish. Students see it on the home page right away.</p>
   <div class="steps">
     <section class="panel" id="p-conn"></section>
@@ -323,6 +304,14 @@ function renderTeacherDashboard(){
     <section class="panel nonum" id="p-list"></section>
   </div>
   <p class="foot">Only someone with your GitHub token can publish or delete.</p>`;
+
+  const lk = $('#btn-lock');
+  if(lk) {
+    lk.onclick = () => {
+      lsDel('qm-t-pin');
+      checkAccess();
+    };
+  }
 
   drawConn();
   wireAdd();
@@ -481,7 +470,7 @@ async function drawPublished(){
   }catch(e){ $('#pl-st').textContent=e.message; }
 }
 
-// Run initial gate check
+// Initialise
 checkAccess();
 </script>
 </body>
