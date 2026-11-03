@@ -166,6 +166,9 @@ pre{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding
    SETTINGS: change these two lines to personalise the site.
    ===================================================================== */
 const SITE_TITLE='Quiz hub';
+/* Only these student IDs can register (not case sensitive). Add or remove IDs here. */
+const ALLOWED_IDS=['vac1','vac2','vac3','vac4','vac5','vac6','vac7','vac8','vac9','vac10'];
+const isAllowed=id=>ALLOWED_IDS.some(x=>x.toLowerCase()===id.replace(/\s+/g,'').toLowerCase());
 const SITE_TAGLINE='Practice quizzes and flashcards from your teacher.';
 
 /* ---------- helpers ---------- */
@@ -316,7 +319,7 @@ async function loadQuiz(id){
 }
 /* ---------- student identity + per-student question order ---------- */
 const me={
-  get(){try{const o=JSON.parse(lsGet('qm-student')||'null');return o&&o.id&&o.name?o:null}catch(e){return null}},
+  get(){try{const o=JSON.parse(lsGet('qm-student')||'null');return o&&o.id&&o.name&&isAllowed(o.id)?o:null}catch(e){return null}},
   set(id,name){id=id.trim();lsSet('qm-student',JSON.stringify({id,name:name.trim().replace(/\s+/g,' '),key:id.replace(/\s+/g,'').toLowerCase()}))},
   clear(){lsDel('qm-student')}
 };
@@ -350,7 +353,7 @@ function viewRegister(){
   $('#app').innerHTML=`<div class="reg panel"><h1>Welcome</h1>
   <p class="lede">Enter your student ID and name to begin. Every student gets the questions in a different order, so always use the same ID.</p>
   <form id="reg" novalidate>
-    <label class="f" for="r-id">Student ID</label><input type="text" id="r-id" maxlength="30" autocomplete="off" autocapitalize="characters" placeholder="e.g. NUR/0123/15">
+    <label class="f" for="r-id">Student ID</label><input type="text" id="r-id" maxlength="30" autocomplete="off" autocapitalize="characters" placeholder="e.g. vac1">
     <label class="f" for="r-name">Full name</label><input type="text" id="r-name" maxlength="60" autocomplete="name" placeholder="e.g. Hanna Bekele">
     <p class="status err" id="r-err" aria-live="polite"></p>
     <button class="btn primary" style="width:100%;margin-top:.4rem">Continue</button>
@@ -359,7 +362,8 @@ function viewRegister(){
   $('#reg').onsubmit=e=>{
     e.preventDefault();
     const id=$('#r-id').value.trim(),name=$('#r-name').value.trim();
-    if(!/^[\p{L}\p{N}][\p{L}\p{N}\s./\-_]{1,29}$/u.test(id))return setStatus('r-err','Enter a valid student ID.','err');
+    if(!id)return setStatus('r-err','Enter your student ID.','err');
+    if(!isAllowed(id))return setStatus('r-err','This student ID is not on the list. Check it and try again, or ask your teacher.','err');
     if(name.length<2)return setStatus('r-err','Enter your full name.','err');
     me.set(id,name);route();
   };
