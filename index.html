@@ -1,11 +1,11 @@
-remove the top header includining the left "Quiz HUb"  and the right "Stundent page"   I do not need them at all
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light dark">
-<title>Quiz hub - Teacher Portal</title>
+<title>Quiz hub</title>
+<meta name="description" content="Practice quizzes and flashcards from your teacher.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -14,15 +14,16 @@ remove the top header includining the left "Quiz HUb"  and the right "Stundent p
 @media(prefers-color-scheme:dark){:root{--bg:#0c1413;--panel:#132120;--ink:#e6efed;--muted:#8fa5a1;--line:#243736;--accent:#3cc9b0;--accent-ink:#06201b;--soft:#173331;--ok:#4cd18a;--bad:#ff8b78;--warn:#e3b341;--shadow:none}}
 *{box-sizing:border-box}
 [hidden]{display:none!important}
-body{margin:0;background:var(--bg);color:var(--ink);font:400 1rem/1.55 Figtree,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;min-height:100vh}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 1rem/1.55 Figtree,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;min-height:100vh;-webkit-text-size-adjust:100%}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 header.top{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
 .bar{max-width:980px;margin:0 auto;padding:.7rem 1.1rem;display:flex;align-items:center;gap:1rem}
 .brand{font-weight:700;letter-spacing:-.02em;font-size:1.15rem;color:var(--ink);text-decoration:none;display:flex;align-items:center;gap:.55rem}
 .logo{width:28px;height:28px;border-radius:8px;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-size:.95rem}
-nav{margin-left:auto;display:flex;gap:.5rem;align-items:center}
+nav{margin-left:auto;display:flex;gap:.25rem}
 nav a{color:var(--muted);text-decoration:none;font-weight:600;padding:.4rem .8rem;border-radius:9px}
 nav a:hover{background:var(--soft);color:var(--ink)}
+nav a[aria-current=page]{background:var(--soft);color:var(--ink)}
 main{max-width:980px;margin:0 auto;padding:clamp(1.25rem,4vw,2.5rem) 1.1rem 3rem}
 h1{font-size:clamp(1.9rem,6vw,2.7rem);line-height:1.08;letter-spacing:-.03em;margin:0 0 .5rem;font-weight:700}
 h2{font-size:1.2rem;margin:0 0 .6rem;letter-spacing:-.01em}
@@ -41,7 +42,7 @@ h2{font-size:1.2rem;margin:0 0 .6rem;letter-spacing:-.01em}
 .row{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
 .muted{color:var(--muted)}
 input[type=text],input[type=password],input[type=search],textarea,select{font:inherit;color:inherit;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:.55rem .8rem;width:100%}
-textarea{min-height:200px;resize:vertical;font:.9rem/1.5 ui-monospace,monospace}
+textarea{min-height:200px;resize:vertical;font:.9rem/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
 textarea.drag{border-color:var(--accent);background:var(--soft)}
 label.f{display:block;font-weight:600;font-size:.9rem;margin:.9rem 0 .3rem}
 label.f small{font-weight:400;color:var(--muted)}
@@ -49,9 +50,72 @@ label.f small{font-weight:400;color:var(--muted)}
 @media(max-width:560px){.grid2{grid-template-columns:1fr}}
 .chk{display:flex;gap:.5rem;align-items:center;cursor:pointer;font-size:.95rem}
 .chk input{accent-color:var(--accent);width:1.05rem;height:1.05rem}
+
+/* library */
+.tools{display:flex;flex-wrap:wrap;gap:.8rem 1.4rem;align-items:center;margin-bottom:1.2rem}
+.tools .search{flex:1 1 220px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:1rem}
+.qc{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:1.1rem;display:flex;flex-direction:column;gap:.5rem;box-shadow:var(--shadow);transition:transform .15s,border-color .15s}
+.qc:hover{transform:translateY(-2px);border-color:var(--accent)}
+.qc h3{margin:0;font-size:1.1rem;line-height:1.3;letter-spacing:-.01em;overflow-wrap:anywhere}
+.meta{display:flex;flex-wrap:wrap;gap:.4rem;color:var(--muted);font-size:.85rem}
 .chip{display:inline-block;padding:.1rem .55rem;border-radius:99px;background:var(--soft);color:var(--ink);font-weight:600;font-size:.8rem}
 .chip.ok{background:color-mix(in srgb,var(--ok) 18%,transparent);color:var(--ok)}
 .chip.warn{background:color-mix(in srgb,var(--warn) 18%,transparent);color:var(--warn)}
+.qc .row{margin-top:auto;padding-top:.5rem}
+.empty{text-align:center;padding:2.5rem 1rem;color:var(--muted)}
+.notice{padding:.7rem 1rem;border-radius:12px;background:var(--soft);font-size:.92rem;margin-bottom:1rem}
+
+/* run view */
+.rtop{display:flex;align-items:center;gap:.8rem;margin-bottom:1.2rem}
+.rtop strong{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.prog{flex:1;height:6px;background:var(--line);border-radius:9px;overflow:hidden;min-width:60px}
+.prog i{display:block;height:100%;background:var(--accent);transition:width .3s}
+.cnt{color:var(--muted);font-weight:600;font-size:.9rem;white-space:nowrap}
+.q{font-size:clamp(1.2rem,4vw,1.5rem);line-height:1.35;font-weight:600;margin:0 0 1.25rem;white-space:pre-wrap;letter-spacing:-.01em;overflow-wrap:anywhere}
+.q.sm{font-size:1.05rem;margin-bottom:.8rem}
+.no{color:var(--accent);font-weight:700}
+.opts{display:grid;gap:.1rem;list-style:none;margin:0;padding:0;font-size:var(--osz,1.1rem)}
+.opt{display:flex;gap:.7rem;align-items:flex-start;padding:.3rem 0}
+.ltr{flex:none;display:grid;place-items:center;width:1.75em;height:1.75em;border-radius:50%;font:inherit;font-size:.9em;font-weight:700;color:var(--muted);background:none;border:1.5px solid var(--line);cursor:pointer;transition:color .15s,border-color .15s,background .15s}
+.ltr:hover{color:var(--accent);border-color:var(--accent)}
+.opt.lock .ltr{pointer-events:none}
+.opt.sel .ltr{border-color:var(--accent);color:var(--ink)}
+.opt.ok .ltr{border-color:var(--ok);color:var(--ink)}
+.opt.bad .ltr{border-color:var(--bad);color:var(--ink)}
+.opt span{flex:1;padding-top:.15em;overflow-wrap:anywhere}
+.static li{display:flex;gap:.6rem;align-items:baseline;padding:.25rem 0}
+.static b{flex:none;min-width:1.5em;color:var(--muted);font-weight:700}
+.static b::after{content:"."}
+.static span{flex:1;overflow-wrap:anywhere}
+.static .ok,.static .ok b{color:var(--ok);font-weight:700}
+.static .bad,.static .bad b{color:var(--bad);font-weight:700}
+.static em{font-style:normal;font-size:.82rem;font-weight:600;white-space:nowrap}
+.exp{margin:1.1rem 0 0;padding:.8rem 1rem;border-left:3px solid var(--accent);background:var(--soft);border-radius:0 10px 10px 0;overflow-wrap:anywhere}
+.nav2{display:flex;justify-content:space-between;gap:.6rem;margin-top:1.75rem}
+.nav2 .exit{margin-right:auto}
+.wrap{perspective:1400px}
+.card{display:grid;transform-style:preserve-3d;transition:transform .55s cubic-bezier(.3,.7,.2,1);cursor:pointer;border-radius:18px}
+.card.flipped{transform:rotateY(180deg)}
+.face{grid-area:1/1;display:flex;flex-direction:column;min-height:340px;padding:clamp(1.1rem,4vw,1.75rem);background:var(--panel);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.back{transform:rotateY(180deg);background:var(--soft)}
+.qno{margin:0 0 .8rem;color:var(--muted);font-weight:600}
+.hint{margin:auto 0 0;padding-top:1rem;color:var(--muted);font-size:.88rem;text-align:center}
+.ans{display:flex;gap:.9rem;align-items:flex-start;font-size:1.25rem;font-weight:600;line-height:1.4}
+.ans b{flex:none;width:2.4rem;height:2.4rem;display:grid;place-items:center;border-radius:10px;background:var(--ok);color:var(--accent-ink)}
+.ans span{padding-top:.3rem;overflow-wrap:anywhere}
+.back .exp{background:var(--panel)}
+.score{text-align:center;padding:1.5rem 1rem}
+.big{font-size:clamp(3.5rem,16vw,5.5rem);font-weight:700;letter-spacing:-.04em;line-height:1}
+.big small{font-size:.4em;color:var(--muted);font-weight:500;letter-spacing:0}
+.score p{color:var(--muted);margin:.6rem 0 0}
+.actions{display:flex;flex-wrap:wrap;justify-content:center;gap:.6rem;margin-top:1.2rem}
+.rev{background:var(--panel);border:1px solid var(--line);border-left-width:4px;border-radius:14px;padding:1rem 1.1rem;margin-bottom:.9rem}
+.rev.ok{border-left-color:var(--ok)}.rev.bad{border-left-color:var(--bad)}.rev.skip{border-left-color:var(--muted)}
+.rh{display:flex;justify-content:space-between;color:var(--muted);font-weight:600;margin-bottom:.4rem}
+.rev.ok .rh span:last-child{color:var(--ok)}.rev.bad .rh span:last-child{color:var(--bad)}
+
+/* teacher */
 .steps{counter-reset:s}
 .steps>.panel>h2::before{counter-increment:s;content:counter(s);display:inline-grid;place-items:center;width:1.7rem;height:1.7rem;margin-right:.6rem;border-radius:50%;background:var(--accent);color:var(--accent-ink);font-size:.9rem}
 .status{font-size:.92rem;margin:.6rem 0 0;min-height:1.3em}
@@ -60,9 +124,7 @@ label.f small{font-weight:400;color:var(--muted)}
 .ed.miss{border-color:var(--warn)}
 .edh{display:flex;gap:.6rem;align-items:flex-start;font-weight:600;overflow-wrap:anywhere}
 .edh span{flex:1;white-space:pre-wrap}
-.ed .opt{display:flex;gap:.7rem;align-items:center;padding:.2rem 0;font-size:.97rem;cursor:default}
-.ltr{flex:none;display:grid;place-items:center;width:1.75em;height:1.75em;border-radius:50%;font:inherit;font-size:.9em;font-weight:700;color:var(--muted);background:none;border:1.5px solid var(--line);cursor:pointer}
-.ltr:hover{color:var(--accent);border-color:var(--accent)}
+.ed .opt{padding:.2rem 0;font-size:.97rem}
 .ed .opt.ok .ltr{background:var(--ok);border-color:var(--ok);color:var(--accent-ink)}
 .ed input{margin-top:.4rem;font-size:.9rem;padding:.4rem .7rem}
 .list{list-style:none;margin:0;padding:0}
@@ -74,101 +136,48 @@ label.f small{font-weight:400;color:var(--muted)}
 .toast{position:fixed;left:50%;bottom:1.2rem;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:.65rem 1.1rem;border-radius:12px;font-weight:600;box-shadow:0 8px 30px rgba(0,0,0,.25);z-index:20;max-width:90vw}
 .foot{margin-top:2rem;color:var(--muted);font-size:.85rem;text-align:center}
 .foot a{color:inherit}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 details{color:var(--muted);font-size:.92rem;margin-top:.8rem}
 summary{cursor:pointer;font-weight:600;color:var(--ink)}
-code{font:.88em ui-monospace,monospace;background:var(--bg);padding:.1em .35em;border-radius:5px}
-.reg{max-width:420px;margin:clamp(1rem,10vh,4rem) auto 0}
-.steps>.panel.nonum>h2::before{display:none}
+code{font:.88em ui-monospace,Menlo,Consolas,monospace;background:var(--bg);padding:.1em .35em;border-radius:5px}
+pre{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:.8rem 1rem;overflow-x:auto;font:.85rem/1.5 ui-monospace,Menlo,Consolas,monospace;color:var(--ink)}
+@media(prefers-reduced-motion:reduce){.card,.btn,.qc,.prog i{transition:none}}
+@media(max-width:520px){.nav2 .btn{padding-inline:.8rem}}
 </style>
 </head>
 <body>
 <header class="top"><div class="bar">
-  <a class="brand" href="../"><span class="logo">Q</span><span>Quiz hub</span></a>
+  <a class="brand" href="#/"><span class="logo" aria-hidden="true">Q</span><span id="brand">Quiz hub</span></a>
   <nav aria-label="Main">
-    <button class="btn ghost sm" id="btn-lock" hidden type="button">Lock</button>
-    <a href="../">Student page</a>
+    <a href="#/" id="nav-s">Quizzes</a>
+    <a href="#/teacher" id="nav-t">Teacher</a>
   </nav>
 </div></header>
-
 <main id="app"></main>
 <div class="toast" id="toast" role="status" hidden></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script>
 /* =====================================================================
-   PASSWORD / PIN PROTECTION:
-   - Set PIN to '123' (or any password).
-   - Set PIN = ''; (empty quotes) to turn the password OFF.
+   SETTINGS: change these two lines to personalise the site.
    ===================================================================== */
-const PIN = '123';
+const SITE_TITLE='Quiz hub';
+const SITE_TAGLINE='Practice quizzes and flashcards from your teacher.';
 
-/* Repo configuration */
-const DEFAULT_REPO = 'oxpc/s';
-const DEFAULT_BRANCH = 'main';
-
-const $ = s => document.querySelector(s);
-const esc = s => String(s ?? '').replace(/[&<>'"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[c]));
-const L = 'ABCDEFGH';
-const lsGet = (k, s) => { try { return (s ? sessionStorage : localStorage).getItem(k); } catch (e) { return null; } };
-const lsSet = (k, v, s) => { try { (s ? sessionStorage : localStorage).setItem(k, v); } catch (e) {} };
-const lsDel = k => { try { localStorage.removeItem(k); sessionStorage.removeItem(k); } catch (e) {} };
-const slug = s => s.toLowerCase().normalize('NFKD').replace(/[^\p{L}\p{N}]+/gu, '-').replace(/^-+|-+$/g, '').slice(0, 60) || 'quiz';
-
+/* ---------- helpers ---------- */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const L='ABCDEFGH';
+const lsGet=(k,s)=>{try{return (s?sessionStorage:localStorage).getItem(k)}catch(e){return null}};
+const lsSet=(k,v,s)=>{try{(s?sessionStorage:localStorage).setItem(k,v)}catch(e){}};
+const lsDel=k=>{try{localStorage.removeItem(k);sessionStorage.removeItem(k)}catch(e){}};
+const slug=s=>s.toLowerCase().normalize('NFKD').replace(/[^\p{L}\p{N}]+/gu,'-').replace(/^-+|-+$/g,'').slice(0,60)||'quiz';
+const shuffle=a=>{a=[...a];for(let n=a.length-1;n>0;n--){const j=Math.floor(Math.random()*(n+1));[a[n],a[j]]=[a[j],a[n]]}return a};
 let toastT;
-function toast(m){ const t=$('#toast'); t.textContent=m; t.hidden=false; clearTimeout(toastT); toastT=setTimeout(()=>t.hidden=true,3200); }
-function setStatus(id, msg, type='info'){ const e=$('#'+id); if(e){ e.textContent=msg; e.className='status '+type; } }
+function toast(m){const t=$('#toast');t.textContent=m;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,3200)}
+document.title=SITE_TITLE;$('#brand').textContent=SITE_TITLE;
 
-/* ---------- PIN Gate check ---------- */
-function isProtected(){
-  return PIN && PIN.trim().length > 0;
-}
-function isUnlocked(){
-  if(!isProtected()) return true;
-  return lsGet('qm-t-pin', true) === 'ok';
-}
-
-function checkAccess(){
-  if(isUnlocked()){
-    if(isProtected()) $('#btn-lock').hidden = false;
-    renderTeacherDashboard();
-  } else {
-    $('#btn-lock').hidden = true;
-    renderLockScreen();
-  }
-}
-
-function renderLockScreen(){
-  $('#app').innerHTML = `
-  <div class="reg panel">
-    <h1>Teacher Login</h1>
-    <p class="lede">Enter your PIN or password to access the teacher dashboard.</p>
-    <form id="lock-form" novalidate>
-      <label class="f" for="pin-val">Password / PIN</label>
-      <input type="password" id="pin-val" autocomplete="current-password" autofocus placeholder="Enter password">
-      <p class="status err" id="pin-err" aria-live="polite"></p>
-      <button class="btn primary" style="width:100%;margin-top:.6rem">Unlock</button>
-    </form>
-  </div>`;
-  $('#pin-val').focus();
-  $('#lock-form').onsubmit = e => {
-    e.preventDefault();
-    const val = $('#pin-val').value;
-    if(val === PIN){
-      lsSet('qm-t-pin', 'ok', true);
-      checkAccess();
-    } else {
-      setStatus('pin-err', 'Incorrect password. Try again.', 'err');
-      $('#pin-val').select();
-    }
-  };
-}
-
-$('#btn-lock').onclick = () => {
-  lsDel('qm-t-pin');
-  checkAccess();
-};
-
-/* ---------- Teacher Dashboard & Quiz Editor ---------- */
+/* ---------- parser (plain text -> questions) ---------- */
 const OPT=/^\(?([A-Ha-h])(?:\)|[.:]\s|\s[-–—]\s)\s*(.+)$/,
   QN=/^(?:q(?:uestion)?\.?\s*)?(\d+)\s*[.):\-]\s*(.+)$/i,
   BN=/^(?:q(?:uestion)?\.?\s*(\d+)\s*[.):\-]?|(\d+)\s*[.):])$/i,
@@ -179,105 +188,271 @@ const OPT=/^\(?([A-Ha-h])(?:\)|[.:]\s|\s[-–—]\s)\s*(.+)$/,
   MK=/\s*(?:[✓✔✅]|\((?:correct|answer|\*)\)|\[(?:correct|x|\*)\])\s*$/i,
   LM=/^(?:[✓✔✅]|\[x\])\s*/i,
   norm=s=>s.toLowerCase().replace(/[^\p{L}\p{N}]+/gu,' ').trim();
-
 function resolve(s,o){
-  s=s.trim(); const ns=norm(s);
-  const k=o.findIndex(t=>{ const n=norm(t); return n&&(ns===n||(n.length>3&&ns.startsWith(n+' '))); });
-  if(k>-1) return {a:k, e:ns===norm(o[k])?'':s.slice(o[k].length).replace(/^[\s.:,;\-–—)]+/,'')};
+  s=s.trim();const ns=norm(s);
+  const k=o.findIndex(t=>{const n=norm(t);return n&&(ns===n||(n.length>3&&ns.startsWith(n+' ')))});
+  if(k>-1)return{a:k,e:ns===norm(o[k])?'':s.slice(o[k].length).replace(/^[\s.:,;\-–—)]+/,'')};
   const m=s.match(/^\(?([A-Ha-h]|[1-9])\)?(?=[.:\-–—)\s]|$)[.:\-–—)]?\s*(.*)$/);
-  if(!m) return {a:-1, e:''};
+  if(!m)return{a:-1,e:''};
   const a=/\d/.test(m[1])?+m[1]-1:L.toLowerCase().indexOf(m[1].toLowerCase());
-  return {a, e:norm(m[2])===norm(o[a]||'')?'':m[2]};
+  return{a,e:norm(m[2])===norm(o[a]||'')?'':m[2]};
 }
-
 function parse(raw){
-  const all=[], key={}; let cur=null, blank=false;
+  const all=[],key={};let cur=null,blank=false;
   const opts=c=>c.o.length>1?c.o.length:c.p.length;
   const fin=()=>{
-    const c=cur; cur=null; if(!c) return;
-    let o=c.o, q=c.q;
-    if(o.length>1){ if(c.p.length) q+='\n'+c.p.join('\n'); } else o=c.p;
-    if(!q||o.length<2) return;
-    let a=-1, e=c.x.join(' ');
-    if(c.ar!=null){ const r=resolve(c.ar,o); a=r.a; e=(r.e+' '+e).trim(); }
-    if(a<0&&c.mark!=null) a=c.mark;
+    const c=cur;cur=null;if(!c)return;
+    let o=c.o,q=c.q;
+    if(o.length>1){if(c.p.length)q+='\n'+c.p.join('\n')}else o=c.p;
+    if(!q||o.length<2)return;
+    let a=-1,e=c.x.join(' ');
+    if(c.ar!=null){const r=resolve(c.ar,o);a=r.a;e=(r.e+' '+e).trim()}
+    if(a<0&&c.mark!=null)a=c.mark;
     all.push({q:q.trim(),o,a,e,n:c.n});
   };
-  const mk=(t,n)=>{ fin(); cur={q:t,o:[],p:[],x:[],a:-1,ar:null,mark:null,n}; };
-  const add=(arr,t)=>{ let c=false; t=t.replace(MK,()=>(c=true,'')).replace(LM,()=>(c=true,'')).trim(); if(c) cur.mark=arr.length; arr.push(t); };
+  const mk=(t,n)=>{fin();cur={q:t,o:[],p:[],x:[],a:-1,ar:null,mark:null,n}};
+  const add=(arr,t)=>{let c=false;t=t.replace(MK,()=>(c=true,'')).replace(LM,()=>(c=true,'')).trim();if(c)cur.mark=arr.length;arr.push(t)};
   const isNew=n=>!cur||opts(cur)>1||n===(cur.n??0)+1||(cur.n==null&&!cur.o.length&&!cur.p.length);
   for(let l of raw.replace(/\r/g,'').split('\n')){
-    if(/^\s*```/.test(l)) continue;
+    if(/^\s*```/.test(l))continue;
     l=l.replace(/\*\*/g,'').replace(/`/g,'').trim().replace(/^#+\s*/,'').replace(/^>\s*/,'').replace(/^[-*•–]\s+/,'');
-    if(!l||/^[-=_*]{3,}$/.test(l)){ blank=true; continue; }
-    blank=false;
-    if(/^(?:answer\s*key|answers|key)\s*:?$/i.test(l)) continue;
+    if(!l||/^[-=_*]{3,}$/.test(l)){blank=true;continue}
+    const wb=blank;blank=false;
+    if(/^(?:answer\s*key|answers|key)\s*:?$/i.test(l))continue;
     let m;
-    if(KEYLINE.test(l)){ for(const k of l.matchAll(/(\d+)\s*[.):\-]?\s*\(?([A-Ha-h])\)?/g)) key[k[1]]=k[2].toLowerCase(); continue; }
-    if(cur&&cur.ar==null&&opts(cur)>1&&(m=l.match(ANS)||l.match(ANS2))){ cur.ar=m[1]; continue; }
+    if(KEYLINE.test(l)){for(const k of l.matchAll(/(\d+)\s*[.):\-]?\s*\(?([A-Ha-h])\)?/g))key[k[1]]=k[2].toLowerCase();continue}
+    if(cur&&cur.ar==null&&opts(cur)>1&&(m=l.match(ANS)||l.match(ANS2))){cur.ar=m[1];continue}
     if(cur&&cur.ar==null&&(m=l.match(OPT))&&m[1].toUpperCase()===L[cur.o.length]){
       const segs=cur.o.length?[l]:l.split(/\s+(?=\(?[B-Hb-h](?:\)|\.\s))/);
-      segs.forEach((s,k)=>{ const x=s.match(OPT); if(x&&x[1].toUpperCase()===L[cur.o.length]) add(cur.o,x[2]); else if(k) cur.o[cur.o.length-1]+=' '+s; });
-      continue;
-    }
-    if((m=l.match(QN))&&isNew(+m[1])){ mk(m[2],+m[1]); continue; }
-    if((m=l.match(BN))&&isNew(+(m[1]||m[2]))){ mk('',+(m[1]||m[2])); continue; }
-    if(!cur){ mk(l,null); continue; }
-    if(!cur.q){ cur.q=l; continue; }
+      segs.forEach((s,k)=>{const x=s.match(OPT);if(x&&x[1].toUpperCase()===L[cur.o.length])add(cur.o,x[2]);else if(k)cur.o[cur.o.length-1]+=' '+s});
+      continue}
+    if((m=l.match(QN))&&isNew(+m[1])){mk(m[2],+m[1]);continue}
+    if((m=l.match(BN))&&isNew(+(m[1]||m[2]))){mk('',+(m[1]||m[2]));continue}
+    if(!cur){mk(l,null);continue}
+    if(!cur.q){cur.q=l;continue}
     const done=cur.ar!=null;
-    const nq=done?((blank&&!EXPL.test(l))||l.endsWith('?')):(opts(cur)>1&&l.endsWith('?'))||(blank&&opts(cur)>=2);
-    if(nq){ mk(l,null); continue; }
-    if(done) cur.x.push(l.replace(EXPL,''));
-    else if(cur.o.length) cur.o[cur.o.length-1]+=' '+l;
+    const nq=done?((wb&&!EXPL.test(l))||l.endsWith('?')):(opts(cur)>1&&l.endsWith('?'))||(wb&&opts(cur)>=2);
+    if(nq){mk(l,null);continue}
+    if(done)cur.x.push(l.replace(EXPL,''));
+    else if(cur.o.length)cur.o[cur.o.length-1]+=' '+l;
     else add(cur.p,l);
   }
   fin();
-  all.forEach((x,k)=>{ if(x.a<0){ const c=key[x.n||k+1]; if(c) x.a=L.toLowerCase().indexOf(c); } });
+  all.forEach((x,k)=>{if(x.a<0){const c=key[x.n||k+1];if(c)x.a=L.toLowerCase().indexOf(c)}});
   return all.filter(x=>x.a<x.o.length).map(({q,o,a,e})=>({q,o,a,e}));
 }
 
+/* ---------- .docx -> plain lines ---------- */
 async function docxText(f){
+  if(!window.JSZip)throw new Error('The Word reader could not load. Check the connection and try again.');
   const zip=await JSZip.loadAsync(await f.arrayBuffer());
   const entry=zip.file('word/document.xml');
-  if(!entry) throw new Error('Not a valid .docx file.');
+  if(!entry)throw new Error('This does not look like a valid .docx file.');
   const xml=new DOMParser().parseFromString(await entry.async('string'),'application/xml');
-  const on=(r,tag)=>{ const n=r.getElementsByTagName('w:rPr')[0]?.getElementsByTagName(tag)[0]; return !!n&&!['0','false','none'].includes(n.getAttribute('w:val')||''); };
+  const on=(r,tag)=>{const n=r.getElementsByTagName('w:rPr')[0]?.getElementsByTagName(tag)[0];return !!n&&!['0','false','none'].includes(n.getAttribute('w:val')||'')};
   const lines=[];
   for(const p of xml.getElementsByTagName('w:p')){
     let t='',mark=true,any=false;
     for(const r of p.getElementsByTagName('w:r')){
       let s='';
       for(const n of r.childNodes){
-        if(n.nodeName==='w:t') s+=n.textContent;
-        else if(n.nodeName==='w:tab') s+=' ';
-        else if(n.nodeName==='w:br') s+='\n';
+        if(n.nodeName==='w:t')s+=n.textContent;
+        else if(n.nodeName==='w:tab')s+=' ';
+        else if(n.nodeName==='w:br')s+='\n';
       }
-      if(!s.trim()){ t+=s; continue; }
-      any=true; t+=s;
-      if(!(on(r,'w:highlight')||on(r,'w:shd'))&&!on(r,'w:b')) mark=false;
+      if(!s.trim()){t+=s;continue}
+      any=true;t+=s;
+      if(!(on(r,'w:highlight')||on(r,'w:shd'))&&!on(r,'w:b'))mark=false;
     }
     t=t.replace(/[ \t]+/g,' ').trim();
-    if(any&&mark&&OPT.test(t)) t+=' ✓';
+    if(any&&mark&&OPT.test(t))t+=' ✓';   /* highlighted or bold option = correct answer */
     lines.push(t);
   }
   const first=lines.findIndex(l=>QN.test(l)&&+l.match(QN)[1]===1);
   return (first>0?lines.slice(first):lines).join('\n');
 }
 
-let cfg={ repo:lsGet('qm-repo')||DEFAULT_REPO, branch:lsGet('qm-branch')||DEFAULT_BRANCH, token:lsGet('qm-token',true)||lsGet('qm-token')||'' };
-let D={ title:'', id:null, qs:[] };
-let ghList=null;
-let src;
+/* ---------- data: quizzes published on this site ---------- */
+const SAMPLE_TEXT=`1. Which Gradle property generates the package for the R class and BuildConfig?
+A) applicationId
+B) namespace
+C) versionName
+D) packageName
+Answer: B. namespace controls where R and BuildConfig are generated.
 
-const b64=s=>{ const b=new TextEncoder().encode(s); let r=''; b.forEach(x=>r+=String.fromCharCode(x)); return btoa(r); };
+2. What uniquely identifies your app on a device and on Google Play?
+A) Namespace
+B) Source package folder
+C) Application ID
+D) App label
+Answer: C. The application ID is the identity of the app.
+
+3. What does adb shell pm list packages show?
+A) Namespaces
+B) Source folders
+C) Gradle modules
+D) Application IDs
+Answer: D. On a device, "package name" means the application ID.`;
+const DEMO={id:'demo',title:'Sample quiz',count:3,updated:'',demo:true};
+let index=null,indexErr=false;
+async function loadIndex(force){
+  if(index&&!force)return index;
+  try{
+    const r=await fetch('quizzes/index.json?v='+Date.now(),{cache:'no-store'});
+    if(!r.ok)throw 0;
+    index=(await r.json()).quizzes||[];indexErr=false;
+  }catch(e){index=[DEMO];indexErr=true}
+  return index;
+}
+async function loadQuiz(id){
+  if(id==='demo')return{title:DEMO.title,questions:parse(SAMPLE_TEXT)};
+  const r=await fetch(`quizzes/${encodeURIComponent(id)}.json?v=${Date.now()}`,{cache:'no-store'});
+  if(!r.ok)throw new Error('Could not load that quiz.');
+  return r.json();
+}
+const best={get:()=>{try{return JSON.parse(lsGet('qm-best')||'{}')}catch(e){return{}}},
+  set(id,right,total){const b=this.get(),o=b[id];if(!o||right/total>=o.r/o.t)b[id]={r:right,t:total};lsSet('qm-best',JSON.stringify(b))}};
+const prefs={get:()=>{try{return JSON.parse(lsGet('qm-prefs')||'{}')}catch(e){return{}}},set(p){lsSet('qm-prefs',JSON.stringify({...this.get(),...p}))}};
+
+/* =====================================================================
+   STUDENT VIEW
+   ===================================================================== */
+let R=null; /* running session: {id,title,Q,mode,i,picks,flip,instant} */
+
+async function viewLibrary(){
+  setNav('s');
+  const app=$('#app');
+  app.innerHTML=`<h1>${esc(SITE_TITLE)}</h1><p class="lede">${esc(SITE_TAGLINE)}</p><p class="muted">Loading quizzes…</p>`;
+  const list=await loadIndex(true),p=prefs.get(),b=best.get();
+  const SZ={s:'.95rem',m:'1.1rem',l:'1.3rem'};
+  app.innerHTML=`
+  <h1>${esc(SITE_TITLE)}</h1><p class="lede">${esc(SITE_TAGLINE)}</p>
+  ${indexErr?`<p class="notice">No quizzes have been published yet, so this is a sample quiz. Teachers: open the Teacher page to add the first one.</p>`:''}
+  <div class="tools">
+    <input class="search" type="search" id="find" placeholder="Search quizzes" aria-label="Search quizzes">
+    <label class="chk"><input type="checkbox" id="shuf" ${p.shuf?'checked':''}> Shuffle questions</label>
+    <label class="chk"><input type="checkbox" id="inst" ${p.inst?'checked':''}> Show answer after each question</label>
+    <label class="chk">Text size <select id="osz" style="width:auto">${Object.entries({s:'Small',m:'Medium',l:'Large'}).map(([k,v])=>`<option value="${k}" ${(p.osz||'m')===k?'selected':''}>${v}</option>`).join('')}</select></label>
+  </div>
+  <div class="cards" id="cards"></div>`;
+  const draw=()=>{
+    const f=$('#find').value.trim().toLowerCase();
+    const items=list.filter(x=>x.title.toLowerCase().includes(f));
+    $('#cards').innerHTML=items.length?items.map(x=>{
+      const s=b[x.id],pct=s?Math.round(s.r/s.t*100):null;
+      return `<article class="qc"><h3>${esc(x.title)}</h3>
+        <div class="meta"><span>${x.count} question${x.count===1?'':'s'}</span>${x.updated?`<span>· ${esc(x.updated)}</span>`:''}${s?`<span class="chip ${pct>=80?'ok':pct>=50?'':'warn'}">Best ${pct}%</span>`:''}</div>
+        <div class="row"><button class="btn primary" data-start="${esc(x.id)}" data-mode="quiz">Start quiz</button><button class="btn" data-start="${esc(x.id)}" data-mode="cards">Flashcards</button></div></article>`}).join('')
+      :`<p class="empty">${list.length?'No quizzes match your search.':'No quizzes yet.'}</p>`;
+  };
+  draw();
+  $('#find').oninput=draw;
+  const save=()=>{prefs.set({shuf:$('#shuf').checked,inst:$('#inst').checked,osz:$('#osz').value});document.documentElement.style.setProperty('--osz',SZ[$('#osz').value])};
+  ['shuf','inst','osz'].forEach(i=>$('#'+i).onchange=save);save();
+  $('#cards').onclick=async e=>{
+    const b=e.target.closest('[data-start]');if(!b)return;
+    b.disabled=true;
+    try{
+      const quiz=await loadQuiz(b.dataset.start);
+      let Q=quiz.questions;if(!Q?.length)throw new Error('This quiz is empty.');
+      if($('#shuf').checked)Q=shuffle(Q);
+      R={id:b.dataset.start,title:quiz.title,Q,mode:b.dataset.mode,i:0,picks:Array(Q.length).fill(null),flip:false,instant:$('#inst').checked};
+      drawRun();
+    }catch(err){toast(err.message||'Could not open the quiz.');b.disabled=false}
+  };
+}
+
+const toTop=()=>window.scrollTo({top:0});
+function runHead(){
+  const pct=Math.round((R.i+1)/R.Q.length*100);
+  return `<div class="rtop"><strong>${esc(R.title)}</strong><div class="prog" aria-hidden="true"><i style="width:${pct}%"></i></div><span class="cnt">${R.i+1} / ${R.Q.length}</span></div>`;
+}
+function drawRun(){R.mode==='quiz'?drawQuiz():drawCard()}
+function drawQuiz(){
+  setNav("s");toTop();
+  const q=R.Q[R.i],p=R.picks[R.i],locked=R.instant&&p!=null&&q.a>-1;
+  $('#app').innerHTML=`${runHead()}
+  <h2 class="q"><span class="no">${R.i+1}.</span> ${esc(q.q)}</h2>
+  <div class="opts" role="radiogroup" aria-label="Answers">${q.o.map((t,k)=>{
+    let c='opt';if(p===k)c+=' sel';
+    if(locked){c+=' lock';if(k===q.a)c+=' ok';else if(p===k)c+=' bad'}
+    return `<div class="${c}"><button class="ltr" role="radio" aria-checked="${p===k}" aria-label="Option ${L[k]}" data-k="${k}">${L[k]}</button><span>${esc(t)}</span></div>`}).join('')}</div>
+  ${locked?`<p class="exp"><strong>${p===q.a?'Correct.':'The answer is '+L[q.a]+'.'}</strong> ${esc(q.e)}</p>`:''}
+  <div class="nav2"><button class="btn ghost exit" data-act="exit">Exit</button>
+    <button class="btn ghost" data-act="prev" ${R.i?'':'disabled'}>Previous</button>
+    <button class="btn primary" data-act="next">${R.i===R.Q.length-1?'Finish':'Next'}</button></div>`;
+}
+function pick(k){
+  const q=R.Q[R.i];
+  if(k<0||k>=q.o.length||(R.instant&&R.picks[R.i]!=null&&q.a>-1))return;
+  R.picks[R.i]=k;drawQuiz();document.querySelector('.opt.sel .ltr')?.focus();
+}
+function drawCard(){
+  setNav("s");toTop();
+  const q=R.Q[R.i];
+  $('#app').innerHTML=`${runHead()}
+  <div class="wrap"><div class="card ${R.flip?'flipped':''}" id="card" tabindex="0" role="button" aria-pressed="${R.flip}" aria-label="Flip card">
+    <div class="face front"><h2 class="q"><span class="no">${R.i+1}.</span> ${esc(q.q)}</h2>
+      <ul class="opts static">${q.o.map((t,k)=>`<li><b>${L[k]}</b><span>${esc(t)}</span></li>`).join('')}</ul>
+      <p class="hint">Tap the card to see the answer</p></div>
+    <div class="face back"><p class="qno">Question ${R.i+1}</p>
+      ${q.a>-1?`<div class="ans"><b>${L[q.a]}</b><span>${esc(q.o[q.a])}</span></div>`:'<p class="ans"><span>No answer was provided for this question.</span></p>'}
+      ${q.e?`<p class="exp">${esc(q.e)}</p>`:''}
+      <p class="hint">Tap the card to flip it back</p></div>
+  </div></div>
+  <div class="nav2"><button class="btn ghost exit" data-act="exit">Exit</button>
+    <button class="btn ghost" data-act="prev" ${R.i?'':'disabled'}>Previous</button>
+    <button class="btn" data-act="flip">Flip card</button>
+    <button class="btn primary" data-act="next">${R.i===R.Q.length-1?'Restart':'Next'}</button></div>`;
+  syncCard();
+}
+function syncCard(){const c=$('#card');if(!c)return;c.querySelector('.front').inert=R.flip;c.querySelector('.back').inert=!R.flip}
+function doFlip(){R.flip=!R.flip;const c=$('#card');c.classList.toggle('flipped',R.flip);c.setAttribute('aria-pressed',R.flip);syncCard()}
+function drawResult(){
+  toTop();
+  const {Q,picks}=R,n=Q.filter(q=>q.a>-1).length,right=Q.filter((q,k)=>picks[k]===q.a).length,skipped=picks.filter(p=>p==null).length,pct=n?Math.round(right/n*100):0;
+  if(n)best.set(R.id,right,n);
+  $('#app').innerHTML=`
+  <div class="panel score"><div class="big">${right}<small> / ${n}</small></div>
+    <p>${n?`${pct}% correct${skipped?`, ${skipped} unanswered`:''}. ${pct>=80?'Strong result.':pct>=50?'Good progress. Review the misses below.':'Worth another pass. Review the answers below.'}`:'This quiz has no answer key, so it is not scored.'}</p></div>
+  <div class="actions"><button class="btn primary" data-act="retry">Try again</button><button class="btn" data-act="flash">Study as flashcards</button><button class="btn ghost" data-act="exit">All quizzes</button></div>
+  <h2 style="margin:2rem 0 1rem">Answer key</h2>
+  ${Q.map((q,k)=>{const p=picks[k],ok=p===q.a,nk=q.a<0;
+    return `<article class="rev ${p==null||nk?'skip':ok?'ok':'bad'}"><div class="rh"><span>Question ${k+1}</span><span>${nk?'No answer':p==null?'Skipped':ok?'Correct':'Incorrect'}</span></div>
+    <p class="q sm">${esc(q.q)}</p>
+    <ul class="opts static">${q.o.map((t,j)=>`<li class="${j===q.a?'ok':j===p&&!nk?'bad':''}"><b>${L[j]}</b><span>${esc(t)}</span>${j===q.a?'<em>Correct answer</em>':j===p?'<em>Your answer</em>':''}</li>`).join('')}</ul>
+    ${q.e?`<p class="exp">${esc(q.e)}</p>`:''}</article>`}).join('')}`;
+}
+function runAct(a){
+  if(a==='exit'){R=null;route()}
+  else if(a==='prev'){R.i--;R.flip=false;drawRun()}
+  else if(a==='next'){if(R.mode==='quiz'&&R.i===R.Q.length-1)return drawResult();R.i=(R.i+1)%R.Q.length;R.flip=false;drawRun()}
+  else if(a==='flip')doFlip();
+  else if(a==='retry'){R={...R,mode:'quiz',i:0,picks:Array(R.Q.length).fill(null),flip:false};drawRun()}
+  else if(a==='flash'){R={...R,mode:'cards',i:0,flip:false};drawRun()}
+}
+
+/* =====================================================================
+   TEACHER VIEW  (publishes quiz files to the GitHub repo through the API)
+   ===================================================================== */
+const guess=()=>{
+  const h=location.hostname,seg=location.pathname.split('/').filter(Boolean)[0]||'';
+  if(h.endsWith('.github.io')){const o=h.split('.')[0];return{repo:`${o}/${seg&&!seg.includes('.')?seg:o+'.github.io'}`}}
+  return{repo:''};
+};
+let cfg={repo:lsGet('qm-repo')||guess().repo,branch:lsGet('qm-branch')||'main',token:lsGet('qm-token',true)||lsGet('qm-token')||''};
+let D={title:'',id:null,qs:[]};         /* draft */
+let ghList=null;                         /* quizzes as read from GitHub */
+
+const b64=s=>{const b=new TextEncoder().encode(s);let r='';b.forEach(x=>r+=String.fromCharCode(x));return btoa(r)};
 const unb64=s=>new TextDecoder().decode(Uint8Array.from(atob(s.replace(/\s/g,'')),c=>c.charCodeAt(0)));
-
 async function gh(path,opt={}){
   const r=await fetch(`https://api.github.com/repos/${cfg.repo}/${path}`,{...opt,headers:{Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28',Authorization:'Bearer '+cfg.token,...(opt.headers||{})}});
-  if(r.status===404&&opt.allow404) return null;
+  if(r.status===404&&opt.allow404)return null;
   if(!r.ok){
-    let m=''; try { m=(await r.json()).message; } catch(e){}
-    throw new Error(m||('GitHub error '+r.status));
+    let m='';try{m=(await r.json()).message}catch(e){}
+    const why={401:'The token was rejected. Check that it is correct and has not expired.',403:'The token does not have permission. It needs "Contents: Read and write" on this repository.',404:'Repository or branch not found. Check the name, the branch and that the token can see this repository.',409:'The repository changed while saving. Please try again.',422:'GitHub refused the change: '+m}[r.status];
+    const e=new Error(why||m||('GitHub error '+r.status));e.status=r.status;throw e;
   }
   return r.status===204?null:r.json();
 }
@@ -286,204 +461,242 @@ async function getFile(path){
   return j?{sha:j.sha,text:unb64(j.content)}:null;
 }
 const putFile=(path,text,sha,msg)=>gh(`contents/${path}`,{method:'PUT',body:JSON.stringify({message:msg,content:b64(text),branch:cfg.branch,...(sha?{sha}:{})})});
-
 async function readIndex(){
   const f=await getFile('quizzes/index.json');
-  let list=[]; if(f){ try{ list=JSON.parse(f.text).quizzes||[]; }catch(e){} }
-  return {sha:f?.sha, list};
+  let list=[];if(f){try{list=JSON.parse(f.text).quizzes||[]}catch(e){}}
+  return{sha:f?.sha,list};
 }
-async function writeIndex(mutate,msg){
-  const {sha,list}=await readIndex(), next=mutate(list);
-  await putFile('quizzes/index.json', JSON.stringify({quizzes:next},null,2)+'\n', sha, msg);
+async function writeIndex(mutate,msg,retry=1){
+  const {sha,list}=await readIndex(),next=mutate(list);
+  try{await putFile('quizzes/index.json',JSON.stringify({quizzes:next},null,2)+'\n',sha,msg)}
+  catch(e){if((e.status===409||e.status===422)&&retry){return writeIndex(mutate,msg,retry-1)}throw e}
   return next;
 }
+
+function setStatus(id,msg,type='info'){const e=$('#'+id);if(e){e.textContent=msg;e.className='status '+type}}
 const hasToken=()=>cfg.repo&&cfg.token;
 
-function renderTeacherDashboard(){
-  $('#app').innerHTML = `
+function viewTeacher(){
+  setNav('t');
+  $('#app').innerHTML=`
   <h1>Teacher</h1>
   <p class="lede">Upload a Word or text file, check the answers, and publish. Students see it on the home page right away.</p>
   <div class="steps">
-    <section class="panel" id="p-conn"></section>
-    <section class="panel">
-      <h2>Add a quiz</h2>
-      <div class="row">
-        <button class="btn" id="up" type="button">Upload .docx or text file</button>
-        <input id="file" type="file" accept=".txt,.md,.docx,text/plain,application/vnd.openxmlformats-officedocument.wordprocessingml.document" hidden>
-        <button class="btn ghost" id="sample" type="button">Use sample</button>
-        <button class="btn ghost" id="clear" type="button">Clear</button>
-      </div>
-      <label class="f" for="src">…or paste the questions <small>(you can also drop a file here)</small></label>
-      <textarea id="src" spellcheck="false" placeholder="1. Question text&#10;A. Option&#10;B. Option&#10;Answer: B"></textarea>
-      <p class="status info" id="parse-status" aria-live="polite"></p>
-      <details><summary>Supported formats</summary>
-        <p>Numbered or plain questions, options lettered <code>A.</code> <code>A)</code> <code>(A)</code> or one per line. The answer can be <code>Answer: B</code>, the option text, a ✓ next to the option, or a key at the end like <code>1. B  2. C</code>. In Word files, bold or highlighted options count as correct.</p>
-      </details>
-    </section>
-    <section class="panel" id="p-edit" hidden></section>
-    <section class="panel nonum" id="p-list"></section>
+  <section class="panel" id="p-conn"></section>
+  <section class="panel">
+    <h2>Add a quiz</h2>
+    <div class="row"><button class="btn" id="up" type="button">Upload .docx or text file</button><input id="file" type="file" accept=".txt,.md,.docx,text/plain,application/vnd.openxmlformats-officedocument.wordprocessingml.document" hidden>
+      <button class="btn ghost" id="sample" type="button">Use sample</button><button class="btn ghost" id="clear" type="button">Clear</button></div>
+    <label class="f" for="src">…or paste the questions <small>(you can also drop a file here)</small></label>
+    <textarea id="src" spellcheck="false" placeholder="1. Question text&#10;A. Option&#10;B. Option&#10;Answer: B"></textarea>
+    <p class="status info" id="parse-status" aria-live="polite"></p>
+    <details><summary>Supported formats</summary>
+      <p>Numbered or plain questions, options lettered <code>A.</code> <code>A)</code> <code>(A)</code> or one per line. The answer can be <code>Answer: B</code>, the option text, a ✓ next to the option, or a key at the end like <code>1. B  2. C</code>. In Word files, a bold or highlighted option counts as the correct answer. Anything missing can be set in the next step.</p></details>
+  </section>
+  <section class="panel" id="p-edit" hidden></section>
+  <section class="panel" id="p-list"></section>
   </div>
-  <p class="foot">Only someone with your GitHub token can publish or delete.</p>`;
-
-  drawConn();
-  wireAdd();
-  drawPublished();
-  src = $('#src');
-  src.value = lsGet('qm-draft') || '';
-  parseSrc();
+  <p class="foot">Anyone can open this page, but only someone with your GitHub token can publish or delete.</p>`;
+  drawConn();wireAdd();drawPublished();
+  src.value=lsGet('qm-draft')||'';parseSrc();
 }
-
+let src;
 function drawConn(){
   const ok=hasToken();
   $('#p-conn').innerHTML=`<h2>Connect to GitHub</h2>
   ${ok&&!$('#p-conn').dataset.open?`<p class="muted" style="margin:0 0 .6rem">Publishing to <strong>${esc(cfg.repo)}</strong> (${esc(cfg.branch)}).</p><div class="row"><button class="btn sm" id="c-edit">Change</button><button class="btn sm ghost danger" id="c-out">Forget token</button></div>`:`
-  <div class="grid2"><div><label class="f" for="c-repo">Repository</label><input type="text" id="c-repo" value="${esc(cfg.repo)}" placeholder="oxpc/s"></div>
-  <div><label class="f" for="c-br">Branch</label><input type="text" id="c-br" value="${esc(cfg.branch)}"></div></div>
-  <label class="f" for="c-tok">Access token <small>(fine-grained, Contents: Read and write)</small></label>
+  <div class="grid2"><div><label class="f" for="c-repo">Repository <small>owner/name</small></label><input type="text" id="c-repo" value="${esc(cfg.repo)}" placeholder="yourname/yourname.github.io" autocomplete="off"></div>
+  <div><label class="f" for="c-br">Branch</label><input type="text" id="c-br" value="${esc(cfg.branch)}" autocomplete="off"></div></div>
+  <label class="f" for="c-tok">Access token <small>fine-grained, Contents: Read and write, only this repository</small></label>
   <input type="password" id="c-tok" value="${esc(cfg.token)}" placeholder="github_pat_…" autocomplete="off">
-  <label class="chk" style="margin-top:.7rem"><input type="checkbox" id="c-rem" ${lsGet('qm-token')?'checked':''}> Remember on this device</label>
-  <div class="row" style="margin-top:.8rem"><button class="btn primary" id="c-go">Connect</button></div>`}
+  <label class="chk" style="margin-top:.7rem"><input type="checkbox" id="c-rem" ${lsGet('qm-token')?'checked':''}> Remember on this device <small class="muted">(only on your own computer)</small></label>
+  <div class="row" style="margin-top:.8rem"><button class="btn primary" id="c-go">Connect</button><a class="btn ghost" target="_blank" rel="noopener" href="https://github.com/settings/personal-access-tokens/new">Create a token</a></div>`}
   <p class="status info" id="c-st" aria-live="polite"></p>`;
   const g=id=>$('#'+id);
-  if(g('c-edit')) g('c-edit').onclick=()=>{ $('#p-conn').dataset.open='1'; drawConn(); };
-  if(g('c-out')) g('c-out').onclick=()=>{ cfg.token=''; lsDel('qm-token'); ghList=null; delete $('#p-conn').dataset.open; drawConn(); drawPublished(); drawEditor(); };
-  if(g('c-go')) g('c-go').onclick=async()=>{
-    cfg={ repo:g('c-repo').value.trim()||DEFAULT_REPO, branch:g('c-br').value.trim()||DEFAULT_BRANCH, token:g('c-tok').value.trim() };
+  if(g('c-edit'))g('c-edit').onclick=()=>{$('#p-conn').dataset.open='1';drawConn()};
+  if(g('c-out'))g('c-out').onclick=()=>{cfg.token='';lsDel('qm-token');ghList=null;delete $('#p-conn').dataset.open;drawConn();drawPublished();drawEditor()};
+  if(g('c-go'))g('c-go').onclick=async()=>{
+    cfg={repo:g('c-repo').value.trim().replace(/^https?:\/\/github\.com\//,'').replace(/\.git$/,'').replace(/\/$/,''),branch:g('c-br').value.trim()||'main',token:g('c-tok').value.trim()};
+    if(!/^[\w.-]+\/[\w.-]+$/.test(cfg.repo)||!cfg.token)return setStatus('c-st','Enter the repository as owner/name and paste your token.','err');
     setStatus('c-st','Checking…');
     try{
       await gh('');
-      lsSet('qm-repo',cfg.repo); lsSet('qm-branch',cfg.branch);
-      if(g('c-rem').checked) lsSet('qm-token',cfg.token); else lsSet('qm-token',cfg.token,true);
-      delete $('#p-conn').dataset.open; drawConn(); drawPublished(); drawEditor();
-      setStatus('c-st','Connected successfully.','ok');
-    }catch(e){ setStatus('c-st',e.message,'err'); }
+      lsSet('qm-repo',cfg.repo);lsSet('qm-branch',cfg.branch);
+      if(g('c-rem').checked){lsSet('qm-token',cfg.token);try{sessionStorage.removeItem('qm-token')}catch(e){}}else{lsSet('qm-token',cfg.token,true);try{localStorage.removeItem('qm-token')}catch(e){}}
+      delete $('#p-conn').dataset.open;drawConn();drawPublished();drawEditor();
+      setStatus('c-st','Connected.','ok');
+    }catch(e){setStatus('c-st',e.message,'err')}
   };
 }
-
 function wireAdd(){
   src=$('#src');
   src.oninput=parseSrc;
   $('#up').onclick=()=>$('#file').click();
-  $('#file').onchange=async e=>{ await loadFile(e.target.files[0]); e.target.value=''; };
-  ['dragover','dragleave','drop'].forEach(t=>src.addEventListener(t,e=>{ e.preventDefault(); src.classList.toggle('drag',t==='dragover'); if(t==='drop') loadFile(e.dataTransfer.files[0]); }));
-  $('#sample').onclick=()=>{
-    D.id=null; D.title='Sample quiz';
-    src.value=`1. Which property identifies your app?\nA) Namespace\nB) Application ID\nAnswer: B`;
-    parseSrc();
-  };
-  $('#clear').onclick=()=>{ D={title:'',id:null,qs:[]}; src.value=''; parseSrc(); src.focus(); };
+  $('#file').onchange=async e=>{await loadFile(e.target.files[0]);e.target.value=''};
+  ['dragover','dragleave','drop'].forEach(t=>src.addEventListener(t,e=>{e.preventDefault();src.classList.toggle('drag',t==='dragover');if(t==='drop')loadFile(e.dataTransfer.files[0])}));
+  $('#sample').onclick=()=>{D.id=null;D.title=D.title||'Sample quiz';src.value=SAMPLE_TEXT;parseSrc()};
+  $('#clear').onclick=()=>{D={title:'',id:null,qs:[]};src.value='';parseSrc();src.focus()};
 }
-
 async function loadFile(f){
-  if(!f) return;
+  if(!f)return;
   try{
     src.value=/\.docx$/i.test(f.name)?await docxText(f):await f.text();
-    if(!D.title) D.title=f.name.replace(/\.[^.]+$/,'').replace(/[_-]+/g,' ').trim();
-    D.id=null;
-    parseSrc();
-  }catch(err){ setStatus('parse-status',err.message,'err'); }
+    if(!D.title)D.title=f.name.replace(/\.[^.]+$/,'').replace(/[_-]+/g,' ').trim();
+    D.id=D.id; parseSrc();
+  }catch(err){setStatus('parse-status',/\.doc$/i.test(f.name)?'Old .doc files are not supported. Save it as .docx and try again.':(err.message||'Could not read that file.'),'err')}
 }
-
+let keepAnswers=false;
 function parseSrc(){
   lsSet('qm-draft',src.value,true);
-  const old=D.qs, qs=parse(src.value);
-  qs.forEach(q=>{ if(q.a<0){ const m=old.find(o=>o.q===q.q&&o.o.length===q.o.length); if(m) q.a=m.a; } });
-  D.qs=qs;
-  setStatus('parse-status', D.qs.length ? `${D.qs.length} question(s) found.` : (src.value.trim() ? 'No questions recognized.' : 'Upload or paste questions to begin.'), D.qs.length?'ok':'info');
+  if(!keepAnswers){
+    const old=D.qs,qs=parse(src.value);
+    /* keep answers the teacher already set when the same question is still there */
+    qs.forEach(q=>{if(q.a<0){const m=old.find(o=>o.q===q.q&&o.o.length===q.o.length);if(m)q.a=m.a}});
+    D.qs=qs;
+  }
+  setStatus('parse-status',D.qs.length?`${D.qs.length} question${D.qs.length>1?'s':''} found.`:(src.value.trim()?'No questions found. Check the supported formats.':'Upload or paste questions to begin.'),D.qs.length?'ok':'info');
   drawEditor();
 }
-
 function drawEditor(){
-  const el=$('#p-edit'); if(!el) return;
-  if(!D.qs.length){ el.hidden=true; return; }
+  const el=$('#p-edit');if(!el)return;
+  if(!D.qs.length){el.hidden=true;return}
   el.hidden=false;
   const miss=D.qs.filter(q=>q.a<0).length;
   if(!el.dataset.built){
     el.dataset.built='1';
     el.innerHTML=`<h2>Check and publish</h2>
-    <label class="f" for="d-title">Quiz title</label><input type="text" id="d-title" maxlength="100" placeholder="e.g. Lesson 1 Quiz">
+    <label class="f" for="d-title">Quiz title</label><input type="text" id="d-title" maxlength="100" placeholder="e.g. CRC Multiple Choice Questions">
     <div id="d-sum" class="row" style="margin:.9rem 0 .2rem"></div>
+    <details id="d-keybox"><summary>Paste an answer key</summary>
+      <p>Write the answers like <code>1. B  2. C  3. A</code> or one per line, then apply.</p>
+      <textarea id="d-key" style="min-height:90px" placeholder="1. B&#10;2. C&#10;3. A"></textarea>
+      <div class="row" style="margin-top:.5rem"><button class="btn sm" id="d-apply">Apply key</button></div></details>
     <div id="d-list"></div>
     <div class="sticky"><div class="row"><button class="btn primary" id="d-pub">Publish to students</button><button class="btn" id="d-dl">Download JSON</button></div><p class="status info" id="d-st" aria-live="polite"></p></div>`;
     $('#d-title').oninput=e=>D.title=e.target.value;
-    $('#d-list').onclick=e=>{
-      const b=e.target.closest('[data-q]'); if(!b) return;
-      const q=D.qs[+b.dataset.q];
-      if(b.dataset.k!=null){ q.a=q.a===+b.dataset.k?-1:+b.dataset.k; drawEditor(); }
-      else if(b.dataset.rm!=null){ D.qs.splice(+b.dataset.q,1); parseSrc(); }
+    $('#d-apply').onclick=()=>{
+      let n=0;for(const m of $('#d-key').value.matchAll(/(\d+)\s*[.):\-]?\s*\(?([A-Ha-h])\)?/g)){const q=D.qs[+m[1]-1],k=L.indexOf(m[2].toUpperCase());if(q&&k<q.o.length){q.a=k;n++}}
+      drawEditor();setStatus('d-st',n?`Applied ${n} answer${n>1?'s':''}.`:'No answers recognised. Use a format like 1. B','info'+(n?'':''));
     };
-    $('#d-list').oninput=e=>{ if(e.target.dataset.e!=null) D.qs[+e.target.dataset.e].e=e.target.value; };
+    $('#d-list').onclick=e=>{
+      const b=e.target.closest('[data-q]');if(!b)return;
+      const q=D.qs[+b.dataset.q];
+      if(b.dataset.k!=null){q.a=q.a===+b.dataset.k?-1:+b.dataset.k;drawEditor()}
+      else if(b.dataset.rm!=null){D.qs.splice(+b.dataset.q,1);keepAnswers=true;drawEditor();keepAnswers=false}
+    };
+    $('#d-list').oninput=e=>{if(e.target.dataset.e!=null)D.qs[+e.target.dataset.e].e=e.target.value};
     $('#d-pub').onclick=publish;
     $('#d-dl').onclick=download;
   }
-  if(document.activeElement!==$('#d-title')) $('#d-title').value=D.title;
-  $('#d-sum').innerHTML=`<span class="chip">${D.qs.length} questions</span>${miss?`<span class="chip warn">${miss} without answer</span>`:''}`;
+  if(document.activeElement!==$('#d-title'))$('#d-title').value=D.title;
+  $('#d-sum').innerHTML=`<span class="chip">${D.qs.length} questions</span>${miss?`<span class="chip warn">${miss} without an answer</span><span class="muted" style="font-size:.9rem">Tap a letter to mark the correct option.</span>`:'<span class="chip ok">All answers set</span>'}${D.id?`<span class="chip">Editing: ${esc(D.id)}</span>`:''}`;
+  const keepScroll=$('#d-list').scrollTop;
   $('#d-list').innerHTML=D.qs.map((q,i)=>`<div class="ed ${q.a<0?'miss':''}">
-    <div class="edh"><b class="no">${i+1}.</b><span>${esc(q.q)}</span><button class="btn ghost sm danger" data-q="${i}" data-rm="1">Remove</button></div>
-    ${q.o.map((t,k)=>`<div class="opt ${q.a===k?'ok':''}"><button class="ltr" data-q="${i}" data-k="${k}">${L[k]}</button><span>${esc(t)}</span></div>`).join('')}
-    <input type="text" data-e="${i}" value="${esc(q.e)}" placeholder="Explanation (optional)"></div>`).join('');
+    <div class="edh"><b class="no">${i+1}.</b><span>${esc(q.q)}</span><button class="btn ghost sm danger" data-q="${i}" data-rm="1" aria-label="Remove question ${i+1}">Remove</button></div>
+    ${q.o.map((t,k)=>`<div class="opt ${q.a===k?'ok':''}"><button class="ltr" data-q="${i}" data-k="${k}" aria-pressed="${q.a===k}" aria-label="Mark option ${L[k]} as correct">${L[k]}</button><span>${esc(t)}</span></div>`).join('')}
+    <input type="text" data-e="${i}" value="${esc(q.e)}" placeholder="Explanation (optional)" aria-label="Explanation for question ${i+1}"></div>`).join('');
+  $('#d-list').scrollTop=keepScroll;
 }
-
 function payload(){
-  return { title: (D.title||'').trim()||'Untitled quiz', questions: D.qs.map(q=>({ q:q.q, o:q.o, a:q.a, e:q.e||'' })) };
+  const title=(D.title||'').trim()||'Untitled quiz';
+  return{title,questions:D.qs.map(q=>({q:q.q,o:q.o,a:q.a,e:q.e||''}))};
 }
 function download(){
-  const p=payload(), b=new Blob([JSON.stringify(p,null,2)],{type:'application/json'}), a=document.createElement('a');
-  a.href=URL.createObjectURL(b); a.download=slug(p.title)+'.json'; a.click(); URL.revokeObjectURL(a.href);
+  const p=payload(),blob=new Blob([JSON.stringify(p,null,2)],{type:'application/json'}),a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);a.download=slug(p.title)+'.json';a.click();URL.revokeObjectURL(a.href);
 }
-
 async function publish(){
-  if(!hasToken()) return setStatus('d-st','Connect to GitHub first (step 1).','err');
+  if(!hasToken())return setStatus('d-st','Connect to GitHub first (step 1).','err');
   const p=payload();
-  if(!(D.title||'').trim()) return setStatus('d-st','Provide a quiz title first.','err');
-  const btn=$('#d-pub'); btn.disabled=true; setStatus('d-st','Publishing…');
+  if(!(D.title||'').trim())return setStatus('d-st','Give the quiz a title first.','err');
+  const miss=D.qs.filter(q=>q.a<0).length;
+  if(miss&&!confirm(`${miss} question${miss>1?'s have':' has'} no answer, so the quiz will not be fully scored. Publish anyway?`))return;
+  const btn=$('#d-pub');btn.disabled=true;setStatus('d-st','Publishing…');
   try{
-    const id=D.id||slug(p.title), path=`quizzes/${id}.json`, ex=await getFile(path);
-    await putFile(path, JSON.stringify(p,null,2)+'\n', ex?.sha, `${ex?'Update':'Add'} quiz: ${p.title}`);
+    const id=D.id||slug(p.title),path=`quizzes/${id}.json`,ex=await getFile(path);
+    if(ex&&!D.id&&!confirm(`A quiz called "${id}" already exists. Replace it?`)){btn.disabled=false;return setStatus('d-st','Cancelled.','info')}
+    await putFile(path,JSON.stringify(p,null,2)+'\n',ex?.sha,`${ex?'Update':'Add'} quiz: ${p.title}`);
     const date=new Date().toISOString().slice(0,10);
-    ghList=await writeIndex(l=>[{id,title:p.title,count:p.questions.length,updated:date},...l.filter(x=>x.id!==id)],`Update index`);
-    D.id=id;
-    setStatus('d-st','Published successfully.','ok');
-    drawPublished(); toast('Published');
-  }catch(e){ setStatus('d-st',e.message,'err'); }
+    ghList=await writeIndex(l=>[{id,title:p.title,count:p.questions.length,updated:date},...l.filter(x=>x.id!==id)],`Update index: ${p.title}`);
+    index=null;D.id=id;
+    setStatus('d-st','Published. GitHub Pages can take up to a minute to show the update to students.','ok');
+    drawPublished();toast('Published');
+  }catch(e){setStatus('d-st',e.message,'err')}
   btn.disabled=false;
 }
-
 async function drawPublished(){
-  const el=$('#p-list'); if(!el) return;
-  el.innerHTML=`<h2>Published quizzes</h2><p class="muted" id="pl-st">${hasToken()?'Loading…':'Connect to GitHub to view published quizzes.'}</p><ul class="list" id="pl"></ul>`;
-  if(!hasToken()) return;
+  const el=$('#p-list');if(!el)return;
+  el.innerHTML=`<h2>Published quizzes</h2><p class="muted" id="pl-st">${hasToken()?'Loading…':'Connect to GitHub to manage published quizzes.'}</p><ul class="list" id="pl"></ul>`;
+  if(!hasToken())return;
   try{
-    if(!ghList) ghList=(await readIndex()).list;
-    $('#pl-st').textContent=ghList.length?'':'No published quizzes yet.';
-    $('#pl').innerHTML=ghList.map(x=>`<li><div class="t"><strong>${esc(x.title)}</strong><small>${x.count} questions</small></div>
+    if(!ghList)ghList=(await readIndex()).list;
+    $('#pl-st').textContent=ghList.length?'':'Nothing published yet.';
+    $('#pl').innerHTML=ghList.map(x=>`<li><div class="t"><strong>${esc(x.title)}</strong><small>${x.count} questions${x.updated?' · '+esc(x.updated):''}</small></div>
       <button class="btn sm" data-edit="${esc(x.id)}">Edit</button><button class="btn sm ghost danger" data-del="${esc(x.id)}">Delete</button></li>`).join('');
     $('#pl').onclick=async e=>{
-      const ed=e.target.closest('[data-edit]'), dl=e.target.closest('[data-del]');
+      const ed=e.target.closest('[data-edit]'),dl=e.target.closest('[data-del]');
       if(ed){
         try{
-          const f=await getFile(`quizzes/${ed.dataset.edit}.json`); if(!f) throw new Error('File not found.');
-          const j=JSON.parse(f.text); D={title:j.title, id:ed.dataset.edit, qs:j.questions.map(q=>({...q}))};
-          src.value=D.qs.map((q,i)=>`${i+1}. ${q.q}\n${q.o.map((t,k)=>`${L[k]}. ${t}`).join('\n')}${q.a>-1?`\nAnswer: ${L[q.a]}`:''}`).join('\n\n');
-          $('#p-edit').dataset.built=''; parseSrc();
+          const f=await getFile(`quizzes/${ed.dataset.edit}.json`);if(!f)throw new Error('File not found.');
+          const j=JSON.parse(f.text);D={title:j.title,id:ed.dataset.edit,qs:j.questions.map(q=>({...q}))};
+          src.value=D.qs.map((q,i)=>`${i+1}. ${q.q}\n${q.o.map((t,k)=>`${L[k]}. ${t}`).join('\n')}${q.a>-1?`\nAnswer: ${L[q.a]}.${q.e?' '+q.e:''}`:''}`).join('\n\n');
+          keepAnswers=false;$('#p-edit').dataset.built='';parseSrc();
           $('#p-edit').scrollIntoView({behavior:'smooth'});
-        }catch(err){ toast(err.message); }
+        }catch(err){toast(err.message)}
       }else if(dl){
-        const id=dl.dataset.del;
-        if(!confirm(`Delete this quiz?`)) return;
+        const id=dl.dataset.del,t=ghList.find(x=>x.id===id)?.title||id;
+        if(!confirm(`Delete "${t}" for everyone? This cannot be undone from here.`))return;
         try{
           const f=await getFile(`quizzes/${id}.json`);
-          if(f) await gh(`contents/quizzes/${id}.json`,{method:'DELETE',body:JSON.stringify({message:`Delete quiz`,sha:f.sha,branch:cfg.branch})});
-          ghList=await writeIndex(l=>l.filter(x=>x.id!==id),`Remove quiz`);
-          drawPublished(); toast('Deleted');
-        }catch(err){ toast(err.message); }
+          if(f)await gh(`contents/quizzes/${id}.json`,{method:'DELETE',body:JSON.stringify({message:`Delete quiz: ${t}`,sha:f.sha,branch:cfg.branch})});
+          ghList=await writeIndex(l=>l.filter(x=>x.id!==id),`Update index: remove ${t}`);index=null;
+          if(D.id===id)D.id=null;
+          drawPublished();toast('Deleted');
+        }catch(err){toast(err.message)}
       }
     };
-  }catch(e){ $('#pl-st').textContent=e.message; }
+  }catch(e){$('#pl-st').textContent=e.message;$('#pl-st').className='status err'}
 }
 
-// Run initial gate check
-checkAccess();
+/* =====================================================================
+   ROUTER + shared events
+   ===================================================================== */
+function setNav(w){
+  $('#nav-s').toggleAttribute('aria-current',w==='s');if(w==='s')$('#nav-s').setAttribute('aria-current','page');else $('#nav-s').removeAttribute('aria-current');
+  if(w==='t')$('#nav-t').setAttribute('aria-current','page');else $('#nav-t').removeAttribute('aria-current');
+}
+function route(){
+  R=R&&location.hash.startsWith('#/teacher')?null:R;
+  if(location.hash.startsWith('#/teacher'))return viewTeacher();
+  if(R)return drawRun();
+  viewLibrary();
+}
+addEventListener('hashchange',()=>{window.scrollTo({top:0});route()});
+
+$('#app').addEventListener('click',e=>{
+  if(!R)return;
+  const o=e.target.closest('.ltr[data-k]');
+  if(o&&R.mode==='quiz'&&!o.dataset.q)return pick(+o.dataset.k);
+  if(e.target.closest('#card'))return doFlip();
+  const a=e.target.closest('[data-act]');if(a)runAct(a.dataset.act);
+});
+$('#app').addEventListener('keydown',e=>{
+  if(R&&e.target.id==='card'&&(e.key===' '||e.key==='Enter')){e.preventDefault();doFlip()}
+});
+addEventListener('keydown',e=>{
+  if(!R||e.target.matches('textarea,input,select')||e.ctrlKey||e.metaKey||e.altKey)return;
+  if(R.mode==='quiz'){
+    const d=/^[1-8]$/.test(e.key)?+e.key-1:e.key.length===1?L.toLowerCase().indexOf(e.key.toLowerCase()):-1;
+    if(d>-1)pick(d);
+    else if(e.key==='ArrowRight')runAct('next');
+    else if(e.key==='ArrowLeft'&&R.i>0)runAct('prev');
+  }else{
+    if(e.key==='ArrowRight')runAct('next');
+    else if(e.key==='ArrowLeft'&&R.i>0)runAct('prev');
+    else if(e.key===' '&&!e.target.closest('button,#card')){e.preventDefault();doFlip()}
+  }
+});
+route();
 </script>
 </body>
 </html>
