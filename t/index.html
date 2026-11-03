@@ -19,7 +19,7 @@ header.top{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg
 .bar{max-width:980px;margin:0 auto;padding:.7rem 1.1rem;display:flex;align-items:center;gap:1rem}
 .brand{font-weight:700;letter-spacing:-.02em;font-size:1.15rem;color:var(--ink);text-decoration:none;display:flex;align-items:center;gap:.55rem}
 .logo{width:28px;height:28px;border-radius:8px;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-size:.95rem}
-nav{margin-left:auto;display:flex;gap:.25rem}
+nav{margin-left:auto;display:flex;gap:.5rem;align-items:center}
 nav a{color:var(--muted);text-decoration:none;font-weight:600;padding:.4rem .8rem;border-radius:9px}
 nav a:hover{background:var(--soft);color:var(--ink)}
 main{max-width:980px;margin:0 auto;padding:clamp(1.25rem,4vw,2.5rem) 1.1rem 3rem}
@@ -76,56 +76,34 @@ label.f small{font-weight:400;color:var(--muted)}
 details{color:var(--muted);font-size:.92rem;margin-top:.8rem}
 summary{cursor:pointer;font-weight:600;color:var(--ink)}
 code{font:.88em ui-monospace,monospace;background:var(--bg);padding:.1em .35em;border-radius:5px}
-.tblw{overflow-x:auto;margin-top:.8rem}
-.tbl{width:100%;border-collapse:collapse;font-size:.92rem}
-.tbl th{text-align:left;color:var(--muted);font-weight:600;padding:.45rem .6rem;border-bottom:1.5px solid var(--line);white-space:nowrap}
-.tbl td{padding:.55rem .6rem;border-bottom:1px solid var(--line);vertical-align:top}
-.tbl .na{color:var(--muted)}
+.reg{max-width:420px;margin:clamp(1rem,10vh,4rem) auto 0}
 .steps>.panel.nonum>h2::before{display:none}
 </style>
 </head>
 <body>
 <header class="top"><div class="bar">
   <a class="brand" href="../"><span class="logo">Q</span><span>Quiz hub</span></a>
-  <nav aria-label="Main"><a href="../">Student page</a></nav>
+  <nav aria-label="Main">
+    <button class="btn ghost sm" id="btn-lock" hidden type="button">Lock</button>
+    <a href="../">Student page</a>
+  </nav>
 </div></header>
 
-<main id="app">
-  <h1>Teacher</h1>
-  <p class="lede">Upload a Word or text file, check the answers, and publish. Students will see it on the home page right away.</p>
-  <div class="steps">
-    <section class="panel" id="p-conn"></section>
-    <section class="panel">
-      <h2>Add a quiz</h2>
-      <div class="row">
-        <button class="btn" id="up" type="button">Upload .docx or text file</button>
-        <input id="file" type="file" accept=".txt,.md,.docx,text/plain,application/vnd.openxmlformats-officedocument.wordprocessingml.document" hidden>
-        <button class="btn ghost" id="sample" type="button">Use sample</button>
-        <button class="btn ghost" id="clear" type="button">Clear</button>
-      </div>
-      <label class="f" for="src">…or paste the questions <small>(you can also drop a file here)</small></label>
-      <textarea id="src" spellcheck="false" placeholder="1. Question text&#10;A. Option&#10;B. Option&#10;Answer: B"></textarea>
-      <p class="status info" id="parse-status" aria-live="polite"></p>
-      <details><summary>Supported formats</summary>
-        <p>Numbered or plain questions, options lettered <code>A.</code> <code>A)</code> <code>(A)</code> or one per line. The answer can be <code>Answer: B</code>, the option text, a ✓ next to the option, or a key at the end like <code>1. B  2. C</code>. In Word files, bold or highlighted options count as correct.</p>
-      </details>
-    </section>
-    <section class="panel" id="p-edit" hidden></section>
-    <section class="panel nonum" id="p-list"></section>
-    <section class="panel nonum" id="p-res"></section>
-  </div>
-  <p class="foot">Only someone with your GitHub token can publish or delete.</p>
-</main>
-
+<main id="app"></main>
 <div class="toast" id="toast" role="status" hidden></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script>
-/* Repo settings */
+/* =====================================================================
+   PASSWORD / PIN PROTECTION:
+   - Set PIN to '123' (or any password).
+   - Set PIN = ''; (empty quotes) to turn the password OFF.
+   ===================================================================== */
+const PIN = '123';
+
+/* Repo configuration */
 const DEFAULT_REPO = 'oxpc/s';
 const DEFAULT_BRANCH = 'main';
-const ALLOWED_IDS = ['vac1','vac2','vac3','vac4','vac5','vac6','vac7','vac8','vac9','vac10'];
-const RESULTS_URL = ''; // Optional Google Apps Script link
 
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>'"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[c]));
@@ -139,7 +117,57 @@ let toastT;
 function toast(m){ const t=$('#toast'); t.textContent=m; t.hidden=false; clearTimeout(toastT); toastT=setTimeout(()=>t.hidden=true,3200); }
 function setStatus(id, msg, type='info'){ const e=$('#'+id); if(e){ e.textContent=msg; e.className='status '+type; } }
 
-/* Parser */
+/* ---------- PIN Gate check ---------- */
+function isProtected(){
+  return PIN && PIN.trim().length > 0;
+}
+function isUnlocked(){
+  if(!isProtected()) return true;
+  return lsGet('qm-t-pin', true) === 'ok';
+}
+
+function checkAccess(){
+  if(isUnlocked()){
+    if(isProtected()) $('#btn-lock').hidden = false;
+    renderTeacherDashboard();
+  } else {
+    $('#btn-lock').hidden = true;
+    renderLockScreen();
+  }
+}
+
+function renderLockScreen(){
+  $('#app').innerHTML = `
+  <div class="reg panel">
+    <h1>Teacher Login</h1>
+    <p class="lede">Enter your PIN or password to access the teacher dashboard.</p>
+    <form id="lock-form" novalidate>
+      <label class="f" for="pin-val">Password / PIN</label>
+      <input type="password" id="pin-val" autocomplete="current-password" autofocus placeholder="Enter password">
+      <p class="status err" id="pin-err" aria-live="polite"></p>
+      <button class="btn primary" style="width:100%;margin-top:.6rem">Unlock</button>
+    </form>
+  </div>`;
+  $('#pin-val').focus();
+  $('#lock-form').onsubmit = e => {
+    e.preventDefault();
+    const val = $('#pin-val').value;
+    if(val === PIN){
+      lsSet('qm-t-pin', 'ok', true);
+      checkAccess();
+    } else {
+      setStatus('pin-err', 'Incorrect password. Try again.', 'err');
+      $('#pin-val').select();
+    }
+  };
+}
+
+$('#btn-lock').onclick = () => {
+  lsDel('qm-t-pin');
+  checkAccess();
+};
+
+/* ---------- Teacher Dashboard & Quiz Editor ---------- */
 const OPT=/^\(?([A-Ha-h])(?:\)|[.:]\s|\s[-–—]\s)\s*(.+)$/,
   QN=/^(?:q(?:uestion)?\.?\s*)?(\d+)\s*[.):\-]\s*(.+)$/i,
   BN=/^(?:q(?:uestion)?\.?\s*(\d+)\s*[.):\-]?|(\d+)\s*[.):])$/i,
@@ -235,10 +263,10 @@ async function docxText(f){
   return (first>0?lines.slice(first):lines).join('\n');
 }
 
-/* GitHub connection */
 let cfg={ repo:lsGet('qm-repo')||DEFAULT_REPO, branch:lsGet('qm-branch')||DEFAULT_BRANCH, token:lsGet('qm-token',true)||lsGet('qm-token')||'' };
 let D={ title:'', id:null, qs:[] };
 let ghList=null;
+let src;
 
 const b64=s=>{ const b=new TextEncoder().encode(s); let r=''; b.forEach(x=>r+=String.fromCharCode(x)); return btoa(r); };
 const unb64=s=>new TextDecoder().decode(Uint8Array.from(atob(s.replace(/\s/g,'')),c=>c.charCodeAt(0)));
@@ -270,13 +298,47 @@ async function writeIndex(mutate,msg){
 }
 const hasToken=()=>cfg.repo&&cfg.token;
 
+function renderTeacherDashboard(){
+  $('#app').innerHTML = `
+  <h1>Teacher</h1>
+  <p class="lede">Upload a Word or text file, check the answers, and publish. Students see it on the home page right away.</p>
+  <div class="steps">
+    <section class="panel" id="p-conn"></section>
+    <section class="panel">
+      <h2>Add a quiz</h2>
+      <div class="row">
+        <button class="btn" id="up" type="button">Upload .docx or text file</button>
+        <input id="file" type="file" accept=".txt,.md,.docx,text/plain,application/vnd.openxmlformats-officedocument.wordprocessingml.document" hidden>
+        <button class="btn ghost" id="sample" type="button">Use sample</button>
+        <button class="btn ghost" id="clear" type="button">Clear</button>
+      </div>
+      <label class="f" for="src">…or paste the questions <small>(you can also drop a file here)</small></label>
+      <textarea id="src" spellcheck="false" placeholder="1. Question text&#10;A. Option&#10;B. Option&#10;Answer: B"></textarea>
+      <p class="status info" id="parse-status" aria-live="polite"></p>
+      <details><summary>Supported formats</summary>
+        <p>Numbered or plain questions, options lettered <code>A.</code> <code>A)</code> <code>(A)</code> or one per line. The answer can be <code>Answer: B</code>, the option text, a ✓ next to the option, or a key at the end like <code>1. B  2. C</code>. In Word files, bold or highlighted options count as correct.</p>
+      </details>
+    </section>
+    <section class="panel" id="p-edit" hidden></section>
+    <section class="panel nonum" id="p-list"></section>
+  </div>
+  <p class="foot">Only someone with your GitHub token can publish or delete.</p>`;
+
+  drawConn();
+  wireAdd();
+  drawPublished();
+  src = $('#src');
+  src.value = lsGet('qm-draft') || '';
+  parseSrc();
+}
+
 function drawConn(){
   const ok=hasToken();
   $('#p-conn').innerHTML=`<h2>Connect to GitHub</h2>
   ${ok&&!$('#p-conn').dataset.open?`<p class="muted" style="margin:0 0 .6rem">Publishing to <strong>${esc(cfg.repo)}</strong> (${esc(cfg.branch)}).</p><div class="row"><button class="btn sm" id="c-edit">Change</button><button class="btn sm ghost danger" id="c-out">Forget token</button></div>`:`
   <div class="grid2"><div><label class="f" for="c-repo">Repository</label><input type="text" id="c-repo" value="${esc(cfg.repo)}" placeholder="oxpc/s"></div>
   <div><label class="f" for="c-br">Branch</label><input type="text" id="c-br" value="${esc(cfg.branch)}"></div></div>
-  <label class="f" for="c-tok">Access token <small>(Contents: Read and write)</small></label>
+  <label class="f" for="c-tok">Access token <small>(fine-grained, Contents: Read and write)</small></label>
   <input type="password" id="c-tok" value="${esc(cfg.token)}" placeholder="github_pat_…" autocomplete="off">
   <label class="chk" style="margin-top:.7rem"><input type="checkbox" id="c-rem" ${lsGet('qm-token')?'checked':''}> Remember on this device</label>
   <div class="row" style="margin-top:.8rem"><button class="btn primary" id="c-go">Connect</button></div>`}
@@ -297,7 +359,6 @@ function drawConn(){
   };
 }
 
-let src;
 function wireAdd(){
   src=$('#src');
   src.oninput=parseSrc;
@@ -420,21 +481,8 @@ async function drawPublished(){
   }catch(e){ $('#pl-st').textContent=e.message; }
 }
 
-function drawResults(){
-  const el=$('#p-res'); if(!el) return;
-  if(!RESULTS_URL){
-    el.innerHTML=`<h2>Student results</h2><p class="muted" style="margin:0">Result collection is optional. Set <code>RESULTS_URL</code> if using Google Sheets.</p>`;
-    return;
-  }
-}
-
-// Initialise
-drawConn();
-wireAdd();
-drawPublished();
-drawResults();
-src.value=lsGet('qm-draft')||'';
-parseSrc();
+// Run initial gate check
+checkAccess();
 </script>
 </body>
 </html>
