@@ -147,6 +147,12 @@ pre{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding
 .reg h1{font-size:clamp(1.8rem,6vw,2.3rem)}
 .slip{margin-top:1.2rem}
 .slip pre{white-space:pre-wrap;margin:.5rem 0 0}
+.steps>.panel.nonum>h2::before{display:none}
+.tblw{overflow-x:auto;margin-top:.8rem}
+.tbl{width:100%;border-collapse:collapse;font-size:.92rem}
+.tbl th{text-align:left;color:var(--muted);font-weight:600;padding:.45rem .6rem;border-bottom:1.5px solid var(--line);white-space:nowrap}
+.tbl td{padding:.55rem .6rem;border-bottom:1px solid var(--line);vertical-align:top}
+.tbl .na{color:var(--muted)}
 @media(prefers-reduced-motion:reduce){.card,.btn,.qc,.prog i{transition:none}}
 @media(max-width:520px){.nav2 .btn{padding-inline:.8rem}}
 </style>
@@ -169,6 +175,8 @@ const SITE_TITLE='Quiz hub';
 /* Only these student IDs can register (not case sensitive). Add or remove IDs here. */
 const ALLOWED_IDS=['vac1','vac2','vac3','vac4','vac5','vac6','vac7','vac8','vac9','vac10'];
 const isAllowed=id=>ALLOWED_IDS.some(x=>x.toLowerCase()===id.replace(/\s+/g,'').toLowerCase());
+/* Paste your Google Apps Script web app link here to collect student results (see README). Leave empty to turn it off. */
+const RESULTS_URL='';
 const SITE_TAGLINE='Practice quizzes and flashcards from your teacher.';
 
 /* ---------- helpers ---------- */
@@ -331,10 +339,10 @@ function shuffleWith(arr,rand){const a=[...arr];for(let n=a.length-1;n>0;n--){co
 const FIXED=/\b(?:all|none|both|neither)\s+(?:of\s+)?(?:the\s+)?(?:above|these|them)\b|\b(?:both\s+)?\(?[A-D]\)?\s+(?:and|&|or)\s+\(?[A-D]\)?\b|\bany of the above\b/i;
 function personalize(questions,studentKey,quizId){
   const rand=seeded(studentKey+'|'+quizId);
-  return shuffleWith(questions,rand).map(q=>{
-    if(q.o.some(t=>FIXED.test(t)))return{...q};
+  return shuffleWith(questions.map((q,i)=>({...q,qi:i})),rand).map(q=>{
+    if(q.o.some(t=>FIXED.test(t)))return{...q,om:q.o.map((_,i)=>i)};
     const perm=shuffleWith(q.o.map((_,i)=>i),rand);
-    return{...q,o:perm.map(i=>q.o[i]),a:q.a>-1?perm.indexOf(q.a):-1};
+    return{...q,o:perm.map(i=>q.o[i]),a:q.a>-1?perm.indexOf(q.a):-1,om:perm};
   });
 }
 const att={get:()=>{try{return JSON.parse(lsGet('qm-att')||'{}')}catch(e){return{}}},bump(k){const a=this.get();a[k]=(a[k]||0)+1;lsSet('qm-att',JSON.stringify(a));return a[k]}};
@@ -342,6 +350,37 @@ const bkey=id=>(me.get()?.key||'')+':'+id;
 const best={get:()=>{try{return JSON.parse(lsGet('qm-best')||'{}')}catch(e){return{}}},
   set(id,right,total){id=bkey(id);const b=this.get(),o=b[id];if(!o||right/total>=o.r/o.t)b[id]={r:right,t:total};lsSet('qm-best',JSON.stringify(b))}};
 const prefs={get:()=>{try{return JSON.parse(lsGet('qm-prefs')||'{}')}catch(e){return{}}},set(p){lsSet('qm-prefs',JSON.stringify({...this.get(),...p}))}};
+
+/* ---------- sending results to the teacher ---------- */
+const outbox={get(){try{return JSON.parse(lsGet('qm-outbox')||'[]')}catch(e){return[]}},set(a){lsSet('qm-outbox',JSON.stringify(a))},
+  add(p){this.set([...this.get(),p])},remove(sid){this.set(this.get().filter(x=>x.sid!==sid))}};
+function submitResult(right,total){
+  if(!RESULTS_URL||!total||R.sent)return;R.sent=true;
+  const st=me.get();
+  outbox.add({sid:Math.random().toString(36).slice(2)+Date.now().toString(36),quizId:R.id,title:R.title,studentId:st.id,name:st.name,
+    attempt:R.counted,score:right,total,secs:Math.round((Date.now()-R.t0)/1000),
+    answers:R.Q.map((q,k)=>({qi:q.qi,oi:R.picks[k]==null?-1:q.om[R.picks[k]]}))});
+  flushOutbox(true);
+}
+let flushing=false;
+async function flushOutbox(show){
+  if(!RESULTS_URL||flushing)return;
+  const say=(m,t)=>{if(show)setStatus('sub-st',m,t)};
+  const btn=()=>$('#resend');
+  flushing=true;say('Sending your result to your teacher…');if(btn())btn().hidden=true;
+  for(const p of outbox.get()){
+    try{
+      const r=await fetch(RESULTS_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(p)});
+      const j=await r.json();
+      if(!j.ok&&j.error!=='unknown student')throw new Error(j.error||'failed');
+      outbox.remove(p.sid);
+    }catch(e){
+      say('Could not send yet. Your result is saved on this device and will be sent next time you open the site.','err');
+      if(btn())btn().hidden=false;flushing=false;return;
+    }
+  }
+  say('Your result was sent to your teacher.','ok');flushing=false;
+}
 
 /* =====================================================================
    STUDENT VIEW
@@ -405,7 +444,7 @@ async function viewLibrary(){
       const quiz=await loadQuiz(b.dataset.start);
       let Q=quiz.questions;if(!Q?.length)throw new Error('This quiz is empty.');
       Q=personalize(Q,me.get().key,b.dataset.start);
-      R={id:b.dataset.start,title:quiz.title,Q,mode:b.dataset.mode,i:0,picks:Array(Q.length).fill(null),flip:false,instant:$('#inst').checked};
+      R={t0:Date.now(),id:b.dataset.start,title:quiz.title,Q,mode:b.dataset.mode,i:0,picks:Array(Q.length).fill(null),flip:false,instant:$('#inst').checked};
       drawRun();
     }catch(err){toast(err.message||'Could not open the quiz.');b.disabled=false}
   };
@@ -464,12 +503,14 @@ function drawResult(){
   const st=me.get(),attempt=R.counted||(R.counted=att.bump(bkey(R.id)));
   const slip=`Quiz: ${R.title}\nStudent: ${st.name} (${st.id})\nScore: ${right} / ${n} (${pct}%)\nAttempt: ${attempt}\nDate: ${new Date().toLocaleString()}`;
   R.slip=slip;
+  queueMicrotask(()=>submitResult(right,n));
   $('#app').innerHTML=`
   <div class="panel score"><div class="big">${right}<small> / ${n}</small></div>
     <p>${n?`${pct}% correct${skipped?`, ${skipped} unanswered`:''}. ${pct>=80?'Strong result.':pct>=50?'Good progress. Review the misses below.':'Worth another pass. Review the answers below.'}`:'This quiz has no answer key, so it is not scored.'}</p></div>
   <div class="actions"><button class="btn primary" data-act="retry">Try again</button><button class="btn" data-act="flash">Study as flashcards</button><button class="btn ghost" data-act="exit">All quizzes</button></div>
   <div class="panel slip"><h2>Result slip</h2><p class="muted" style="margin:0">Send this to your teacher or take a screenshot.</p><pre>${esc(slip)}</pre>
-    <div class="row" style="margin-top:.8rem"><button class="btn sm" data-act="copy">Copy</button><button class="btn sm" data-act="save">Download</button></div></div>
+    <div class="row" style="margin-top:.8rem"><button class="btn sm" data-act="copy">Copy</button><button class="btn sm" data-act="save">Download</button><button class="btn sm" data-act="resend" id="resend" hidden>Send again</button></div>
+    <p class="status info" id="sub-st" aria-live="polite"></p></div>
   <h2 style="margin:2rem 0 1rem">Answer key</h2>
   ${Q.map((q,k)=>{const p=picks[k],ok=p===q.a,nk=q.a<0;
     return `<article class="rev ${p==null||nk?'skip':ok?'ok':'bad'}"><div class="rh"><span>Question ${k+1}</span><span>${nk?'No answer':p==null?'Skipped':ok?'Correct':'Incorrect'}</span></div>
@@ -484,7 +525,8 @@ function runAct(a){
   else if(a==='flip')doFlip();
   else if(a==='copy'){(navigator.clipboard?.writeText(R.slip)||Promise.reject()).then(()=>toast('Copied'),()=>toast('Could not copy. Select the text and copy it.'))}
   else if(a==='save'){const bl=new Blob([R.slip+'\n'],{type:'text/plain'}),l=document.createElement('a');l.href=URL.createObjectURL(bl);l.download=slug(R.title+' '+me.get().id)+'.txt';l.click();URL.revokeObjectURL(l.href)}
-  else if(a==='retry'){R={...R,mode:'quiz',i:0,picks:Array(R.Q.length).fill(null),flip:false,counted:null};drawRun()}
+  else if(a==='resend'){flushOutbox(true)}
+  else if(a==='retry'){R={...R,mode:'quiz',i:0,picks:Array(R.Q.length).fill(null),flip:false,counted:null,sent:false,t0:Date.now()};drawRun()}
   else if(a==='flash'){R={...R,mode:'cards',i:0,flip:false};drawRun()}
 }
 
@@ -550,10 +592,11 @@ function viewTeacher(){
       <p>Numbered or plain questions, options lettered <code>A.</code> <code>A)</code> <code>(A)</code> or one per line. The answer can be <code>Answer: B</code>, the option text, a ✓ next to the option, or a key at the end like <code>1. B  2. C</code>. In Word files, a bold or highlighted option counts as the correct answer. Anything missing can be set in the next step.</p></details>
   </section>
   <section class="panel" id="p-edit" hidden></section>
-  <section class="panel" id="p-list"></section>
+  <section class="panel nonum" id="p-list"></section>
+  <section class="panel nonum" id="p-res"></section>
   </div>
   <p class="foot">Anyone can open this page, but only someone with your GitHub token can publish or delete.</p>`;
-  drawConn();wireAdd();drawPublished();
+  drawConn();wireAdd();drawPublished();drawResults();
   src.value=lsGet('qm-draft')||'';parseSrc();
 }
 let src;
@@ -714,6 +757,77 @@ async function drawPublished(){
   }catch(e){$('#pl-st').textContent=e.message;$('#pl-st').className='status err'}
 }
 
+/* ---------- teacher: student results ---------- */
+let RES=null,RKEYS={};
+const pctOf=(r,t)=>t?Math.round(r/t*100):0;
+function drawResults(){
+  const el=$('#p-res');if(!el)return;
+  if(!RESULTS_URL){
+    el.innerHTML=`<h2>Student results</h2><p class="muted" style="margin:0">Result collection is not set up yet. Follow "Receive student results" in the README, then paste your web app link into <code>RESULTS_URL</code> near the top of index.html.</p>`;return;
+  }
+  el.innerHTML=`<h2>Student results</h2>
+  <div class="row"><input type="password" id="rk" placeholder="Teacher key" aria-label="Teacher key" autocomplete="off" style="max-width:240px" value="${esc(lsGet('qm-rkey',true)||'')}">
+    <button class="btn primary" id="rload">Load results</button><button class="btn" id="rcsv" disabled>Export CSV</button></div>
+  <p class="status info" id="r-st" aria-live="polite"></p>
+  <div id="r-pick" class="row" hidden><label class="muted" for="r-quiz">Quiz</label><select id="r-quiz" style="width:auto;max-width:100%"></select></div>
+  <div id="r-out"></div>`;
+  $('#rload').onclick=loadResults;
+  $('#rk').onkeydown=e=>{if(e.key==='Enter')loadResults()};
+  $('#r-quiz').onchange=renderResults;
+  $('#rcsv').onclick=exportCsv;
+}
+async function loadResults(){
+  const key=$('#rk').value.trim();
+  if(!key)return setStatus('r-st','Enter your teacher key.','err');
+  setStatus('r-st','Loading…');
+  try{
+    const r=await fetch(RESULTS_URL+'?key='+encodeURIComponent(key),{cache:'no-store'}),j=await r.json();
+    if(!j.ok)throw new Error(j.error==='forbidden'?'Wrong teacher key.':(j.error||'Could not load results.'));
+    lsSet('qm-rkey',key,true);
+    RES=j.rows.map(x=>({...x,studentId:String(x.studentId).toLowerCase()}));
+    /* check each score against the published answer key */
+    RKEYS={};
+    for(const id of [...new Set(RES.map(x=>x.quizId))]){
+      try{const q=await fetch(`quizzes/${encodeURIComponent(id)}.json?v=${Date.now()}`,{cache:'no-store'});if(q.ok)RKEYS[id]=(await q.json()).questions}catch(e){}
+    }
+    for(const x of RES){
+      const K=RKEYS[x.quizId];
+      if(K){x.ver=x.answers.reduce((n,a)=>n+(K[a.qi]&&a.oi>-1&&K[a.qi].a===a.oi?1:0),0);x.vtotal=K.filter(q=>q.a>-1).length}
+      else{x.ver=x.score;x.vtotal=x.total}
+      x.flag=K&&(x.ver!==x.score);
+    }
+    const quizzes=[...new Map(RES.map(x=>[x.quizId,x.title])).entries()];
+    $('#r-pick').hidden=!quizzes.length;
+    $('#r-quiz').innerHTML=quizzes.map(([id,t])=>`<option value="${esc(id)}">${esc(t)}</option>`).join('');
+    $('#rcsv').disabled=!quizzes.length;
+    setStatus('r-st',quizzes.length?'':'No results submitted yet.','info');
+    renderResults();
+  }catch(e){setStatus('r-st',/fetch/i.test(e.message)?'Could not reach the results service. Check the web app link and that it is deployed for "Anyone".':e.message,'err')}
+}
+const rowsFor=()=>RES.filter(x=>x.quizId===$('#r-quiz').value).sort((a,b)=>new Date(a.time)-new Date(b.time));
+function renderResults(){
+  const out=$('#r-out');if(!RES||!$('#r-quiz').value){out.innerHTML='';return}
+  const rows=rowsFor(),by={};rows.forEach(x=>(by[x.studentId]??=[]).push(x));
+  const firsts=ALLOWED_IDS.map(id=>by[id.toLowerCase()]?.[0]).filter(Boolean);
+  const avg=firsts.length?Math.round(firsts.reduce((s,x)=>s+pctOf(x.ver,x.vtotal),0)/firsts.length):null;
+  const fmt=x=>`${x.ver} / ${x.vtotal} <span class="muted">(${pctOf(x.ver,x.vtotal)}%)</span>`;
+  out.innerHTML=`<p style="margin:.9rem 0 0"><span class="chip">${firsts.length} of ${ALLOWED_IDS.length} submitted</span>${avg==null?'':` <span class="chip">Average first attempt ${avg}%</span>`}</p>
+  <div class="tblw"><table class="tbl"><thead><tr><th>ID</th><th>Name</th><th>First attempt</th><th>Best</th><th>Attempts</th><th>Last submitted</th></tr></thead><tbody>${
+    ALLOWED_IDS.map(id=>{
+      const l=by[id.toLowerCase()];
+      if(!l)return `<tr><td>${esc(id)}</td><td class="na" colspan="5">Not submitted</td></tr>`;
+      const bestX=l.reduce((a,b)=>b.ver>a.ver?b:a),last=l[l.length-1];
+      return `<tr><td>${esc(id)}</td><td>${esc(last.name)}</td><td>${fmt(l[0])}${l.some(x=>x.flag)?' <span class="chip warn" title="The score the student sent differs from the score calculated from the answer key. The calculated score is shown.">check</span>':''}</td><td>${fmt(bestX)}</td><td>${l.length}</td><td>${esc(new Date(last.time).toLocaleString())}</td></tr>`}).join('')
+  }</tbody></table></div>`;
+}
+function exportCsv(){
+  const q=s=>`"${String(s??'').replace(/"/g,'""')}"`;
+  const head=['Student ID','Name','Quiz','Attempt','Score','Total','Percent','Seconds','Submitted'];
+  const lines=[head.map(q).join(',')].concat(rowsFor().map(x=>[x.studentId,x.name,x.title,x.attempt,x.ver,x.vtotal,pctOf(x.ver,x.vtotal),x.secs,new Date(x.time).toISOString()].map(q).join(',')));
+  const bl=new Blob(['\ufeff'+lines.join('\n')],{type:'text/csv'}),a=document.createElement('a');
+  a.href=URL.createObjectURL(bl);a.download=slug(rowsFor()[0]?.title||'results')+'-results.csv';a.click();URL.revokeObjectURL(a.href);
+}
+
 /* =====================================================================
    ROUTER + shared events
    ===================================================================== */
@@ -755,6 +869,7 @@ addEventListener('keydown',e=>{
   }
 });
 route();
+if(me.get())flushOutbox(false);
 </script>
 </body>
 </html>
