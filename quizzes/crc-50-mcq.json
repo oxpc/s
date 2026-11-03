@@ -9,7 +9,7 @@
         "Alleviate it",
         "Record it"
       ],
-      "a": -1,
+      "a": 2,
       "e": ""
     },
     {
@@ -20,7 +20,7 @@
         "Schedule",
         "Profession"
       ],
-      "a": -1,
+      "a": 1,
       "e": ""
     },
     {
@@ -31,7 +31,7 @@
         "Angry",
         "Silent"
       ],
-      "a": -1,
+      "a": 1,
       "e": ""
     },
     {
@@ -42,7 +42,7 @@
         "Person-centered care with empathy",
         "Avoiding family involvement"
       ],
-      "a": -1,
+      "a": 2,
       "e": ""
     },
     {
@@ -53,7 +53,7 @@
         "Mary Breckinridge",
         "Florence Nightingale"
       ],
-      "a": -1,
+      "a": 3,
       "e": ""
     },
     {
@@ -64,7 +64,7 @@
         "1925",
         "1965"
       ],
-      "a": -1,
+      "a": 1,
       "e": ""
     },
     {
@@ -75,7 +75,7 @@
         "Renaissance image",
         "Modern image"
       ],
-      "a": -1,
+      "a": 0,
       "e": ""
     },
     {
@@ -86,7 +86,7 @@
         "Sanitation for patients",
         "Surgery"
       ],
-      "a": -1,
+      "a": 2,
       "e": ""
     },
     {
@@ -97,7 +97,7 @@
         "Hobby",
         "Shopkeeping"
       ],
-      "a": -1,
+      "a": 1,
       "e": ""
     },
     {
@@ -108,7 +108,7 @@
         "Dress only",
         "Hospital"
       ],
-      "a": -1,
+      "a": 0,
       "e": ""
     },
     {
@@ -119,7 +119,7 @@
         "Caregiver",
         "Lawyer"
       ],
-      "a": -1,
+      "a": 2,
       "e": ""
     },
     {
@@ -130,7 +130,7 @@
         "Researcher",
         "Cleaner"
       ],
-      "a": -1,
+      "a": 0,
       "e": ""
     },
     {
@@ -141,7 +141,7 @@
         "Law",
         "Drugs"
       ],
-      "a": -1,
+      "a": 1,
       "e": ""
     },
     {
@@ -152,7 +152,7 @@
         "Custom or character",
         "Illness"
       ],
-      "a": -1,
+      "a": 2,
       "e": ""
     },
     {
@@ -163,7 +163,7 @@
         "Doing or promoting good",
         "Independence"
       ],
-      "a": -1,
+      "a": 2,
       "e": ""
     },
     {
@@ -174,7 +174,7 @@
         "Being honest",
         "Being fair"
       ],
-      "a": -1,
+      "a": 0,
       "e": ""
     },
     {
@@ -185,7 +185,7 @@
         "Be quiet",
         "Be transferred"
       ],
-      "a": -1,
+      "a": 1,
       "e": ""
     },
     {
@@ -196,7 +196,7 @@
         "Autonomy",
         "Morality"
       ],
-      "a": -1,
+      "a": 0,
       "e": ""
     },
     {
@@ -207,7 +207,7 @@
         "Shout at the patient",
         "Discharge without telling"
       ],
-      "a": -1,
+      "a": 1,
       "e": ""
     },
     {
@@ -218,7 +218,7 @@
         "Being fast",
         "Being popular"
       ],
-      "a": -1,
+      "a": 0,
       "e": ""
     },
     {
@@ -229,7 +229,7 @@
         "A complaint or grievance about care",
         "A bill"
       ],
-      "a": -1,
+      "a": 2,
       "e": ""
     },
     {
@@ -240,7 +240,7 @@
         "Assume",
         "Look away"
       ],
-      "a": -1,
+      "a": 0,
       "e": ""
     },
     {
@@ -251,7 +251,7 @@
         "Giving advice",
         "Repeating what the patient said to show understanding"
       ],
-      "a": -1,
+      "a": 3,
       "e": ""
     },
     {
@@ -262,7 +262,7 @@
         "Taking vital signs",
         "Writing only"
       ],
-      "a": -1,
+      "a": 1,
       "e": ""
     },
     {
@@ -273,7 +273,7 @@
         "Nonverbal communication",
         "Visual aids"
       ],
-      "a": -1,
+      "a": 2,
       "e": ""
     },
     {
@@ -284,7 +284,7 @@
         "Drawing",
         "Shouting"
       ],
-      "a": -1,
+      "a": 0,
       "e": ""
     },
     {
@@ -295,7 +295,7 @@
         "Public",
         "Delayed"
       ],
-      "a": -1,
+      "a": 1,
       "e": ""
     },
     {
@@ -306,7 +306,7 @@
         "Trust and respect",
         "Blame"
       ],
-      "a": -1,
+      "a": 2,
       "e": ""
     },
     {
@@ -317,7 +317,7 @@
         "Ask the neighbor",
         "Wait until they sleep"
       ],
-      "a": -1,
+      "a": 0,
       "e": ""
     },
     {
@@ -328,7 +328,7 @@
         "Weather",
         "Prices"
       ],
-      "a": -1,
+      "a": 1,
       "e": ""
     },
     {
@@ -339,7 +339,7 @@
         "A relative",
         "A uniform"
       ],
-      "a": -1,
+      "a": 1,
       "e": ""
     },
     {
@@ -350,7 +350,7 @@
         "Capacity",
         "Payment of a fee"
       ],
-      "a": -1,
+      "a": 3,
       "e": ""
     },
     {
@@ -361,7 +361,7 @@
         "Before any medical treatment",
         "Next week"
       ],
-      "a": -1,
+      "a": 2,
       "e": ""
     },
     {
@@ -372,7 +372,7 @@
         "Religion",
         "Access"
       ],
-      "a": -1,
+      "a": 0,
       "e": ""
     },
     {
@@ -383,7 +383,7 @@
         "Allowed",
         "Required"
       ],
-      "a": -1,
+      "a": 1,
       "e": ""
     },
     {
@@ -394,7 +394,7 @@
         "Lack of privacy",
         "Kindness"
       ],
-      "a": -1,
+      "a": 2,
       "e": ""
     },
     {
@@ -405,7 +405,7 @@
         "Lack of resources",
         "Restricted access"
       ],
-      "a": -1,
+      "a": 1,
       "e": ""
     },
     {
@@ -416,7 +416,7 @@
         "Harshness",
         "Listening"
       ],
-      "a": -1,
+      "a": 2,
       "e": ""
     },
     {
@@ -427,7 +427,7 @@
         "Your uniform",
         "Your shift"
       ],
-      "a": -1,
+      "a": 0,
       "e": ""
     },
     {
@@ -438,7 +438,7 @@
         "Visitors",
         "Kindness"
       ],
-      "a": -1,
+      "a": 1,
       "e": ""
     },
     {
@@ -449,7 +449,7 @@
         "Unethical",
         "Kind"
       ],
-      "a": -1,
+      "a": 2,
       "e": ""
     },
     {
@@ -460,7 +460,7 @@
         "A patient right",
         "A nursing role"
       ],
-      "a": -1,
+      "a": 0,
       "e": ""
     },
     {
@@ -471,7 +471,7 @@
         "Professional",
         "Compassionate"
       ],
-      "a": -1,
+      "a": 1,
       "e": ""
     },
     {
@@ -482,7 +482,7 @@
         "The nurse is late",
         "Principles cannot all be respected and people disagree"
       ],
-      "a": -1,
+      "a": 3,
       "e": ""
     },
     {
@@ -493,7 +493,7 @@
         "Uniforms",
         "Shift change"
       ],
-      "a": -1,
+      "a": 0,
       "e": ""
     },
     {
@@ -504,7 +504,7 @@
         "Relatives",
         "Paperwork"
       ],
-      "a": -1,
+      "a": 0,
       "e": ""
     },
     {
@@ -515,7 +515,7 @@
         "Easiest",
         "Painless"
       ],
-      "a": -1,
+      "a": 1,
       "e": ""
     },
     {
@@ -526,7 +526,7 @@
         "Not move them unless danger is great",
         "Carry them home"
       ],
-      "a": -1,
+      "a": 2,
       "e": ""
     },
     {
@@ -537,7 +537,7 @@
         "Less loyalty",
         "More staff turnover"
       ],
-      "a": -1,
+      "a": 1,
       "e": ""
     },
     {
@@ -548,7 +548,7 @@
         "Schedule",
         "Visitors"
       ],
-      "a": -1,
+      "a": 0,
       "e": ""
     }
   ]
