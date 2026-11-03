@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light dark">
-<title>Quiz hub</title>
-<meta name="description" content="Practice quizzes and flashcards from your teacher.">
+<title>Practice Quizzes</title>
+<meta name="description" content="Practice quizzes and flashcards.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -16,17 +16,7 @@
 [hidden]{display:none!important}
 body{margin:0;background:var(--bg);color:var(--ink);font:400 1rem/1.55 Figtree,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;min-height:100vh;-webkit-text-size-adjust:100%}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-header.top{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
-.bar{max-width:980px;margin:0 auto;padding:.7rem 1.1rem;display:flex;align-items:center;gap:1rem}
-.brand{font-weight:700;letter-spacing:-.02em;font-size:1.15rem;color:var(--ink);text-decoration:none;display:flex;align-items:center;gap:.55rem}
-.logo{width:28px;height:28px;border-radius:8px;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-size:.95rem}
-#who{margin-left:auto;display:flex;gap:.3rem;align-items:center;min-width:0}
-#who .chip{max-width:46vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-nav{margin-left:auto;display:flex;gap:.25rem}
-nav a{color:var(--muted);text-decoration:none;font-weight:600;padding:.4rem .8rem;border-radius:9px}
-nav a:hover{background:var(--soft);color:var(--ink)}
-nav a[aria-current=page]{background:var(--soft);color:var(--ink)}
-main{max-width:980px;margin:0 auto;padding:clamp(1.25rem,4vw,2.5rem) 1.1rem 3rem}
+main{max-width:980px;margin:0 auto;padding:clamp(1.5rem,5vw,3rem) 1.1rem 3rem}
 h1{font-size:clamp(1.9rem,6vw,2.7rem);line-height:1.08;letter-spacing:-.03em;margin:0 0 .5rem;font-weight:700}
 h2{font-size:1.2rem;margin:0 0 .6rem;letter-spacing:-.01em}
 .lede{color:var(--muted);margin:0 0 1.6rem;max-width:56ch}
@@ -44,12 +34,7 @@ h2{font-size:1.2rem;margin:0 0 .6rem;letter-spacing:-.01em}
 .row{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
 .muted{color:var(--muted)}
 input[type=text],input[type=password],input[type=search],textarea,select{font:inherit;color:inherit;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:.55rem .8rem;width:100%}
-textarea{min-height:200px;resize:vertical;font:.9rem/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
-textarea.drag{border-color:var(--accent);background:var(--soft)}
 label.f{display:block;font-weight:600;font-size:.9rem;margin:.9rem 0 .3rem}
-label.f small{font-weight:400;color:var(--muted)}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}
-@media(max-width:560px){.grid2{grid-template-columns:1fr}}
 .chk{display:flex;gap:.5rem;align-items:center;cursor:pointer;font-size:.95rem}
 .chk input{accent-color:var(--accent);width:1.05rem;height:1.05rem}
 
@@ -119,70 +104,30 @@ label.f small{font-weight:400;color:var(--muted)}
 .rh{display:flex;justify-content:space-between;color:var(--muted);font-weight:600;margin-bottom:.4rem}
 .rev.ok .rh span:last-child{color:var(--ok)}.rev.bad .rh span:last-child{color:var(--bad)}
 
-/* teacher */
-.steps{counter-reset:s}
-.steps>.panel>h2::before{counter-increment:s;content:counter(s);display:inline-grid;place-items:center;width:1.7rem;height:1.7rem;margin-right:.6rem;border-radius:50%;background:var(--accent);color:var(--accent-ink);font-size:.9rem}
-.status{font-size:.92rem;margin:.6rem 0 0;min-height:1.3em}
-.status.ok{color:var(--ok)}.status.err{color:var(--bad)}.status.info{color:var(--muted)}
-.ed{border:1px solid var(--line);border-radius:12px;padding:.8rem .9rem;margin-top:.7rem;background:var(--bg)}
-.ed.miss{border-color:var(--warn)}
-.edh{display:flex;gap:.6rem;align-items:flex-start;font-weight:600;overflow-wrap:anywhere}
-.edh span{flex:1;white-space:pre-wrap}
-.ed .opt{padding:.2rem 0;font-size:.97rem;cursor:default}
-.ed .opt:hover{background:transparent}
-.ed .opt.ok .ltr{background:var(--ok);border-color:var(--ok);color:var(--accent-ink)}
-.ed input{margin-top:.4rem;font-size:.9rem;padding:.4rem .7rem}
-.list{list-style:none;margin:0;padding:0}
-.list li{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;padding:.7rem 0;border-top:1px solid var(--line)}
-.list li:first-child{border-top:0}
-.list .t{flex:1 1 200px;min-width:0;overflow-wrap:anywhere}
-.list .t small{display:block;color:var(--muted)}
-.sticky{position:sticky;bottom:0;background:var(--panel);padding:.8rem 0 .2rem;margin-top:1rem;border-top:1px solid var(--line)}
 .toast{position:fixed;left:50%;bottom:1.2rem;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:.65rem 1.1rem;border-radius:12px;font-weight:600;box-shadow:0 8px 30px rgba(0,0,0,.25);z-index:20;max-width:90vw}
-.foot{margin-top:2rem;color:var(--muted);font-size:.85rem;text-align:center}
-.foot a{color:inherit}
-.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
-details{color:var(--muted);font-size:.92rem;margin-top:.8rem}
-summary{cursor:pointer;font-weight:600;color:var(--ink)}
-code{font:.88em ui-monospace,Menlo,Consolas,monospace;background:var(--bg);padding:.1em .35em;border-radius:5px}
-pre{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:.8rem 1rem;overflow-x:auto;font:.85rem/1.5 ui-monospace,Menlo,Consolas,monospace;color:var(--ink)}
-.reg{max-width:460px;margin:clamp(.5rem,6vh,3rem) auto 0}
+pre{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:.8rem 1rem;overflow-x:auto;font:.85rem/1.5 ui-monospace,monospace;color:var(--ink)}
+.reg{max-width:460px;margin:clamp(1rem,10vh,4rem) auto 0}
 .reg h1{font-size:clamp(1.8rem,6vw,2.3rem)}
 .slip{margin-top:1.2rem}
 .slip pre{white-space:pre-wrap;margin:.5rem 0 0}
-.steps>.panel.nonum>h2::before{display:none}
-.tblw{overflow-x:auto;margin-top:.8rem}
-.tbl{width:100%;border-collapse:collapse;font-size:.92rem}
-.tbl th{text-align:left;color:var(--muted);font-weight:600;padding:.45rem .6rem;border-bottom:1.5px solid var(--line);white-space:nowrap}
-.tbl td{padding:.55rem .6rem;border-bottom:1px solid var(--line);vertical-align:top}
-.tbl .na{color:var(--muted)}
+.status{font-size:.92rem;margin:.6rem 0 0;min-height:1.3em}
+.status.ok{color:var(--ok)}.status.err{color:var(--bad)}.status.info{color:var(--muted)}
 @media(prefers-reduced-motion:reduce){.card,.btn,.qc,.prog i{transition:none}}
 @media(max-width:520px){.nav2 .btn{padding-inline:.8rem}}
 </style>
 </head>
 <body>
-<header class="top"><div class="bar">
-  <a class="brand" href="#/"><span class="logo" aria-hidden="true">Q</span><span id="brand">Quiz hub</span></a>
-  <div id="who" hidden><span class="chip" id="who-n"></span><button class="btn ghost sm" id="who-out" type="button">Not you?</button></div>
-  <nav aria-label="Main" id="nav" hidden><a href="#/" id="nav-s">Student page</a></nav>
-</div></header>
+
 <main id="app"></main>
 <div class="toast" id="toast" role="status" hidden></div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script>
-/* =====================================================================
-   SETTINGS: configure repository and whitelist.
-   ===================================================================== */
-const SITE_TITLE='Quiz hub';
-/* Only these student IDs can register (not case sensitive). Add or remove IDs here. */
+/* Whitelisted student IDs */
 const ALLOWED_IDS=['vac1','vac2','vac3','vac4','vac5','vac6','vac7','vac8','vac9','vac10'];
 const isAllowed=id=>ALLOWED_IDS.some(x=>x.toLowerCase()===id.replace(/\s+/g,'').toLowerCase());
-/* Paste your Google Apps Script web app link here to collect student results. Leave empty to turn it off. */
 const RESULTS_URL='';
-const SITE_TAGLINE='Practice quizzes and flashcards from your teacher.';
+const SITE_TAGLINE='Practice quizzes and flashcards. Your questions are arranged just for you.';
 
-/* ---------- helpers ---------- */
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
 const L='ABCDEFGH';
@@ -193,104 +138,29 @@ const slug=s=>s.toLowerCase().normalize('NFKD').replace(/[^\p{L}\p{N}]+/gu,'-').
 const shuffle=a=>{a=[...a];for(let n=a.length-1;n>0;n--){const j=Math.floor(Math.random()*(n+1));[a[n],a[j]]=[a[j],a[n]]}return a};
 let toastT;
 function toast(m){const t=$('#toast');t.textContent=m;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,3200)}
-document.title=SITE_TITLE;$('#brand').textContent=SITE_TITLE;
+function setStatus(id,msg,type='info'){const e=$('#'+id);if(e){e.textContent=msg;e.className='status '+type}}
 
-/* ---------- parser (plain text -> questions) ---------- */
-const OPT=/^\(?([A-Ha-h])(?:\)|[.:]\s|\s[-–—]\s)\s*(.+)$/,
-  QN=/^(?:q(?:uestion)?\.?\s*)?(\d+)\s*[.):\-]\s*(.+)$/i,
-  BN=/^(?:q(?:uestion)?\.?\s*(\d+)\s*[.):\-]?|(\d+)\s*[.):])$/i,
-  ANS=/^(?:the\s+)?(?:correct(?:\s+(?:answer|option|choice))?|answer|ans\.?|key|solution)\s*(?:[:=\-–—]|\bis\b)\s*(.+)$/i,
-  ANS2=/^(?:correct\s+)?(?:answer|ans)\.?\s+\(?([A-Ha-h])\)?[.)]?$/i,
-  KEYLINE=/^(?:(?:q\s*)?\d+\s*[.):\-]?\s*\(?[A-Ha-h]\)?[\s.,;]*)+$/i,
-  EXPL=/^(?:explanation|rationale|reason|why|note)\s*[:\-]\s*/i,
-  MK=/\s*(?:[✓✔✅]|\((?:correct|answer|\*)\)|\[(?:correct|x|\*)\])\s*$/i,
-  LM=/^(?:[✓✔✅]|\[x\])\s*/i,
-  norm=s=>s.toLowerCase().replace(/[^\p{L}\p{N}]+/gu,' ').trim();
-function resolve(s,o){
-  s=s.trim();const ns=norm(s);
-  const k=o.findIndex(t=>{const n=norm(t);return n&&(ns===n||(n.length>3&&ns.startsWith(n+' ')))});
-  if(k>-1)return{a:k,e:ns===norm(o[k])?'':s.slice(o[k].length).replace(/^[\s.:,;\-–—)]+/,'')};
-  const m=s.match(/^\(?([A-Ha-h]|[1-9])\)?(?=[.:\-–—)\s]|$)[.:\-–—)]?\s*(.*)$/);
-  if(!m)return{a:-1,e:''};
-  const a=/\d/.test(m[1])?+m[1]-1:L.toLowerCase().indexOf(m[1].toLowerCase());
-  return{a,e:norm(m[2])===norm(o[a]||'')?'':m[2]};
-}
+/* Parser for sample fallback */
 function parse(raw){
-  const all=[],key={};let cur=null,blank=false;
-  const opts=c=>c.o.length>1?c.o.length:c.p.length;
-  const fin=()=>{
-    const c=cur;cur=null;if(!c)return;
-    let o=c.o,q=c.q;
-    if(o.length>1){if(c.p.length)q+='\n'+c.p.join('\n')}else o=c.p;
-    if(!q||o.length<2)return;
-    let a=-1,e=c.x.join(' ');
-    if(c.ar!=null){const r=resolve(c.ar,o);a=r.a;e=(r.e+' '+e).trim()}
-    if(a<0&&c.mark!=null)a=c.mark;
-    all.push({q:q.trim(),o,a,e,n:c.n});
-  };
-  const mk=(t,n)=>{fin();cur={q:t,o:[],p:[],x:[],a:-1,ar:null,mark:null,n}};
-  const add=(arr,t)=>{let c=false;t=t.replace(MK,()=>(c=true,'')).replace(LM,()=>(c=true,'')).trim();if(c)cur.mark=arr.length;arr.push(t)};
-  const isNew=n=>!cur||opts(cur)>1||n===(cur.n??0)+1||(cur.n==null&&!cur.o.length&&!cur.p.length);
-  for(let l of raw.replace(/\r/g,'').split('\n')){
-    if(/^\s*```/.test(l))continue;
-    l=l.replace(/\*\*/g,'').replace(/`/g,'').trim().replace(/^#+\s*/,'').replace(/^>\s*/,'').replace(/^[-*•–]\s+/,'');
-    if(!l||/^[-=_*]{3,}$/.test(l)){blank=true;continue}
-    const wb=blank;blank=false;
-    if(/^(?:answer\s*key|answers|key)\s*:?$/i.test(l))continue;
-    let m;
-    if(KEYLINE.test(l)){for(const k of l.matchAll(/(\d+)\s*[.):\-]?\s*\(?([A-Ha-h])\)?/g))key[k[1]]=k[2].toLowerCase();continue}
-    if(cur&&cur.ar==null&&opts(cur)>1&&(m=l.match(ANS)||l.match(ANS2))){cur.ar=m[1];continue}
-    if(cur&&cur.ar==null&&(m=l.match(OPT))&&m[1].toUpperCase()===L[cur.o.length]){
-      const segs=cur.o.length?[l]:l.split(/\s+(?=\(?[B-Hb-h](?:\)|\.\s))/);
-      segs.forEach((s,k)=>{const x=s.match(OPT);if(x&&x[1].toUpperCase()===L[cur.o.length])add(cur.o,x[2]);else if(k)cur.o[cur.o.length-1]+=' '+s});
-      continue}
-    if((m=l.match(QN))&&isNew(+m[1])){mk(m[2],+m[1]);continue}
-    if((m=l.match(BN))&&isNew(+(m[1]||m[2]))){mk('',+(m[1]||m[2]));continue}
-    if(!cur){mk(l,null);continue}
-    if(!cur.q){cur.q=l;continue}
-    const done=cur.ar!=null;
-    const nq=done?((wb&&!EXPL.test(l))||l.endsWith('?')):(opts(cur)>1&&l.endsWith('?'))||(wb&&opts(cur)>=2);
-    if(nq){mk(l,null);continue}
-    if(done)cur.x.push(l.replace(EXPL,''));
-    else if(cur.o.length)cur.o[cur.o.length-1]+=' '+l;
-    else add(cur.p,l);
-  }
-  fin();
-  all.forEach((x,k)=>{if(x.a<0){const c=key[x.n||k+1];if(c)x.a=L.toLowerCase().indexOf(c)}});
-  return all.filter(x=>x.a<x.o.length).map(({q,o,a,e})=>({q,o,a,e}));
-}
-
-/* ---------- .docx -> plain lines ---------- */
-async function docxText(f){
-  if(!window.JSZip)throw new Error('The Word reader could not load. Check the connection and try again.');
-  const zip=await JSZip.loadAsync(await f.arrayBuffer());
-  const entry=zip.file('word/document.xml');
-  if(!entry)throw new Error('This does not look like a valid .docx file.');
-  const xml=new DOMParser().parseFromString(await entry.async('string'),'application/xml');
-  const on=(r,tag)=>{const n=r.getElementsByTagName('w:rPr')[0]?.getElementsByTagName(tag)[0];return !!n&&!['0','false','none'].includes(n.getAttribute('w:val')||'')};
-  const lines=[];
-  for(const p of xml.getElementsByTagName('w:p')){
-    let t='',mark=true,any=false;
-    for(const r of p.getElementsByTagName('w:r')){
-      let s='';
-      for(const n of r.childNodes){
-        if(n.nodeName==='w:t')s+=n.textContent;
-        else if(n.nodeName==='w:tab')s+=' ';
-        else if(n.nodeName==='w:br')s+='\n';
-      }
-      if(!s.trim()){t+=s;continue}
-      any=true;t+=s;
-      if(!(on(r,'w:highlight')||on(r,'w:shd'))&&!on(r,'w:b'))mark=false;
+  const all=[];
+  for(const block of raw.split(/\n\s*\n/)){
+    const lines=block.trim().split('\n').map(l=>l.trim()).filter(Boolean);
+    if(lines.length<3) continue;
+    const q=lines[0].replace(/^\d+[\s.)\-]+/, '');
+    const o=[], ansLine=lines.find(l=>/^answer:/i.test(l));
+    lines.slice(1).forEach(l=>{
+      if(/^[A-H][\s.)\-]/i.test(l)) o.push(l.replace(/^[A-H][\s.)\-]+/i, '').trim());
+    });
+    let a=-1, e='';
+    if(ansLine){
+      const m=ansLine.match(/^answer:\s*([A-H])(?:\.\s*(.*))?$/i);
+      if(m){ a=L.indexOf(m[1].toUpperCase()); e=m[2]||''; }
     }
-    t=t.replace(/[ \t]+/g,' ').trim();
-    if(any&&mark&&OPT.test(t))t+=' ✓';
-    lines.push(t);
+    if(q && o.length>1) all.push({q,o,a,e});
   }
-  const first=lines.findIndex(l=>QN.test(l)&&+l.match(QN)[1]===1);
-  return (first>0?lines.slice(first):lines).join('\n');
+  return all;
 }
 
-/* ---------- data: quizzes published on this site ---------- */
 const SAMPLE_TEXT=`1. Which Gradle property generates the package for the R class and BuildConfig?
 A) applicationId
 B) namespace
@@ -303,15 +173,9 @@ A) Namespace
 B) Source package folder
 C) Application ID
 D) App label
-Answer: C. The application ID is the identity of the app.
+Answer: C. The application ID is the identity of the app.`;
 
-3. What does adb shell pm list packages show?
-A) Namespaces
-B) Source folders
-C) Gradle modules
-D) Application IDs
-Answer: D. On a device, "package name" means the application ID.`;
-const DEMO={id:'demo',title:'Sample quiz',count:3,updated:'',demo:true};
+const DEMO={id:'demo',title:'Sample quiz',count:2,updated:'',demo:true};
 let index=null,indexErr=false;
 async function loadIndex(force){
   if(index&&!force)return index;
@@ -329,7 +193,7 @@ async function loadQuiz(id){
   return r.json();
 }
 
-/* ---------- student identity + per-student question order ---------- */
+/* Student authentication */
 const me={
   get(){try{const o=JSON.parse(lsGet('qm-student')||'null');return o&&o.id&&o.name&&isAllowed(o.id)?o:null}catch(e){return null}},
   set(id,name){id=id.trim();lsSet('qm-student',JSON.stringify({id,name:name.trim().replace(/\s+/g,' '),key:id.replace(/\s+/g,'').toLowerCase()}))},
@@ -354,7 +218,6 @@ const best={get:()=>{try{return JSON.parse(lsGet('qm-best')||'{}')}catch(e){retu
   set(id,right,total){id=bkey(id);const b=this.get(),o=b[id];if(!o||right/total>=o.r/o.t)b[id]={r:right,t:total};lsSet('qm-best',JSON.stringify(b))}};
 const prefs={get:()=>{try{return JSON.parse(lsGet('qm-prefs')||'{}')}catch(e){return{}}},set(p){lsSet('qm-prefs',JSON.stringify({...this.get(),...p}))}};
 
-/* ---------- sending results to the teacher ---------- */
 const outbox={get(){try{return JSON.parse(lsGet('qm-outbox')||'[]')}catch(e){return[]}},set(a){lsSet('qm-outbox',JSON.stringify(a))},
   add(p){this.set([...this.get(),p])},remove(sid){this.set(this.get().filter(x=>x.sid!==sid))}};
 function submitResult(right,total){
@@ -368,9 +231,7 @@ function submitResult(right,total){
 let flushing=false;
 async function flushOutbox(show){
   if(!RESULTS_URL||flushing)return;
-  const say=(m,t)=>{if(show)setStatus('sub-st',m,t)};
-  const btn=()=>$('#resend');
-  flushing=true;say('Sending your result to your teacher…');if(btn())btn().hidden=true;
+  flushing=true;
   for(const p of outbox.get()){
     try{
       const r=await fetch(RESULTS_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(p)});
@@ -378,54 +239,64 @@ async function flushOutbox(show){
       if(!j.ok&&j.error!=='unknown student')throw new Error(j.error||'failed');
       outbox.remove(p.sid);
     }catch(e){
-      say('Could not send yet. Your result is saved on this device and will be sent next time you open the site.','err');
-      if(btn())btn().hidden=false;flushing=false;return;
+      if(show)setStatus('sub-st','Result saved locally. It will sync automatically next time.','err');
+      flushing=false;return;
     }
   }
-  say('Your result was sent to your teacher.','ok');flushing=false;
+  if(show)setStatus('sub-st','Result submitted successfully.','ok');
+  flushing=false;
 }
 
-/* =====================================================================
-   STUDENT VIEW
-   ===================================================================== */
 let R=null;
 
 function viewRegister(){
-  setNav('r');
   $('#app').innerHTML=`<div class="reg panel"><h1>Welcome</h1>
-  <p class="lede">Enter your student ID and name to begin. Every student gets the questions in a different order, so always use the same ID.</p>
+  <p class="lede">Enter your student ID and name to begin. Every student receives questions in a unique arrangement, so always use your own ID.</p>
   <form id="reg" novalidate>
     <label class="f" for="r-id">Student ID</label><input type="text" id="r-id" maxlength="30" autocomplete="off" autocapitalize="characters" placeholder="e.g. vac1">
     <label class="f" for="r-name">Full name</label><input type="text" id="r-name" maxlength="60" autocomplete="name" placeholder="e.g. Hanna Bekele">
     <p class="status err" id="r-err" aria-live="polite"></p>
-    <button class="btn primary" style="width:100%;margin-top:.4rem">Continue</button>
+    <button class="btn primary" style="width:100%;margin-top:.8rem">Continue</button>
   </form></div>`;
   $('#r-id').focus();
   $('#reg').onsubmit=e=>{
     e.preventDefault();
     const id=$('#r-id').value.trim(),name=$('#r-name').value.trim();
     if(!id)return setStatus('r-err','Enter your student ID.','err');
-    if(!isAllowed(id))return setStatus('r-err','This student ID is not on the list. Check it and try again, or ask your teacher.','err');
+    if(!isAllowed(id))return setStatus('r-err','This student ID is not registered. Please check and try again.','err');
     if(name.length<2)return setStatus('r-err','Enter your full name.','err');
     me.set(id,name);route();
   };
 }
+
 async function viewLibrary(){
-  setNav('s');
   if(!me.get())return viewRegister();
   const app=$('#app');
-  app.innerHTML=`<h1>${esc(SITE_TITLE)}</h1><p class="lede">${esc(SITE_TAGLINE)}</p><p class="muted">Loading quizzes…</p>`;
+  app.innerHTML=`<p class="muted">Loading quizzes…</p>`;
   const list=await loadIndex(true),p=prefs.get(),b=best.get();
   const SZ={s:'.95rem',m:'1.1rem',l:'1.3rem'};
+  
   app.innerHTML=`
-  <h1>Hi, ${esc(me.get().name.split(' ')[0])}</h1><p class="lede">${esc(SITE_TAGLINE)} Your questions are arranged just for you.</p>
-  ${indexErr?`<p class="notice">No quizzes have been published yet, so this is a sample quiz.</p>`:''}
+  <div class="row" style="justify-content:space-between;align-items:baseline;margin-bottom:.4rem">
+    <h1 style="margin:0">Hi, ${esc(me.get().name.split(' ')[0])}</h1>
+    <button class="btn ghost sm" id="btn-logout" type="button">Switch student (${esc(me.get().id)})</button>
+  </div>
+  <p class="lede">${esc(SITE_TAGLINE)}</p>
+  ${indexErr?`<p class="notice">No published quizzes found yet. Showing sample quiz.</p>`:''}
   <div class="tools">
     <input class="search" type="search" id="find" placeholder="Search quizzes" aria-label="Search quizzes">
     <label class="chk"><input type="checkbox" id="inst" ${p.inst?'checked':''}> Show answer after each question</label>
     <label class="chk">Text size <select id="osz" style="width:auto">${Object.entries({s:'Small',m:'Medium',l:'Large'}).map(([k,v])=>`<option value="${k}" ${(p.osz||'m')===k?'selected':''}>${v}</option>`).join('')}</select></label>
   </div>
   <div class="cards" id="cards"></div>`;
+
+  $('#btn-logout').onclick=()=>{
+    if(R&&!confirm('Leave current quiz session?')) return;
+    me.clear();
+    R=null;
+    route();
+  };
+
   const draw=()=>{
     const f=$('#find').value.trim().toLowerCase();
     const items=list.filter(x=>x.title.toLowerCase().includes(f));
@@ -434,12 +305,13 @@ async function viewLibrary(){
       return `<article class="qc"><h3>${esc(x.title)}</h3>
         <div class="meta"><span>${x.count} question${x.count===1?'':'s'}</span>${x.updated?`<span>· ${esc(x.updated)}</span>`:''}${s?`<span class="chip ${pct>=80?'ok':pct>=50?'':'warn'}">Best ${pct}%</span>`:''}</div>
         <div class="row"><button class="btn primary" data-start="${esc(x.id)}" data-mode="quiz">Start quiz</button><button class="btn" data-start="${esc(x.id)}" data-mode="cards">Flashcards</button></div></article>`}).join('')
-      :`<p class="empty">${list.length?'No quizzes match your search.':'No quizzes yet.'}</p>`;
+      :`<p class="empty">${list.length?'No matching quizzes.':'No quizzes available yet.'}</p>`;
   };
   draw();
   $('#find').oninput=draw;
   const save=()=>{prefs.set({inst:$('#inst').checked,osz:$('#osz').value});document.documentElement.style.setProperty('--osz',SZ[$('#osz').value])};
   ['inst','osz'].forEach(i=>$('#'+i).onchange=save);save();
+
   $('#cards').onclick=async e=>{
     const b=e.target.closest('[data-start]');if(!b)return;
     b.disabled=true;
@@ -449,7 +321,7 @@ async function viewLibrary(){
       Q=personalize(Q,me.get().key,b.dataset.start);
       R={t0:Date.now(),id:b.dataset.start,title:quiz.title,Q,mode:b.dataset.mode,i:0,picks:Array(Q.length).fill(null),flip:false,instant:$('#inst').checked};
       drawRun();
-    }catch(err){toast(err.message||'Could not open the quiz.');b.disabled=false}
+    }catch(err){toast(err.message||'Could not open quiz.');b.disabled=false}
   };
 }
 
@@ -460,7 +332,7 @@ function runHead(){
 }
 function drawRun(){R.mode==='quiz'?drawQuiz():drawCard()}
 function drawQuiz(){
-  setNav("s");toTop();
+  toTop();
   const q=R.Q[R.i],p=R.picks[R.i],locked=R.instant&&p!=null&&q.a>-1;
   $('#app').innerHTML=`${runHead()}
   <h2 class="q"><span class="no">${R.i+1}.</span> ${esc(q.q)}</h2>
@@ -479,17 +351,17 @@ function pick(k){
   R.picks[R.i]=k;drawQuiz();document.querySelector('.opt.sel')?.focus();
 }
 function drawCard(){
-  setNav("s");toTop();
+  toTop();
   const q=R.Q[R.i];
   $('#app').innerHTML=`${runHead()}
   <div class="wrap"><div class="card ${R.flip?'flipped':''}" id="card" tabindex="0" role="button" aria-pressed="${R.flip}" aria-label="Flip card">
     <div class="face front"><h2 class="q"><span class="no">${R.i+1}.</span> ${esc(q.q)}</h2>
       <ul class="opts static">${q.o.map((t,k)=>`<li><b>${L[k]}</b><span>${esc(t)}</span></li>`).join('')}</ul>
-      <p class="hint">Tap the card to see the answer</p></div>
+      <p class="hint">Tap card to see the answer</p></div>
     <div class="face back"><p class="qno">Question ${R.i+1}</p>
-      ${q.a>-1?`<div class="ans"><b>${L[q.a]}</b><span>${esc(q.o[q.a])}</span></div>`:'<p class="ans"><span>No answer was provided for this question.</span></p>'}
+      ${q.a>-1?`<div class="ans"><b>${L[q.a]}</b><span>${esc(q.o[q.a])}</span></div>`:'<p class="ans"><span>No answer provided for this question.</span></p>'}
       ${q.e?`<p class="exp">${esc(q.e)}</p>`:''}
-      <p class="hint">Tap the card to flip it back</p></div>
+      <p class="hint">Tap card to flip back</p></div>
   </div></div>
   <div class="nav2"><button class="btn ghost exit" data-act="exit">Exit</button>
     <button class="btn ghost" data-act="prev" ${R.i?'':'disabled'}>Previous</button>
@@ -498,7 +370,7 @@ function drawCard(){
   syncCard();
 }
 function syncCard(){const c=$('#card');if(!c)return;c.querySelector('.front').inert=R.flip;c.querySelector('.back').inert=!R.flip}
-function doFlip(){R.flip=!R.flip;const c=$('#card');if(!c)return;c.classList.toggle('flipped',R.flip);c.setAttribute('aria-pressed',R.flip);syncCard()}
+function doFlip(){R.flip=!R.flip;const c=$('#card');c.classList.toggle('flipped',R.flip);c.setAttribute('aria-pressed',R.flip);syncCard()}
 function drawResult(){
   toTop();
   const {Q,picks}=R,n=Q.filter(q=>q.a>-1).length,right=Q.filter((q,k)=>picks[k]===q.a).length,skipped=picks.filter(p=>p==null).length,pct=n?Math.round(right/n*100):0;
@@ -509,10 +381,10 @@ function drawResult(){
   queueMicrotask(()=>submitResult(right,n));
   $('#app').innerHTML=`
   <div class="panel score"><div class="big">${right}<small> / ${n}</small></div>
-    <p>${n?`${pct}% correct${skipped?`, ${skipped} unanswered`:''}. ${pct>=80?'Strong result.':pct>=50?'Good progress. Review the misses below.':'Worth another pass. Review the answers below.'}`:'This quiz has no answer key, so it is not scored.'}</p></div>
+    <p>${n?`${pct}% correct${skipped?`, ${skipped} unanswered`:''}. ${pct>=80?'Strong result!':pct>=50?'Good progress. Review the misses below.':'Worth another pass. Review the answers below.'}`:'This quiz has no answer key.'}</p></div>
   <div class="actions"><button class="btn primary" data-act="retry">Try again</button><button class="btn" data-act="flash">Study as flashcards</button><button class="btn ghost" data-act="exit">All quizzes</button></div>
   <div class="panel slip"><h2>Result slip</h2><p class="muted" style="margin:0">Send this to your teacher or take a screenshot.</p><pre>${esc(slip)}</pre>
-    <div class="row" style="margin-top:.8rem"><button class="btn sm" data-act="copy">Copy</button><button class="btn sm" data-act="save">Download</button><button class="btn sm" data-act="resend" id="resend" hidden>Send again</button></div>
+    <div class="row" style="margin-top:.8rem"><button class="btn sm" data-act="copy">Copy</button><button class="btn sm" data-act="save">Download</button></div>
     <p class="status info" id="sub-st" aria-live="polite"></p></div>
   <h2 style="margin:2rem 0 1rem">Answer key</h2>
   ${Q.map((q,k)=>{const p=picks[k],ok=p===q.a,nk=q.a<0;
@@ -521,6 +393,7 @@ function drawResult(){
     <ul class="opts static">${q.o.map((t,j)=>`<li class="${j===q.a?'ok':j===p&&!nk?'bad':''}"><b>${L[j]}</b><span>${esc(t)}</span>${j===q.a?'<em>Correct answer</em>':j===p?'<em>Your answer</em>':''}</li>`).join('')}</ul>
     ${q.e?`<p class="exp">${esc(q.e)}</p>`:''}</article>`}).join('')}`;
 }
+
 function runAct(a){
   if(a==='exit'){R=null;route()}
   else if(a==='prev'){R.i--;R.flip=false;drawRun()}
@@ -530,327 +403,18 @@ function runAct(a){
     R.i=(R.i+1)%R.Q.length;R.flip=false;drawRun();
   }
   else if(a==='flip')doFlip();
-  else if(a==='copy'){(navigator.clipboard?.writeText(R.slip)||Promise.reject()).then(()=>toast('Copied'),()=>toast('Could not copy. Select the text and copy it.'))}
+  else if(a==='copy'){(navigator.clipboard?.writeText(R.slip)||Promise.reject()).then(()=>toast('Copied'),()=>toast('Select the text above to copy.'))}
   else if(a==='save'){const bl=new Blob([R.slip+'\n'],{type:'text/plain'}),l=document.createElement('a');l.href=URL.createObjectURL(bl);l.download=slug(R.title+' '+me.get().id)+'.txt';l.click();URL.revokeObjectURL(l.href)}
-  else if(a==='resend'){flushOutbox(true)}
   else if(a==='retry'){R={...R,mode:'quiz',i:0,picks:Array(R.Q.length).fill(null),flip:false,counted:null,sent:false,t0:Date.now()};drawRun()}
   else if(a==='flash'){R={...R,mode:'cards',i:0,flip:false};drawRun()}
 }
 
-/* =====================================================================
-   TEACHER VIEW  (publishes quiz files to the GitHub repo through the API)
-   ===================================================================== */
-const guess=()=>{
-  const h=location.hostname,seg=location.pathname.split('/').filter(Boolean)[0]||'';
-  if(h.endsWith('.github.io')){const o=h.split('.')[0];return{repo:`${o}/${seg&&!seg.includes('.')?seg:o+'.github.io'}`}}
-  return{repo:'oxpc/s'};
-};
-let cfg={repo:lsGet('qm-repo')||guess().repo||'oxpc/s',branch:lsGet('qm-branch')||'main',token:lsGet('qm-token',true)||lsGet('qm-token')||''};
-let D={title:'',id:null,qs:[]};
-let ghList=null;
-
-const b64=s=>{const b=new TextEncoder().encode(s);let r='';b.forEach(x=>r+=String.fromCharCode(x));return btoa(r)};
-const unb64=s=>new TextDecoder().decode(Uint8Array.from(atob(s.replace(/\s/g,'')),c=>c.charCodeAt(0)));
-async function gh(path,opt={}){
-  const r=await fetch(`https://api.github.com/repos/${cfg.repo}/${path}`,{...opt,headers:{Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28',Authorization:'Bearer '+cfg.token,...(opt.headers||{})}});
-  if(r.status===404&&opt.allow404)return null;
-  if(!r.ok){
-    let m='';try{m=(await r.json()).message}catch(e){}
-    const why={401:'The token was rejected. Check that it is correct and has not expired.',403:'The token does not have permission. It needs "Contents: Read and write" on this repository.',404:'Repository or branch not found. Check the name, the branch and that the token can see this repository.',409:'The repository changed while saving. Please try again.',422:'GitHub refused the change: '+m}[r.status];
-    const e=new Error(why||m||('GitHub error '+r.status));e.status=r.status;throw e;
-  }
-  return r.status===204?null:r.json();
-}
-async function getFile(path){
-  const j=await gh(`contents/${path}?ref=${encodeURIComponent(cfg.branch)}`,{allow404:true,cache:'no-store'});
-  return j?{sha:j.sha,text:unb64(j.content)}:null;
-}
-const putFile=(path,text,sha,msg)=>gh(`contents/${path}`,{method:'PUT',body:JSON.stringify({message:msg,content:b64(text),branch:cfg.branch,...(sha?{sha}:{})})});
-async function readIndex(){
-  const f=await getFile('quizzes/index.json');
-  let list=[];if(f){try{list=JSON.parse(f.text).quizzes||[]}catch(e){}}
-  return{sha:f?.sha,list};
-}
-async function writeIndex(mutate,msg,retry=1){
-  const {sha,list}=await readIndex(),next=mutate(list);
-  try{await putFile('quizzes/index.json',JSON.stringify({quizzes:next},null,2)+'\n',sha,msg)}
-  catch(e){if((e.status===409||e.status===422)&&retry){return writeIndex(mutate,msg,retry-1)}throw e}
-  return next;
-}
-
-function setStatus(id,msg,type='info'){const e=$('#'+id);if(e){e.textContent=msg;e.className='status '+type}}
-const hasToken=()=>cfg.repo&&cfg.token;
-
-function viewTeacher(){
-  setNav('t');
-  $('#app').innerHTML=`
-  <h1>Teacher</h1>
-  <p class="lede">Upload a Word or text file, check the answers, and publish. Students see it on the home page right away.</p>
-  <div class="steps">
-  <section class="panel" id="p-conn"></section>
-  <section class="panel">
-    <h2>Add a quiz</h2>
-    <div class="row"><button class="btn" id="up" type="button">Upload .docx or text file</button><input id="file" type="file" accept=".txt,.md,.docx,text/plain,application/vnd.openxmlformats-officedocument.wordprocessingml.document" hidden>
-      <button class="btn ghost" id="sample" type="button">Use sample</button><button class="btn ghost" id="clear" type="button">Clear</button></div>
-    <label class="f" for="src">…or paste the questions <small>(you can also drop a file here)</small></label>
-    <textarea id="src" spellcheck="false" placeholder="1. Question text&#10;A. Option&#10;B. Option&#10;Answer: B"></textarea>
-    <p class="status info" id="parse-status" aria-live="polite"></p>
-    <details><summary>Supported formats</summary>
-      <p>Numbered or plain questions, options lettered <code>A.</code> <code>A)</code> <code>(A)</code> or one per line. The answer can be <code>Answer: B</code>, the option text, a ✓ next to the option, or a key at the end like <code>1. B  2. C</code>. In Word files, a bold or highlighted option counts as the correct answer. Anything missing can be set in the next step.</p></details>
-  </section>
-  <section class="panel" id="p-edit" hidden></section>
-  <section class="panel nonum" id="p-list"></section>
-  <section class="panel nonum" id="p-res"></section>
-  </div>
-  <p class="foot">Anyone can open this page, but only someone with your GitHub token can publish or delete.</p>`;
-  drawConn();wireAdd();drawPublished();drawResults();
-  src.value=lsGet('qm-draft')||'';parseSrc();
-}
-let src;
-function drawConn(){
-  const ok=hasToken();
-  $('#p-conn').innerHTML=`<h2>Connect to GitHub</h2>
-  ${ok&&!$('#p-conn').dataset.open?`<p class="muted" style="margin:0 0 .6rem">Publishing to <strong>${esc(cfg.repo)}</strong> (${esc(cfg.branch)}).</p><div class="row"><button class="btn sm" id="c-edit">Change</button><button class="btn sm ghost danger" id="c-out">Forget token</button></div>`:`
-  <div class="grid2"><div><label class="f" for="c-repo">Repository <small>owner/name</small></label><input type="text" id="c-repo" value="${esc(cfg.repo)}" placeholder="oxpc/s" autocomplete="off"></div>
-  <div><label class="f" for="c-br">Branch</label><input type="text" id="c-br" value="${esc(cfg.branch)}" autocomplete="off"></div></div>
-  <label class="f" for="c-tok">Access token <small>fine-grained, Contents: Read and write, only this repository</small></label>
-  <input type="password" id="c-tok" value="${esc(cfg.token)}" placeholder="github_pat_…" autocomplete="off">
-  <label class="chk" style="margin-top:.7rem"><input type="checkbox" id="c-rem" ${lsGet('qm-token')?'checked':''}> Remember on this device <small class="muted">(only on your own computer)</small></label>
-  <div class="row" style="margin-top:.8rem"><button class="btn primary" id="c-go">Connect</button><a class="btn ghost" target="_blank" rel="noopener" href="https://github.com/settings/personal-access-tokens/new">Create a token</a></div>`}
-  <p class="status info" id="c-st" aria-live="polite"></p>`;
-  const g=id=>$('#'+id);
-  if(g('c-edit'))g('c-edit').onclick=()=>{$('#p-conn').dataset.open='1';drawConn()};
-  if(g('c-out'))g('c-out').onclick=()=>{cfg.token='';lsDel('qm-token');ghList=null;delete $('#p-conn').dataset.open;drawConn();drawPublished();drawEditor()};
-  if(g('c-go'))g('c-go').onclick=async()=>{
-    cfg={repo:g('c-repo').value.trim().replace(/^https?:\/\/github\.com\//,'').replace(/\.git$/,'').replace(/\/$/,'')||'oxpc/s',branch:g('c-br').value.trim()||'main',token:g('c-tok').value.trim()};
-    if(!/^[\w.-]+\/[\w.-]+$/.test(cfg.repo)||!cfg.token)return setStatus('c-st','Enter the repository as owner/name and paste your token.','err');
-    setStatus('c-st','Checking…');
-    try{
-      await gh('');
-      lsSet('qm-repo',cfg.repo);lsSet('qm-branch',cfg.branch);
-      if(g('c-rem').checked){lsSet('qm-token',cfg.token);try{sessionStorage.removeItem('qm-token')}catch(e){}}else{lsSet('qm-token',cfg.token,true);try{localStorage.removeItem('qm-token')}catch(e){}}
-      delete $('#p-conn').dataset.open;drawConn();drawPublished();drawEditor();
-      setStatus('c-st','Connected.','ok');
-    }catch(e){setStatus('c-st',e.message,'err')}
-  };
-}
-function wireAdd(){
-  src=$('#src');
-  src.oninput=parseSrc;
-  $('#up').onclick=()=>$('#file').click();
-  $('#file').onchange=async e=>{await loadFile(e.target.files[0]);e.target.value=''};
-  ['dragover','dragleave','drop'].forEach(t=>src.addEventListener(t,e=>{e.preventDefault();src.classList.toggle('drag',t==='dragover');if(t==='drop')loadFile(e.dataTransfer.files[0])}));
-  $('#sample').onclick=()=>{D.id=null;D.title=D.title||'Sample quiz';src.value=SAMPLE_TEXT;parseSrc()};
-  $('#clear').onclick=()=>{D={title:'',id:null,qs:[]};src.value='';parseSrc();src.focus()};
-}
-async function loadFile(f){
-  if(!f)return;
-  try{
-    src.value=/\.docx$/i.test(f.name)?await docxText(f):await f.text();
-    if(!D.title)D.title=f.name.replace(/\.[^.]+$/,'').replace(/[_-]+/g,' ').trim();
-    D.id=null;
-    parseSrc();
-  }catch(err){setStatus('parse-status',/\.doc$/i.test(f.name)?'Old .doc files are not supported. Save it as .docx and try again.':(err.message||'Could not read that file.'),'err')}
-}
-let keepAnswers=false;
-function parseSrc(){
-  lsSet('qm-draft',src.value,true);
-  if(!keepAnswers){
-    const old=D.qs,qs=parse(src.value);
-    qs.forEach(q=>{if(q.a<0){const m=old.find(o=>o.q===q.q&&o.o.length===q.o.length);if(m)q.a=m.a}});
-    D.qs=qs;
-  }
-  setStatus('parse-status',D.qs.length?`${D.qs.length} question${D.qs.length>1?'s':''} found.`:(src.value.trim()?'No questions found. Check the supported formats.':'Upload or paste questions to begin.'),D.qs.length?'ok':'info');
-  drawEditor();
-}
-function drawEditor(){
-  const el=$('#p-edit');if(!el)return;
-  if(!D.qs.length){el.hidden=true;return}
-  el.hidden=false;
-  const miss=D.qs.filter(q=>q.a<0).length;
-  if(!el.dataset.built){
-    el.dataset.built='1';
-    el.innerHTML=`<h2>Check and publish</h2>
-    <label class="f" for="d-title">Quiz title</label><input type="text" id="d-title" maxlength="100" placeholder="e.g. CRC Multiple Choice Questions">
-    <div id="d-sum" class="row" style="margin:.9rem 0 .2rem"></div>
-    <details id="d-keybox"><summary>Paste an answer key</summary>
-      <p>Write the answers like <code>1. B  2. C  3. A</code> or one per line, then apply.</p>
-      <textarea id="d-key" style="min-height:90px" placeholder="1. B&#10;2. C&#10;3. A"></textarea>
-      <div class="row" style="margin-top:.5rem"><button class="btn sm" id="d-apply">Apply key</button></div></details>
-    <div id="d-list"></div>
-    <div class="sticky"><div class="row"><button class="btn primary" id="d-pub">Publish to students</button><button class="btn" id="d-dl">Download JSON</button></div><p class="status info" id="d-st" aria-live="polite"></p></div>`;
-    $('#d-title').oninput=e=>D.title=e.target.value;
-    $('#d-apply').onclick=()=>{
-      let n=0;for(const m of $('#d-key').value.matchAll(/(\d+)\s*[.):\-]?\s*\(?([A-Ha-h])\)?/g)){const q=D.qs[+m[1]-1],k=L.indexOf(m[2].toUpperCase());if(q&&k<q.o.length){q.a=k;n++}}
-      drawEditor();setStatus('d-st',n?`Applied ${n} answer${n>1?'s':''}.`:'No answers recognised. Use a format like 1. B','info'+(n?'':''));
-    };
-    $('#d-list').onclick=e=>{
-      const b=e.target.closest('[data-q]');if(!b)return;
-      const q=D.qs[+b.dataset.q];
-      if(b.dataset.k!=null){q.a=q.a===+b.dataset.k?-1:+b.dataset.k;drawEditor()}
-      else if(b.dataset.rm!=null){D.qs.splice(+b.dataset.q,1);keepAnswers=true;drawEditor();keepAnswers=false}
-    };
-    $('#d-list').oninput=e=>{if(e.target.dataset.e!=null)D.qs[+e.target.dataset.e].e=e.target.value};
-    $('#d-pub').onclick=publish;
-    $('#d-dl').onclick=download;
-  }
-  if(document.activeElement!==$('#d-title'))$('#d-title').value=D.title;
-  $('#d-sum').innerHTML=`<span class="chip">${D.qs.length} questions</span>${miss?`<span class="chip warn">${miss} without an answer</span><span class="muted" style="font-size:.9rem">Tap a letter to mark the correct option.</span>`:'<span class="chip ok">All answers set</span>'}${D.id?`<span class="chip">Editing: ${esc(D.id)}</span>`:''}`;
-  const keepScroll=$('#d-list').scrollTop;
-  $('#d-list').innerHTML=D.qs.map((q,i)=>`<div class="ed ${q.a<0?'miss':''}">
-    <div class="edh"><b class="no">${i+1}.</b><span>${esc(q.q)}</span><button class="btn ghost sm danger" data-q="${i}" data-rm="1" aria-label="Remove question ${i+1}">Remove</button></div>
-    ${q.o.map((t,k)=>`<div class="opt ${q.a===k?'ok':''}"><button class="ltr" data-q="${i}" data-k="${k}" aria-pressed="${q.a===k}" aria-label="Mark option ${L[k]} as correct">${L[k]}</button><span>${esc(t)}</span></div>`).join('')}
-    <input type="text" data-e="${i}" value="${esc(q.e)}" placeholder="Explanation (optional)" aria-label="Explanation for question ${i+1}"></div>`).join('');
-  $('#d-list').scrollTop=keepScroll;
-}
-function payload(){
-  const title=(D.title||'').trim()||'Untitled quiz';
-  return{title,questions:D.qs.map(q=>({q:q.q,o:q.o,a:q.a,e:q.e||''}))};
-}
-function download(){
-  const p=payload(),blob=new Blob([JSON.stringify(p,null,2)],{type:'application/json'}),a=document.createElement('a');
-  a.href=URL.createObjectURL(blob);a.download=slug(p.title)+'.json';a.click();URL.revokeObjectURL(a.href);
-}
-async function publish(){
-  if(!hasToken())return setStatus('d-st','Connect to GitHub first (step 1).','err');
-  const p=payload();
-  if(!(D.title||'').trim())return setStatus('d-st','Give the quiz a title first.','err');
-  const miss=D.qs.filter(q=>q.a<0).length;
-  if(miss&&!confirm(`${miss} question${miss>1?'s have':' has'} no answer, so the quiz will not be fully scored. Publish anyway?`))return;
-  const btn=$('#d-pub');btn.disabled=true;setStatus('d-st','Publishing…');
-  try{
-    const id=D.id||slug(p.title),path=`quizzes/${id}.json`,ex=await getFile(path);
-    if(ex&&!D.id&&!confirm(`A quiz called "${id}" already exists. Replace it?`)){btn.disabled=false;return setStatus('d-st','Cancelled.','info')}
-    await putFile(path,JSON.stringify(p,null,2)+'\n',ex?.sha,`${ex?'Update':'Add'} quiz: ${p.title}`);
-    const date=new Date().toISOString().slice(0,10);
-    ghList=await writeIndex(l=>[{id,title:p.title,count:p.questions.length,updated:date},...l.filter(x=>x.id!==id)],`Update index: ${p.title}`);
-    index=null;D.id=id;
-    setStatus('d-st','Published. GitHub Pages can take up to a minute to show the update to students.','ok');
-    drawPublished();toast('Published');
-  }catch(e){setStatus('d-st',e.message,'err')}
-  btn.disabled=false;
-}
-async function drawPublished(){
-  const el=$('#p-list');if(!el)return;
-  el.innerHTML=`<h2>Published quizzes</h2><p class="muted" id="pl-st">${hasToken()?'Loading…':'Connect to GitHub to manage published quizzes.'}</p><ul class="list" id="pl"></ul>`;
-  if(!hasToken())return;
-  try{
-    if(!ghList)ghList=(await readIndex()).list;
-    $('#pl-st').textContent=ghList.length?'':'Nothing published yet.';
-    $('#pl').innerHTML=ghList.map(x=>`<li><div class="t"><strong>${esc(x.title)}</strong><small>${x.count} questions${x.updated?' · '+esc(x.updated):''}</small></div>
-      <button class="btn sm" data-edit="${esc(x.id)}">Edit</button><button class="btn sm ghost danger" data-del="${esc(x.id)}">Delete</button></li>`).join('');
-    $('#pl').onclick=async e=>{
-      const ed=e.target.closest('[data-edit]'),dl=e.target.closest('[data-del]');
-      if(ed){
-        try{
-          const f=await getFile(`quizzes/${ed.dataset.edit}.json`);if(!f)throw new Error('File not found.');
-          const j=JSON.parse(f.text);D={title:j.title,id:ed.dataset.edit,qs:j.questions.map(q=>({...q}))};
-          src.value=D.qs.map((q,i)=>`${i+1}. ${q.q}\n${q.o.map((t,k)=>`${L[k]}. ${t}`).join('\n')}${q.a>-1?`\nAnswer: ${L[q.a]}.${q.e?' '+q.e:''}`:''}`).join('\n\n');
-          keepAnswers=false;$('#p-edit').dataset.built='';parseSrc();
-          $('#p-edit').scrollIntoView({behavior:'smooth'});
-        }catch(err){toast(err.message)}
-      }else if(dl){
-        const id=dl.dataset.del,t=ghList.find(x=>x.id===id)?.title||id;
-        if(!confirm(`Delete "${t}" for everyone? This cannot be undone from here.`))return;
-        try{
-          const f=await getFile(`quizzes/${id}.json`);
-          if(f)await gh(`contents/quizzes/${id}.json`,{method:'DELETE',body:JSON.stringify({message:`Delete quiz: ${t}`,sha:f.sha,branch:cfg.branch})});
-          ghList=await writeIndex(l=>l.filter(x=>x.id!==id),`Update index: remove ${t}`);index=null;
-          if(D.id===id)D.id=null;
-          drawPublished();toast('Deleted');
-        }catch(err){toast(err.message)}
-      }
-    };
-  }catch(e){$('#pl-st').textContent=e.message;$('#pl-st').className='status err'}
-}
-
-/* ---------- teacher: student results ---------- */
-let RES=null,RKEYS={};
-const pctOf=(r,t)=>t?Math.round(r/t*100):0;
-function drawResults(){
-  const el=$('#p-res');if(!el)return;
-  if(!RESULTS_URL){
-    el.innerHTML=`<h2>Student results</h2><p class="muted" style="margin:0">Result collection is not set up yet. Paste your web app link into <code>RESULTS_URL</code> near the top of the file.</p>`;return;
-  }
-  el.innerHTML=`<h2>Student results</h2>
-  <div class="row"><input type="password" id="rk" placeholder="Teacher key" aria-label="Teacher key" autocomplete="off" style="max-width:240px" value="${esc(lsGet('qm-rkey',true)||'')}">
-    <button class="btn primary" id="rload">Load results</button><button class="btn" id="rcsv" disabled>Export CSV</button></div>
-  <p class="status info" id="r-st" aria-live="polite"></p>
-  <div id="r-pick" class="row" hidden><label class="muted" for="r-quiz">Quiz</label><select id="r-quiz" style="width:auto;max-width:100%"></select></div>
-  <div id="r-out"></div>`;
-  $('#rload').onclick=loadResults;
-  $('#rk').onkeydown=e=>{if(e.key==='Enter')loadResults()};
-  $('#r-quiz').onchange=renderResults;
-  $('#rcsv').onclick=exportCsv;
-}
-async function loadResults(){
-  const key=$('#rk').value.trim();
-  if(!key)return setStatus('r-st','Enter your teacher key.','err');
-  setStatus('r-st','Loading…');
-  try{
-    const r=await fetch(RESULTS_URL+'?key='+encodeURIComponent(key),{cache:'no-store'}),j=await r.json();
-    if(!j.ok)throw new Error(j.error==='forbidden'?'Wrong teacher key.':(j.error||'Could not load results.'));
-    lsSet('qm-rkey',key,true);
-    RES=j.rows.map(x=>({...x,studentId:String(x.studentId).toLowerCase()}));
-    RKEYS={};
-    for(const id of [...new Set(RES.map(x=>x.quizId))]){
-      try{const q=await fetch(`quizzes/${encodeURIComponent(id)}.json?v=${Date.now()}`,{cache:'no-store'});if(q.ok)RKEYS[id]=(await q.json()).questions}catch(e){}
-    }
-    for(const x of RES){
-      const K=RKEYS[x.quizId];
-      if(K){x.ver=x.answers.reduce((n,a)=>n+(K[a.qi]&&a.oi>-1&&K[a.qi].a===a.oi?1:0),0);x.vtotal=K.filter(q=>q.a>-1).length}
-      else{x.ver=x.score;x.vtotal=x.total}
-      x.flag=K&&(x.ver!==x.score);
-    }
-    const quizzes=[...new Map(RES.map(x=>[x.quizId,x.title])).entries()];
-    $('#r-pick').hidden=!quizzes.length;
-    $('#r-quiz').innerHTML=quizzes.map(([id,t])=>`<option value="${esc(id)}">${esc(t)}</option>`).join('');
-    $('#rcsv').disabled=!quizzes.length;
-    setStatus('r-st',quizzes.length?'':'No results submitted yet.','info');
-    renderResults();
-  }catch(e){setStatus('r-st',/fetch/i.test(e.message)?'Could not reach the results service. Check the web app link and that it is deployed for "Anyone".':e.message,'err')}
-}
-const rowsFor=()=>RES.filter(x=>x.quizId===$('#r-quiz').value).sort((a,b)=>new Date(a.time)-new Date(b.time));
-function renderResults(){
-  const out=$('#r-out');if(!RES||!$('#r-quiz').value){out.innerHTML='';return}
-  const rows=rowsFor(),by={};rows.forEach(x=>(by[x.studentId]??=[]).push(x));
-  const firsts=ALLOWED_IDS.map(id=>by[id.toLowerCase()]?.[0]).filter(Boolean);
-  const avg=firsts.length?Math.round(firsts.reduce((s,x)=>s+pctOf(x.ver,x.vtotal),0)/firsts.length):null;
-  const fmt=x=>`${x.ver} / ${x.vtotal} <span class="muted">(${pctOf(x.ver,x.vtotal)}%)</span>`;
-  out.innerHTML=`<p style="margin:.9rem 0 0"><span class="chip">${firsts.length} of ${ALLOWED_IDS.length} submitted</span>${avg==null?'':` <span class="chip">Average first attempt ${avg}%</span>`}</p>
-  <div class="tblw"><table class="tbl"><thead><tr><th>ID</th><th>Name</th><th>First attempt</th><th>Best</th><th>Attempts</th><th>Last submitted</th></tr></thead><tbody>${
-    ALLOWED_IDS.map(id=>{
-      const l=by[id.toLowerCase()];
-      if(!l)return `<tr><td>${esc(id)}</td><td class="na" colspan="5">Not submitted</td></tr>`;
-      const bestX=l.reduce((a,b)=>b.ver>a.ver?b:a),last=l[l.length-1];
-      return `<tr><td>${esc(id)}</td><td>${esc(last.name)}</td><td>${fmt(l[0])}${l.some(x=>x.flag)?' <span class="chip warn" title="The score the student sent differs from the score calculated from the answer key. The calculated score is shown.">check</span>':''}</td><td>${fmt(bestX)}</td><td>${l.length}</td><td>${esc(new Date(last.time).toLocaleString())}</td></tr>`}).join('')
-  }</tbody></table></div>`;
-}
-function exportCsv(){
-  const q=s=>`"${String(s??'').replace(/"/g,'""')}"`;
-  const head=['Student ID','Name','Quiz','Attempt','Score','Total','Percent','Seconds','Submitted'];
-  const lines=[head.map(q).join(',')].concat(rowsFor().map(x=>[x.studentId,x.name,x.title,x.attempt,x.ver,x.vtotal,pctOf(x.ver,x.vtotal),x.secs,new Date(x.time).toISOString()].map(q).join(',')));
-  const bl=new Blob(['\ufeff'+lines.join('\n')],{type:'text/csv'}),a=document.createElement('a');
-  a.href=URL.createObjectURL(bl);a.download=slug(rowsFor()[0]?.title||'results')+'-results.csv';a.click();URL.revokeObjectURL(a.href);
-}
-
-/* =====================================================================
-   ROUTER + shared events
-   ===================================================================== */
-function setNav(w){
-  $('#nav').hidden=w!=='t';
-  const m=me.get();$('#who').hidden=!(m&&w==='s');
-  if(m)$('#who-n').textContent=m.name+' · '+m.id;
-}
-$('#who-out').onclick=()=>{if(R&&!confirm('Leave this quiz and switch student?'))return;me.clear();R=null;route()};
 function route(){
-  R=R&&location.hash.startsWith('#/teacher')?null:R;
-  if(location.hash.startsWith('#/teacher'))return viewTeacher();
-  if(R)return drawRun();
+  if(R) return drawRun();
   viewLibrary();
 }
-addEventListener('hashchange',()=>{window.scrollTo({top:0});route()});
 
+addEventListener('hashchange',()=>{window.scrollTo({top:0});route()});
 $('#app').addEventListener('click',e=>{
   if(!R)return;
   const o=e.target.closest('.opts .opt[data-k]');
@@ -878,6 +442,7 @@ addEventListener('keydown',e=>{
     else if(e.key===' '&&!e.target.closest('button,#card')){e.preventDefault();doFlip()}
   }
 });
+
 route();
 if(me.get())flushOutbox(false);
 </script>
