@@ -335,7 +335,7 @@ function viewRegister() {
   $('#app').innerHTML = `<div class="reg panel"><h1>Welcome</h1>
   <p class="lede">Enter your student ID and name to begin. Note: Each student ID receives <strong>only 1 attempt</strong> per quiz.</p>
   <form id="reg" novalidate>
-    <label class="f" for="r-id">Student ID</label><input type="text" id="r-id" maxlength="30" autocomplete="off" placeholder="e.g. vac1">
+    <label class="f" for="r-id">Student ID</label><input type="text" id="r-id" maxlength="30" autocomplete="off">
     <label class="f" for="r-name">Full name</label><input type="text" id="r-name" maxlength="60" autocomplete="name" placeholder="e.g. Hanna Bekele">
     <p class="status err" id="r-err" aria-live="polite"></p>
     <button class="btn primary">Continue</button></form></div>`;
