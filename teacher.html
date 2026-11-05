@@ -6,33 +6,96 @@
 <meta name="robots" content="noindex,nofollow">
 <title>Quiz hub - Teacher Portal</title>
 <link rel="stylesheet" href="style.css">
+<style>
+  .id-chip-box {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    max-height: 180px;
+    overflow-y: auto;
+    padding: 0.75rem;
+    background: #fff;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    margin: 0.75rem 0;
+  }
+  .id-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.25rem 0.55rem;
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-family: monospace;
+  }
+</style>
 </head>
 <body>
 <main id="app"></main>
 <div class="toast" id="toast" role="status" hidden></div>
 <script src="common.js"></script>
 <script>
-/* Set PIN='' to disable the lock. NOTE: this is only a convenience gate (client-side);
-   real protection is the GitHub token, which is required to publish or delete. */
-const PIN='123';
-const DEFAULT_REPO='oxpc/s',DEFAULT_BRANCH='main';
+/* PIN set to accept both 123 and 1234 */
+const PIN = '123';
+const DEFAULT_REPO = 'oxpc/s', DEFAULT_BRANCH = 'main';
 
 /* ---------- lock screen ---------- */
-const unlocked=()=>!PIN||lsGet('qm-t-pin',true)==='ok';
-const checkAccess=()=>unlocked()?dashboard():lockScreen();
-function lockScreen(){
-  $('#app').innerHTML=`<div class="reg panel"><h1>Teacher Login</h1>
+const unlocked = () => !PIN || lsGet('qm-t-pin', true) === 'ok';
+const checkAccess = () => unlocked() ? dashboard() : lockScreen();
+
+function lockScreen() {
+  $('#app').innerHTML = `<div class="reg panel"><h1>Teacher Login</h1>
   <p class="lede">Enter your PIN or password to access the teacher dashboard.</p>
   <form id="lock" novalidate><label class="f" for="pin">Password / PIN</label>
-  <input type="password" id="pin" autocomplete="current-password" placeholder="Enter password">
+  <input type="password" id="pin" autocomplete="current-password" placeholder="Enter PIN (123 or 1234)">
   <p class="status err" id="pin-err" aria-live="polite"></p><button class="btn primary">Unlock</button></form></div>`;
   $('#pin').focus();
-  $('#lock').onsubmit=e=>{
+  $('#lock').onsubmit = e => {
     e.preventDefault();
-    if($('#pin').value===PIN){lsSet('qm-t-pin','ok',true);checkAccess()}
-    else{setStatus('pin-err','Incorrect password. Try again.','err');$('#pin').select()}
+    const val = $('#pin').value.trim();
+    if (val === PIN || val === '1234' || val === '123') {
+      lsSet('qm-t-pin', 'ok', true);
+      checkAccess();
+    } else {
+      setStatus('pin-err', 'Incorrect password. Try 123 or 1234.', 'err');
+      $('#pin').select();
+    }
   };
 }
+
+/* ---------- Student ID Store & Management ---------- */
+const DEFAULT_IDS = Array.from({length: 10}, (_, i) => 'vac' + (i + 1));
+const idStore = {
+  get() {
+    return lsJSON('qm-allowed-ids', DEFAULT_IDS);
+  },
+  set(arr) {
+    lsSet('qm-allowed-ids', JSON.stringify(arr));
+  },
+  add(newId) {
+    const list = this.get();
+    const clean = newId.replace(/\s+/g, '').toLowerCase();
+    if (!list.includes(clean)) {
+      list.push(clean);
+      this.set(list);
+    }
+    return list;
+  },
+  generate(prefix = 'vac') {
+    const list = this.get();
+    let maxNum = 0;
+    const re = new RegExp('^' + prefix + '(\\d+)$');
+    for (const id of list) {
+      const m = id.match(re);
+      if (m) maxNum = Math.max(maxNum, parseInt(m[1], 10));
+    }
+    const nextId = prefix + (maxNum + 1);
+    this.add(nextId);
+    return nextId;
+  }
+};
 
 /* ---------- parser (questions from pasted text / docx) ---------- */
 const OPT=/^\(?([A-Ha-h])(?:\)|[.:]\s|\s[-–—]\s)\s*(.+)$/,
@@ -180,10 +243,25 @@ async function writeIndex(mutate,msg){
 /* ---------- dashboard ---------- */
 function dashboard(){
   $('#app').innerHTML=`
-  <div class="row between"><h1 style="margin:0">Teacher</h1>${PIN?'<button class="btn ghost sm danger" id="lock-btn">Lock</button>':''}</div>
-  <p class="lede">Upload a Word or text file, check the answers, and publish. Students see it on the home page right away.</p>
+  <div class="row between"><h1 style="margin:0">Teacher Portal</h1>${PIN?'<button class="btn ghost sm danger" id="lock-btn">Lock</button>':''}</div>
+  <p class="lede">Manage student IDs, upload Word/text questions, and publish quizzes to GitHub.</p>
   <div class="steps">
     <section class="panel n" id="p-conn"></section>
+    
+    <!-- Student ID Generation Section -->
+    <section class="panel n" id="p-ids">
+      <h2>Student IDs</h2>
+      <p class="muted">Generate valid IDs for your students. Each student ID has strictly 1 attempt per quiz.</p>
+      <div class="row" style="gap:0.5rem;flex-wrap:wrap">
+        <button class="btn primary" id="btn-id-next">+ Generate Next ID</button>
+        <button class="btn" id="btn-id-5">+ Generate 5 IDs</button>
+        <button class="btn ghost" id="btn-id-copy">Copy All IDs</button>
+        ${hasToken()?'<button class="btn ghost" id="btn-id-pub">Publish IDs to GitHub</button>':''}
+      </div>
+      <p class="status info" id="id-status" style="margin:0.5rem 0" aria-live="polite"></p>
+      <div class="id-chip-box" id="id-chips"></div>
+    </section>
+
     <section class="panel n"><h2>Add a quiz</h2>
       <div class="row">
         <button class="btn" id="up">Upload .docx or text file</button>
@@ -200,8 +278,12 @@ function dashboard(){
     <section class="panel" id="p-list"></section>
   </div>
   <p class="foot">Only someone with your GitHub token can publish or delete.</p>`;
+  
   $('#lock-btn')&&($('#lock-btn').onclick=()=>{lsDel('qm-t-pin');checkAccess()});
-  drawConn();drawPublished();
+  drawConn();
+  drawStudentIDs();
+  drawPublished();
+  
   src=$('#src');src.value=lsGet('qm-draft',true)||'';
   src.oninput=parseSrc;
   $('#up').onclick=()=>$('#file').click();
@@ -210,6 +292,51 @@ function dashboard(){
   $('#sample').onclick=()=>{D.id=null;D.title='Sample quiz';src.value='1. Which property identifies your app?\nA) Namespace\nB) Application ID\nAnswer: B';parseSrc()};
   $('#clear').onclick=()=>{D={title:'',id:null,qs:[]};src.value='';parseSrc();src.focus()};
   parseSrc();
+}
+
+function drawStudentIDs() {
+  const ids = idStore.get();
+  const attempts = lsJSON('qm-att', {});
+  const container = $('#id-chips');
+  if (!container) return;
+
+  container.innerHTML = ids.map(id => {
+    const isUsed = Object.keys(attempts).some(k => k.startsWith(id + ':'));
+    return `<span class="id-chip"><strong>${id}</strong> ${isUsed ? '<span style="color:var(--danger)">● used</span>' : '<span style="color:var(--primary)">● ready</span>'}</span>`;
+  }).join('');
+
+  $('#btn-id-next').onclick = () => {
+    const newId = idStore.generate('vac');
+    drawStudentIDs();
+    setStatus('id-status', `Generated new ID: ${newId}`, 'ok');
+    toast(`Generated: ${newId}`);
+  };
+
+  $('#btn-id-5').onclick = () => {
+    let created = [];
+    for (let i = 0; i < 5; i++) created.push(idStore.generate('vac'));
+    drawStudentIDs();
+    setStatus('id-status', `Generated 5 IDs: ${created.join(', ')}`, 'ok');
+    toast('Generated 5 IDs!');
+  };
+
+  $('#btn-id-copy').onclick = () => {
+    navigator.clipboard?.writeText(idStore.get().join(', ')).then(() => toast('Copied all IDs to clipboard!'));
+  };
+
+  if ($('#btn-id-pub')) {
+    $('#btn-id-pub').onclick = async () => {
+      setStatus('id-status', 'Publishing student IDs to GitHub…');
+      try {
+        const file = await getFile('quizzes/students.json');
+        await putFile('quizzes/students.json', JSON.stringify({ students: idStore.get() }, null, 2) + '\n', file?.sha, 'Update allowed student IDs');
+        setStatus('id-status', 'Student IDs published to GitHub successfully!', 'ok');
+        toast('Published to GitHub');
+      } catch (err) {
+        setStatus('id-status', err.message, 'err');
+      }
+    };
+  }
 }
 
 function drawConn(){
