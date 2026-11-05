@@ -148,13 +148,6 @@
     height: 100%;
     background: var(--primary);
   }
-  .exp {
-    margin-top: 1rem;
-    padding: 0.85rem;
-    background: #f8fafc;
-    border-left: 4px solid var(--primary);
-    border-radius: 4px;
-  }
   .toast {
     position: fixed;
     bottom: 1.5rem;
@@ -175,6 +168,16 @@
     border-radius: 4px;
     font-size: 0.8rem;
     font-weight: 600;
+  }
+  .id-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.3rem 0.6rem;
+    background: #f1f5f9;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-family: monospace;
   }
 </style>
 </head>
@@ -200,11 +203,40 @@ window.setStatus = window.setStatus || ((id, m, c) => {
   el.textContent = m; el.className = 'status ' + (c || '');
 });
 
-const ALLOWED_IDS = Array.from({length: 10}, (_, i) => 'vac' + (i + 1));
+/* ---- ID management & persistent store ---- */
+const DEFAULT_IDS = Array.from({length: 10}, (_, i) => 'vac' + (i + 1));
+const idStore = {
+  get() {
+    return lsJSON('qm-allowed-ids', DEFAULT_IDS);
+  },
+  add(newId) {
+    const list = this.get();
+    const clean = normId(newId);
+    if (!list.includes(clean)) {
+      list.push(clean);
+      lsSet('qm-allowed-ids', JSON.stringify(list));
+    }
+    return list;
+  },
+  generate(prefix = 'vac') {
+    const list = this.get();
+    let maxNum = 0;
+    const re = new RegExp('^' + prefix + '(\\d+)$');
+    for (const id of list) {
+      const m = id.match(re);
+      if (m) maxNum = Math.max(maxNum, parseInt(m[1], 10));
+    }
+    const nextId = prefix + (maxNum + 1);
+    this.add(nextId);
+    return nextId;
+  }
+};
+
+const TEACHER_PIN = '1234';
 const RESULTS_URL = '';
 const TAGLINE = 'Only one attempt is allowed per student ID. Questions are arranged uniquely for you.';
 const normId = s => s.replace(/\s+/g, '').toLowerCase();
-const isAllowed = id => ALLOWED_IDS.includes(normId(id));
+const isAllowed = id => idStore.get().includes(normId(id));
 
 /* ---- data ---- */
 const SAMPLE = [
@@ -335,10 +367,21 @@ function viewRegister() {
   $('#app').innerHTML = `<div class="reg panel"><h1>Welcome</h1>
   <p class="lede">Enter your student ID and name to begin. Note: Each student ID receives <strong>only 1 attempt</strong> per quiz.</p>
   <form id="reg" novalidate>
-    <label class="f" for="r-id">Student ID</label><input type="text" id="r-id" maxlength="30" autocomplete="off">
-    <label class="f" for="r-name">Full name</label><input type="text" id="r-name" maxlength="60" autocomplete="name" placeholder="e.g. Hanna Bekele">
-    <p class="status err" id="r-err" aria-live="polite"></p>
-    <button class="btn primary">Continue</button></form></div>`;
+    <label class="f" for="r-id" style="font-weight:600;display:block;margin-top:0.8rem">Student ID</label>
+    <input type="text" id="r-id" maxlength="30" autocomplete="off" style="width:100%;padding:0.6rem;box-sizing:border-box;margin-top:0.2rem">
+    
+    <label class="f" for="r-name" style="font-weight:600;display:block;margin-top:0.8rem">Full name</label>
+    <input type="text" id="r-name" maxlength="60" autocomplete="name" placeholder="e.g. Hanna Bekele" style="width:100%;padding:0.6rem;box-sizing:border-box;margin-top:0.2rem">
+    
+    <p class="status err" id="r-err" aria-live="polite" style="color:var(--danger);margin:0.5rem 0"></p>
+    <button class="btn primary" style="width:100%;margin-top:0.5rem">Continue</button>
+  </form>
+  
+  <div style="margin-top:2rem;padding-top:1rem;border-top:1px solid #e2e8f0;text-align:center;">
+    <button class="btn ghost sm" id="btn-open-teacher" type="button" style="color:var(--text-muted);font-size:0.85rem">Teacher Access</button>
+  </div>
+  </div>`;
+  
   $('#r-id').focus();
   $('#reg').onsubmit = e => {
     e.preventDefault();
@@ -348,6 +391,92 @@ function viewRegister() {
     if (name.length < 2) return err('Enter your full name.');
     me.set(id, name);
     route();
+  };
+
+  $('#btn-open-teacher').onclick = viewTeacherLogin;
+}
+
+function viewTeacherLogin() {
+  $('#app').innerHTML = `<div class="panel" style="padding:1.5rem;border:1px solid #e2e8f0;border-radius:8px">
+    <h2>Teacher Login</h2>
+    <p style="color:var(--text-muted)">Enter Teacher PIN to manage and generate student IDs.</p>
+    <form id="t-form">
+      <label style="font-weight:600;display:block;margin-top:1rem">Teacher PIN</label>
+      <input type="password" id="t-pin" placeholder="Default PIN: 1234" style="width:100%;padding:0.6rem;box-sizing:border-box;margin-top:0.3rem">
+      <p class="status err" id="t-err" style="color:var(--danger);margin:0.5rem 0"></p>
+      <div style="display:flex;gap:0.5rem;margin-top:1rem">
+        <button class="btn primary">Login</button>
+        <button type="button" class="btn ghost" id="t-back">Cancel</button>
+      </div>
+    </form>
+  </div>`;
+  $('#t-pin').focus();
+  $('#t-back').onclick = viewRegister;
+  $('#t-form').onsubmit = e => {
+    e.preventDefault();
+    if ($('#t-pin').value === TEACHER_PIN) {
+      viewTeacherDashboard();
+    } else {
+      setStatus('t-err', 'Incorrect PIN. Try 1234.', 'err');
+    }
+  };
+}
+
+function viewTeacherDashboard() {
+  const renderList = () => {
+    const ids = idStore.get();
+    const attempts = lsJSON('qm-att', {});
+    $('#t-count').textContent = ids.length;
+    $('#t-list').innerHTML = ids.map(id => {
+      const hasUsed = Object.keys(attempts).some(k => k.startsWith(id + ':'));
+      return `<span class="id-chip">${id} ${hasUsed ? '<b style="color:var(--danger)">● used</b>' : '<b style="color:var(--primary)">● new</b>'}</span>`;
+    }).join(' ');
+  };
+
+  $('#app').innerHTML = `<div class="panel" style="padding:1.5rem;border:1px solid #e2e8f0;border-radius:8px">
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <h2 style="margin:0">Teacher Dashboard</h2>
+      <button class="btn ghost sm" id="t-exit">Exit to Login</button>
+    </div>
+    <p style="color:var(--text-muted);margin:0.5rem 0 1.5rem">Generate unique student IDs to share with your students.</p>
+    
+    <div style="background:#f8fafc;padding:1rem;border-radius:6px;border:1px solid #e2e8f0;margin-bottom:1.5rem">
+      <h3 style="margin-top:0">Generate Student ID</h3>
+      <div style="display:flex;gap:0.5rem;flex-wrap:wrap">
+        <button class="btn primary" id="btn-gen-one">+ Generate Next ID</button>
+        <button class="btn" id="btn-gen-batch">+ Generate 5 IDs</button>
+      </div>
+      <p id="t-msg" style="margin:0.5rem 0 0;font-weight:600;color:var(--primary)"></p>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem">
+      <h3 style="margin:0">Active Student IDs (<span id="t-count">0</span>)</h3>
+      <button class="btn sm" id="btn-copy-all">Copy All IDs</button>
+    </div>
+    <div id="t-list" style="display:flex;flex-wrap:wrap;gap:0.4rem;max-height:220px;overflow-y:auto;padding:0.75rem;background:#fff;border:1px solid #e2e8f0;border-radius:6px"></div>
+  </div>`;
+
+  renderList();
+
+  $('#t-exit').onclick = viewRegister;
+
+  $('#btn-gen-one').onclick = () => {
+    const newId = idStore.generate('vac');
+    renderList();
+    $('#t-msg').textContent = `Created ID: ${newId}`;
+    toast(`Generated ID: ${newId}`);
+  };
+
+  $('#btn-gen-batch').onclick = () => {
+    let created = [];
+    for (let i = 0; i < 5; i++) created.push(idStore.generate('vac'));
+    renderList();
+    $('#t-msg').textContent = `Generated 5 IDs: ${created.join(', ')}`;
+    toast('5 IDs successfully generated!');
+  };
+
+  $('#btn-copy-all').onclick = () => {
+    navigator.clipboard?.writeText(idStore.get().join(', ')).then(() => toast('All IDs copied to clipboard!'));
   };
 }
 
