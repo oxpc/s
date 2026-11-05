@@ -454,10 +454,6 @@ function drawResult() {
   $('#app').innerHTML = `
   <div class="panel score" style="text-align:center;margin:1.5rem 0;"><div class="big" style="font-size:2.5rem;font-weight:700;">${right}<small style="font-size:1.2rem;color:var(--text-muted)"> / ${n}</small></div>
     <p>${n ? `${pct}% correct${skipped ? `, ${skipped} unanswered` : ''}. ${pct >= 80 ? 'Strong result!' : pct >= 50 ? 'Good progress. Review misses below.' : 'Review answers below.'}` : 'This quiz has no answer key.'}</p></div>
-  <div class="actions" style="display:flex;gap:0.5rem;justify-content:center;margin-bottom:2rem;">
-    <button class="btn primary" data-act="retry">Try again</button>
-    <button class="btn ghost" data-act="exit">All quizzes</button>
-  </div>
   <div class="panel" style="padding:1rem;background:#f8fafc;border-radius:8px"><h2>Result slip</h2><pre style="background:#fff;padding:1rem;border:1px solid #e2e8f0;border-radius:4px">${esc(R.slip)}</pre>
     <div class="row" style="margin-top:.8rem;display:flex;gap:0.5rem"><button class="btn sm" data-act="copy">Copy</button></div>
     <p class="status info" id="sub-st" aria-live="polite"></p></div>
@@ -480,8 +476,7 @@ const ACTIONS = {
     R.i = (R.i + 1) % R.Q.length;
     drawRun();
   },
-  copy() { navigator.clipboard?.writeText(R.slip).then(() => toast('Copied'), () => toast('Select text to copy.')); },
-  retry() { R = { ...R, mode: 'quiz', i: 0, picks: Array(R.Q.length).fill(null), counted: null, sent: false, t0: Date.now() }; drawRun(); }
+  copy() { navigator.clipboard?.writeText(R.slip).then(() => toast('Copied'), () => toast('Select text to copy.')); }
 };
 
 const route = () => R ? drawRun() : viewLibrary();
