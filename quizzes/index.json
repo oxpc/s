@@ -1,3 +1,10 @@
 {
-  "quizzes": []
+  "quizzes": [
+    {
+      "id": "crc-11-mcq",
+      "title": "CRC 11 MCQ",
+      "count": 11,
+      "updated": "2026-11-05"
+    }
+  ]
 }
