@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Practice Quizzes</title>
-<meta name="description" content="Practice quizzes and flashcards.">
+<meta name="description" content="Practice quizzes arranged just for you.">
 <link rel="stylesheet" href="style.css">
 <style>
   :root {
@@ -44,7 +44,7 @@
     margin-right: 0.25rem;
   }
 
-  /* --- Option Styling matching the sample --- */
+  /* --- Option Styling --- */
   .opts {
     display: flex;
     flex-direction: column;
@@ -66,7 +66,7 @@
     transition: background-color 0.15s ease;
   }
 
-  .opt:hover:not(.lock) {
+  .opt:hover {
     background-color: #f8fafc;
   }
 
@@ -101,18 +101,7 @@
     color: #0f172a;
   }
 
-  /* Instant Feedback / Locked States */
-  .opt.lock.ok .ltr {
-    background-color: var(--primary) !important;
-    color: #ffffff !important;
-  }
-
-  .opt.lock.bad .ltr {
-    background-color: var(--danger) !important;
-    color: #ffffff !important;
-  }
-
-  /* Review / Static Options */
+  /* Review / Static Options on Result View */
   .opts.static {
     list-style: none;
     padding: 0;
@@ -209,7 +198,6 @@
 
 <script src="common.js"></script>
 <script>
-// Fallback helpers in case common.js doesn't provide them
 window.$ = window.$ || (s => document.querySelector(s));
 window.L = window.L || ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
 window.esc = window.esc || (s => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'));
@@ -228,7 +216,7 @@ window.setStatus = window.setStatus || ((id, m, c) => {
 
 const ALLOWED_IDS = Array.from({length: 10}, (_, i) => 'vac' + (i + 1));
 const RESULTS_URL = '';
-const TAGLINE = 'Practice quizzes and flashcards. Your questions are arranged just for you.';
+const TAGLINE = 'Practice quizzes. Your questions are arranged just for you.';
 const normId = s => s.replace(/\s+/g, '').toLowerCase();
 const isAllowed = id => ALLOWED_IDS.includes(normId(id));
 
@@ -388,9 +376,7 @@ async function viewLibrary() {
     <button class="btn ghost sm" id="logout">Switch student (${esc(st.id)})</button></div>
   <p class="lede">${esc(TAGLINE)}</p>
   ${indexErr ? '<p class="notice">No published quizzes found yet. Showing sample quiz.</p>' : ''}
-  <div class="tools">
-    <input class="search" type="search" id="find" placeholder="Search quizzes" aria-label="Search quizzes">
-    <label class="chk"><input type="checkbox" id="inst" ${p.inst ? 'checked' : ''}> Show answer after each question</label>
+  <div class="tools" style="display:flex;justify-content:flex-end;margin:1rem 0;">
     <label class="chk">Text size <select id="osz">${Object.entries({ s: 'Small', m: 'Medium', l: 'Large' }).map(([k, v]) => `<option value="${k}" ${(p.osz || 'm') === k ? 'selected' : ''}>${v}</option>`).join('')}</select></label>
   </div>
   <div class="cards" id="cards"></div>`;
@@ -398,22 +384,20 @@ async function viewLibrary() {
   $('#logout').onclick = () => { me.clear(); R = null; route(); };
 
   const draw = () => {
-    const f = $('#find').value.trim().toLowerCase(), items = list.filter(x => x.title.toLowerCase().includes(f));
-    $('#cards').innerHTML = items.length ? items.map(x => {
+    $('#cards').innerHTML = list.length ? list.map(x => {
       const s = b[bkey(x.id)], pct = s && Math.round(s.r / s.t * 100);
       return `<article class="qc" style="margin-bottom:1.5rem;padding:1rem;border:1px solid #e2e8f0;border-radius:8px"><h3>${esc(x.title)}</h3>
       <div class="meta" style="margin:0.5rem 0"><span>${x.count} question${x.count === 1 ? '' : 's'}</span>${s ? ` · <span class="chip">Best ${pct}%</span>` : ''}</div>
-      <div class="row"><button class="btn primary" data-start="${esc(x.id)}" data-mode="quiz">Start quiz</button> <button class="btn" data-start="${esc(x.id)}" data-mode="cards">Flashcards</button></div></article>`;
-    }).join('') : `<p class="empty">${list.length ? 'No matching quizzes.' : 'No quizzes available yet.'}</p>`;
+      <div class="row"><button class="btn primary" data-start="${esc(x.id)}">Start quiz</button></div></article>`;
+    }).join('') : '<p class="empty">No quizzes available yet.</p>';
   };
   draw();
-  $('#find').oninput = draw;
   
   const save = () => {
-    prefs.set({ inst: $('#inst').checked, osz: $('#osz').value });
+    prefs.set({ osz: $('#osz').value });
     document.documentElement.style.setProperty('--osz', SZ[$('#osz').value]);
   };
-  $('#inst').onchange = $('#osz').onchange = save;
+  $('#osz').onchange = save;
   save();
 
   $('#cards').onclick = async e => {
@@ -424,7 +408,7 @@ async function viewLibrary() {
       const quiz = await loadQuiz(btn.dataset.start);
       if (!quiz.questions?.length) throw new Error('This quiz is empty.');
       const Q = personalize(quiz.questions, st.key, btn.dataset.start);
-      R = { t0: Date.now(), id: btn.dataset.start, title: quiz.title, Q, mode: btn.dataset.mode, i: 0, picks: Array(Q.length).fill(null), flip: false, instant: $('#inst').checked };
+      R = { t0: Date.now(), id: btn.dataset.start, title: quiz.title, Q, mode: 'quiz', i: 0, picks: Array(Q.length).fill(null) };
       drawRun();
     } catch (err) {
       toast(err.message || 'Could not open quiz.');
@@ -434,19 +418,17 @@ async function viewLibrary() {
 }
 
 const head = () => `<div class="rtop"><strong>${esc(R.title)}</strong><div class="prog" aria-hidden="true"><i style="width:${Math.round((R.i + 1) / R.Q.length * 100)}%"></i></div><span class="cnt">${R.i + 1} / ${R.Q.length}</span></div>`;
-const staticOpts = (q, mark) => `<ul class="opts static">${q.o.map((t, k) => `<li${mark ? ` class="${mark(k)}"` : ''}><b>${L[k]}</b><span>${esc(t)}</span></li>`).join('')}</ul>`;
-const drawRun = () => { window.scrollTo({ top: 0 }); R.mode === 'quiz' ? drawQuiz() : drawCard(); };
+const drawRun = () => { window.scrollTo({ top: 0 }); drawQuiz(); };
 
 function drawQuiz() {
-  const q = R.Q[R.i], p = R.picks[R.i], locked = R.instant && p != null && q.a > -1, last = R.i === R.Q.length - 1;
+  const q = R.Q[R.i], p = R.picks[R.i], last = R.i === R.Q.length - 1;
   $('#app').innerHTML = `${head()}
   <h2 class="q"><span class="no">${R.i + 1}.</span> ${esc(q.q)}</h2>
   <div class="opts" role="radiogroup" aria-label="Answers">${q.o.map((t, k) => {
-    const c = 'opt' + (p === k ? ' sel' : '') + (locked ? ' lock' + (k === q.a ? ' ok' : p === k ? ' bad' : '') : '');
+    const c = 'opt' + (p === k ? ' sel' : '');
     const isFocusable = p === k || (p == null && k === 0);
     return `<div class="${c}" data-k="${k}" role="radio" aria-checked="${p === k}" tabindex="${isFocusable ? 0 : -1}"><span class="ltr">${L[k]}</span><span>${esc(t)}</span></div>`;
   }).join('')}</div>
-  ${locked ? `<p class="exp" aria-live="polite"><strong>${p === q.a ? 'Correct.' : 'The answer is ' + L[q.a] + '.'}</strong> ${esc(q.e || '')}</p>` : ''}
   <div class="nav2"><button class="btn ghost exit" data-act="exit">Exit</button>
     <button class="btn ghost" data-act="prev" ${R.i ? '' : 'disabled'}>Previous</button>
     <button class="btn primary" data-act="next">${last ? 'Finish' : 'Next'}</button></div>`;
@@ -454,48 +436,15 @@ function drawQuiz() {
 
 function pick(k) {
   const q = R.Q[R.i];
-  if (k < 0 || k >= q.o.length || (R.instant && R.picks[R.i] != null && q.a > -1)) return;
+  if (k < 0 || k >= q.o.length) return;
   R.picks[R.i] = k;
   drawQuiz();
   $('.opt.sel')?.focus();
 }
 
-function drawCard() {
-  const q = R.Q[R.i], last = R.i === R.Q.length - 1;
-  $('#app').innerHTML = `${head()}
-  <div class="wrap"><div class="card ${R.flip ? 'flipped' : ''}" id="card" tabindex="0" role="button" aria-pressed="${R.flip}" aria-label="Flip card">
-    <div class="face front"><h2 class="q"><span class="no">${R.i + 1}.</span> ${esc(q.q)}</h2>${staticOpts(q)}<p class="hint">Tap card to see the answer</p></div>
-    <div class="face back"><p class="qno">Question ${R.i + 1}</p>
-      ${q.a > -1 ? `<div class="ans"><b>${L[q.a]}</b><span>${esc(q.o[q.a])}</span></div>` : '<p class="ans"><span>No answer provided for this question.</span></p>'}
-      ${q.e ? `<p class="exp">${esc(q.e)}</p>` : ''}<p class="hint">Tap card to flip back</p></div></div></div>
-  <div class="nav2"><button class="btn ghost exit" data-act="exit">Exit</button>
-    <button class="btn ghost" data-act="prev" ${R.i ? '' : 'disabled'}>Previous</button>
-    <button class="btn" data-act="flip">Flip card</button>
-    <button class="btn primary" data-act="next">${last ? 'Restart' : 'Next'}</button></div>`;
-  syncCard();
-}
-
-function syncCard() {
-  const c = $('#card');
-  if (c) {
-    c.querySelector('.front').inert = R.flip;
-    c.querySelector('.back').inert = !R.flip;
-  }
-}
-
-function doFlip() {
-  R.flip = !R.flip;
-  const c = $('#card');
-  if (c) {
-    c.classList.toggle('flipped', R.flip);
-    c.setAttribute('aria-pressed', R.flip);
-    syncCard();
-  }
-}
-
 function drawResult() {
   window.scrollTo({ top: 0 });
-  R.mode = 'result'; // Prevent quiz keydown shortcuts
+  R.mode = 'result';
   const { Q, picks } = R, n = Q.filter(q => q.a > -1).length, right = Q.filter((q, k) => picks[k] === q.a).length, skipped = picks.filter(p => p == null).length, pct = n ? Math.round(right / n * 100) : 0, st = me.get();
   if (n) setBest(R.id, right, n);
   const attempt = R.counted || (R.counted = bump(bkey(R.id)));
@@ -507,7 +456,6 @@ function drawResult() {
     <p>${n ? `${pct}% correct${skipped ? `, ${skipped} unanswered` : ''}. ${pct >= 80 ? 'Strong result!' : pct >= 50 ? 'Good progress. Review misses below.' : 'Review answers below.'}` : 'This quiz has no answer key.'}</p></div>
   <div class="actions" style="display:flex;gap:0.5rem;justify-content:center;margin-bottom:2rem;">
     <button class="btn primary" data-act="retry">Try again</button>
-    <button class="btn" data-act="flash">Study as flashcards</button>
     <button class="btn ghost" data-act="exit">All quizzes</button>
   </div>
   <div class="panel" style="padding:1rem;background:#f8fafc;border-radius:8px"><h2>Result slip</h2><pre style="background:#fff;padding:1rem;border:1px solid #e2e8f0;border-radius:4px">${esc(R.slip)}</pre>
@@ -526,18 +474,14 @@ function drawResult() {
 
 const ACTIONS = {
   exit() { R = null; route(); },
-  prev() { R.i--; R.flip = false; drawRun(); },
+  prev() { R.i--; drawRun(); },
   next() {
-    if (R.mode === 'quiz' && R.i === R.Q.length - 1) return drawResult();
-    if (R.mode === 'cards' && R.i === R.Q.length - 1) toast('Completed deck. Starting over.');
+    if (R.i === R.Q.length - 1) return drawResult();
     R.i = (R.i + 1) % R.Q.length;
-    R.flip = false;
     drawRun();
   },
-  flip: () => doFlip(),
   copy() { navigator.clipboard?.writeText(R.slip).then(() => toast('Copied'), () => toast('Select text to copy.')); },
-  retry() { R = { ...R, mode: 'quiz', i: 0, picks: Array(R.Q.length).fill(null), flip: false, counted: null, sent: false, t0: Date.now() }; drawRun(); },
-  flash() { R = { ...R, mode: 'cards', i: 0, flip: false }; drawRun(); }
+  retry() { R = { ...R, mode: 'quiz', i: 0, picks: Array(R.Q.length).fill(null), counted: null, sent: false, t0: Date.now() }; drawRun(); }
 };
 
 const route = () => R ? drawRun() : viewLibrary();
@@ -547,15 +491,13 @@ $('#app').addEventListener('click', e => {
   if (!R) return;
   const o = e.target.closest('.opts .opt[data-k]');
   if (o && R.mode === 'quiz') return pick(+o.dataset.k);
-  if (e.target.closest('#card')) return doFlip();
   const a = e.target.closest('[data-act]');
   if (a) ACTIONS[a.dataset.act]?.();
 });
 
 $('#app').addEventListener('keydown', e => {
   if (!R || (e.key !== ' ' && e.key !== 'Enter')) return;
-  if (e.target.id === 'card') { e.preventDefault(); doFlip(); }
-  else if (R.mode === 'quiz' && e.target.matches('.opts .opt[data-k]')) { e.preventDefault(); pick(+e.target.dataset.k); }
+  if (R.mode === 'quiz' && e.target.matches('.opts .opt[data-k]')) { e.preventDefault(); pick(+e.target.dataset.k); }
 });
 
 addEventListener('keydown', e => {
@@ -565,9 +507,6 @@ addEventListener('keydown', e => {
   if (R.mode === 'quiz') {
     const d = /^[1-8]$/.test(e.key) ? +e.key - 1 : e.key.length === 1 ? 'abcdefgh'.indexOf(e.key.toLowerCase()) : -1;
     if (d > -1) pick(d);
-  } else if (e.key === ' ' && !e.target.closest('button,#card')) {
-    e.preventDefault();
-    doFlip();
   }
 });
 
