@@ -37,33 +37,13 @@
 <div class="toast" id="toast" role="status" hidden></div>
 <script src="common.js"></script>
 <script>
-/* PIN set to accept both 123 and 1234 */
-const PIN = '123';
+/* PIN set to empty string to bypass the lock screen entirely */
+const PIN = '';
 const DEFAULT_REPO = 'oxpc/s', DEFAULT_BRANCH = 'main';
 
-/* ---------- lock screen ---------- */
-const unlocked = () => !PIN || lsGet('qm-t-pin', true) === 'ok';
-const checkAccess = () => unlocked() ? dashboard() : lockScreen();
-
-function lockScreen() {
-  $('#app').innerHTML = `<div class="reg panel"><h1>Teacher Login</h1>
-  <p class="lede">Enter your PIN or password to access the teacher dashboard.</p>
-  <form id="lock" novalidate><label class="f" for="pin">Password / PIN</label>
-  <input type="password" id="pin" autocomplete="current-password" placeholder="Enter PIN (123 or 1234)">
-  <p class="status err" id="pin-err" aria-live="polite"></p><button class="btn primary">Unlock</button></form></div>`;
-  $('#pin').focus();
-  $('#lock').onsubmit = e => {
-    e.preventDefault();
-    const val = $('#pin').value.trim();
-    if (val === PIN || val === '1234' || val === '123') {
-      lsSet('qm-t-pin', 'ok', true);
-      checkAccess();
-    } else {
-      setStatus('pin-err', 'Incorrect password. Try 123 or 1234.', 'err');
-      $('#pin').select();
-    }
-  };
-}
+/* ---------- lock screen (bypassed when PIN is '') ---------- */
+const unlocked = () => true;
+const checkAccess = () => dashboard();
 
 /* ---------- Student ID Store & Management ---------- */
 const DEFAULT_IDS = Array.from({length: 10}, (_, i) => 'vac' + (i + 1));
@@ -243,7 +223,7 @@ async function writeIndex(mutate,msg){
 /* ---------- dashboard ---------- */
 function dashboard(){
   $('#app').innerHTML=`
-  <div class="row between"><h1 style="margin:0">Teacher Portal</h1>${PIN?'<button class="btn ghost sm danger" id="lock-btn">Lock</button>':''}</div>
+  <div class="row between"><h1 style="margin:0">Teacher Portal</h1></div>
   <p class="lede">Manage student IDs, upload Word/text questions, and publish quizzes to GitHub.</p>
   <div class="steps">
     <section class="panel n" id="p-conn"></section>
@@ -279,7 +259,6 @@ function dashboard(){
   </div>
   <p class="foot">Only someone with your GitHub token can publish or delete.</p>`;
   
-  $('#lock-btn')&&($('#lock-btn').onclick=()=>{lsDel('qm-t-pin');checkAccess()});
   drawConn();
   drawStudentIDs();
   drawPublished();
