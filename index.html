@@ -373,7 +373,7 @@ async function viewLibrary() {
   const list = await loadIndex(), p = prefs.get(), b = lsJSON('qm-best', {});
   $('#app').innerHTML = `
   <div class="row between"><h1 style="margin:0">Hi, ${esc(st.name.split(' ')[0])}</h1>
-    <button class="btn ghost sm" id="logout">Switch student (${esc(st.id)})</button></div>
+    <button class="btn ghost sm" id="logout">Logout</button></div>
   <p class="lede">${esc(TAGLINE)}</p>
   ${indexErr ? '<p class="notice">No published quizzes found yet. Showing sample quiz.</p>' : ''}
   <div class="tools" style="display:flex;justify-content:flex-end;margin:1rem 0;">
