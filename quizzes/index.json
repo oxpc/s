@@ -1,10 +1,10 @@
 {
   "quizzes": [
     {
-      "id": "crc-20-mcq",
-      "title": "CRC 20 MCQ",
-      "count": 20,
-      "updated": "2026-11-05"
+      "id": "crc-50-mcq",
+      "title": "CRC 50 MCQ",
+      "count": 50,
+      "updated": "2026-11-03"
     }
   ]
 }

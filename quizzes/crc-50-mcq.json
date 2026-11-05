@@ -1,0 +1,555 @@
+{
+  "title": "CRC 50 MCQ",
+  "questions": [
+    {
+      "q": "Compassion means deep sympathy for suffering plus a strong desire to:",
+      "o": [
+        "Ignore it",
+        "Transfer the patient",
+        "Alleviate it",
+        "Record it"
+      ],
+      "a": 2,
+      "e": ""
+    },
+    {
+      "q": "Respectful care supports and promotes a person's:",
+      "o": [
+        "Income",
+        "Self-respect",
+        "Schedule",
+        "Profession"
+      ],
+      "a": 1,
+      "e": ""
+    },
+    {
+      "q": "A benefit of CRC for patients is that they will be:",
+      "o": [
+        "More anxious",
+        "Less anxious",
+        "Angry",
+        "Silent"
+      ],
+      "a": 1,
+      "e": ""
+    },
+    {
+      "q": "Which is an essential characteristic of a CRC professional?",
+      "o": [
+        "Working alone",
+        "Ignoring complaints",
+        "Person-centered care with empathy",
+        "Avoiding family involvement"
+      ],
+      "a": 2,
+      "e": ""
+    },
+    {
+      "q": "Who is the founder of modern nursing?",
+      "o": [
+        "Clara Barton",
+        "Dorothea Dix",
+        "Mary Breckinridge",
+        "Florence Nightingale"
+      ],
+      "a": 3,
+      "e": ""
+    },
+    {
+      "q": "Florence Nightingale established her nursing school in:",
+      "o": [
+        "1760",
+        "1860",
+        "1925",
+        "1965"
+      ],
+      "a": 1,
+      "e": ""
+    },
+    {
+      "q": "\"The nurse as a mother\" is the:",
+      "o": [
+        "Folk image",
+        "Religious image",
+        "Renaissance image",
+        "Modern image"
+      ],
+      "a": 0,
+      "e": ""
+    },
+    {
+      "q": "Nightingale's environment theory addressed:",
+      "o": [
+        "Salary",
+        "Drug dosage",
+        "Sanitation for patients",
+        "Surgery"
+      ],
+      "a": 2,
+      "e": ""
+    },
+    {
+      "q": "Which one requires a high degree of knowledge and expertise?",
+      "o": [
+        "Occupation",
+        "Profession",
+        "Hobby",
+        "Shopkeeping"
+      ],
+      "a": 1,
+      "e": ""
+    },
+    {
+      "q": "Professionalism is a professional's beliefs about their own:",
+      "o": [
+        "Conduct",
+        "Salary",
+        "Dress only",
+        "Hospital"
+      ],
+      "a": 0,
+      "e": ""
+    },
+    {
+      "q": "The traditional role of the nurse is:",
+      "o": [
+        "Manager",
+        "Researcher",
+        "Caregiver",
+        "Lawyer"
+      ],
+      "a": 2,
+      "e": ""
+    },
+    {
+      "q": "A nurse teaching a mother about handwashing is acting as an:",
+      "o": [
+        "Educator",
+        "Manager",
+        "Researcher",
+        "Cleaner"
+      ],
+      "a": 0,
+      "e": ""
+    },
+    {
+      "q": "The four central concepts of nursing theories are person, environment, health and:",
+      "o": [
+        "Money",
+        "Nursing",
+        "Law",
+        "Drugs"
+      ],
+      "a": 1,
+      "e": ""
+    },
+    {
+      "q": "The word \"ethics\" comes from the Greek \"ethos\", meaning:",
+      "o": [
+        "Law",
+        "Money",
+        "Custom or character",
+        "Illness"
+      ],
+      "a": 2,
+      "e": ""
+    },
+    {
+      "q": "Beneficence means:",
+      "o": [
+        "Avoiding harm",
+        "Fairness",
+        "Doing or promoting good",
+        "Independence"
+      ],
+      "a": 2,
+      "e": ""
+    },
+    {
+      "q": "Non-malfeasance means:",
+      "o": [
+        "Avoiding and preventing harm",
+        "Doing good",
+        "Being honest",
+        "Being fair"
+      ],
+      "a": 0,
+      "e": ""
+    },
+    {
+      "q": "Respect for autonomy means respecting the patient's ability to:",
+      "o": [
+        "Pay",
+        "Be self-directed",
+        "Be quiet",
+        "Be transferred"
+      ],
+      "a": 1,
+      "e": ""
+    },
+    {
+      "q": "A nurse at a health center serves all clients equally and fairly. This is the principle of:",
+      "o": [
+        "Justice",
+        "Beneficence",
+        "Autonomy",
+        "Morality"
+      ],
+      "a": 0,
+      "e": ""
+    },
+    {
+      "q": "A patient refuses treatment after full explanation. The nurse should:",
+      "o": [
+        "Force the treatment",
+        "Respect the decision",
+        "Shout at the patient",
+        "Discharge without telling"
+      ],
+      "a": 1,
+      "e": ""
+    },
+    {
+      "q": "Trustworthiness means:",
+      "o": [
+        "Keeping promises and being honest",
+        "Being rich",
+        "Being fast",
+        "Being popular"
+      ],
+      "a": 0,
+      "e": ""
+    },
+    {
+      "q": "A patient concern is:",
+      "o": [
+        "A drug",
+        "A diagnosis",
+        "A complaint or grievance about care",
+        "A bill"
+      ],
+      "a": 2,
+      "e": ""
+    },
+    {
+      "q": "To understand a patient better, you should:",
+      "o": [
+        "Listen fully",
+        "Interrupt",
+        "Assume",
+        "Look away"
+      ],
+      "a": 0,
+      "e": ""
+    },
+    {
+      "q": "\"Reflecting back\" means:",
+      "o": [
+        "Ignoring the patient",
+        "Writing a report",
+        "Giving advice",
+        "Repeating what the patient said to show understanding"
+      ],
+      "a": 3,
+      "e": ""
+    },
+    {
+      "q": "Communication is:",
+      "o": [
+        "Giving drugs",
+        "Transferring information from one person or group to another",
+        "Taking vital signs",
+        "Writing only"
+      ],
+      "a": 1,
+      "e": ""
+    },
+    {
+      "q": "Facial expression, gestures and posture are:",
+      "o": [
+        "Verbal communication",
+        "Written communication",
+        "Nonverbal communication",
+        "Visual aids"
+      ],
+      "a": 2,
+      "e": ""
+    },
+    {
+      "q": "Which communication type is perhaps the most important, since we cannot engage without it?",
+      "o": [
+        "Active listening",
+        "Texting",
+        "Drawing",
+        "Shouting"
+      ],
+      "a": 0,
+      "e": ""
+    },
+    {
+      "q": "Communication between health professionals should be clear, timely and:",
+      "o": [
+        "Loud",
+        "Discreet",
+        "Public",
+        "Delayed"
+      ],
+      "a": 1,
+      "e": ""
+    },
+    {
+      "q": "A good work relationship requires:",
+      "o": [
+        "Competition",
+        "Secrecy",
+        "Trust and respect",
+        "Blame"
+      ],
+      "a": 2,
+      "e": ""
+    },
+    {
+      "q": "Before touching a client, you should:",
+      "o": [
+        "Ask permission",
+        "Just start",
+        "Ask the neighbor",
+        "Wait until they sleep"
+      ],
+      "a": 0,
+      "e": ""
+    },
+    {
+      "q": "To respect a client's culture, you should learn customs about eye contact and:",
+      "o": [
+        "Salary",
+        "Physical contact",
+        "Weather",
+        "Prices"
+      ],
+      "a": 1,
+      "e": ""
+    },
+    {
+      "q": "Valid consent must be voluntary, informed and given by a person with:",
+      "o": [
+        "Money",
+        "Capacity",
+        "A relative",
+        "A uniform"
+      ],
+      "a": 1,
+      "e": ""
+    },
+    {
+      "q": "Which is NOT needed for valid consent?",
+      "o": [
+        "Voluntary",
+        "Informed",
+        "Capacity",
+        "Payment of a fee"
+      ],
+      "a": 3,
+      "e": ""
+    },
+    {
+      "q": "Informed consent should be taken:",
+      "o": [
+        "After treatment",
+        "During surgery",
+        "Before any medical treatment",
+        "Next week"
+      ],
+      "a": 2,
+      "e": ""
+    },
+    {
+      "q": "A neighbor asks you about a patient's diagnosis. Which patient right protects the patient?",
+      "o": [
+        "Confidentiality",
+        "Education",
+        "Religion",
+        "Access"
+      ],
+      "a": 0,
+      "e": ""
+    },
+    {
+      "q": "Breaching patient confidentiality is:",
+      "o": [
+        "Good practice",
+        "Unethical behavior",
+        "Allowed",
+        "Required"
+      ],
+      "a": 1,
+      "e": ""
+    },
+    {
+      "q": "A threat to respectful care in a facility is:",
+      "o": [
+        "Adequate staffing",
+        "Privacy",
+        "Lack of privacy",
+        "Kindness"
+      ],
+      "a": 2,
+      "e": ""
+    },
+    {
+      "q": "An enabler of respectful care in the environment is:",
+      "o": [
+        "Staff shortage",
+        "Adequate staffing",
+        "Lack of resources",
+        "Restricted access"
+      ],
+      "a": 1,
+      "e": ""
+    },
+    {
+      "q": "Which staff behavior threatens respectful care?",
+      "o": [
+        "Kindness",
+        "Courtesy",
+        "Harshness",
+        "Listening"
+      ],
+      "a": 2,
+      "e": ""
+    },
+    {
+      "q": "\"Attitude\" in the handout means:",
+      "o": [
+        "Your beliefs about patients",
+        "Your salary",
+        "Your uniform",
+        "Your shift"
+      ],
+      "a": 0,
+      "e": ""
+    },
+    {
+      "q": "Malpractice means patients need protection from mistakes, fraud and:",
+      "o": [
+        "Good medicine",
+        "Bad medicine",
+        "Visitors",
+        "Kindness"
+      ],
+      "a": 1,
+      "e": ""
+    },
+    {
+      "q": "Covering up a mistake is:",
+      "o": [
+        "Ethical",
+        "Required",
+        "Unethical",
+        "Kind"
+      ],
+      "a": 2,
+      "e": ""
+    },
+    {
+      "q": "Taking money from a drug company is:",
+      "o": [
+        "Unethical behavior",
+        "Good practice",
+        "A patient right",
+        "A nursing role"
+      ],
+      "a": 0,
+      "e": ""
+    },
+    {
+      "q": "Working while impaired by alcohol or drugs is:",
+      "o": [
+        "Acceptable",
+        "Unethical",
+        "Professional",
+        "Compassionate"
+      ],
+      "a": 1,
+      "e": ""
+    },
+    {
+      "q": "An ethical dilemma arises when:",
+      "o": [
+        "Everyone agrees",
+        "There is no patient",
+        "The nurse is late",
+        "Principles cannot all be respected and people disagree"
+      ],
+      "a": 3,
+      "e": ""
+    },
+    {
+      "q": "Which is an area of ethical dilemma?",
+      "o": [
+        "End-of-life care",
+        "Hand washing",
+        "Uniforms",
+        "Shift change"
+      ],
+      "a": 0,
+      "e": ""
+    },
+    {
+      "q": "In an emergency, you should first check for:",
+      "o": [
+        "Danger",
+        "Money",
+        "Relatives",
+        "Paperwork"
+      ],
+      "a": 0,
+      "e": ""
+    },
+    {
+      "q": "In an emergency, treat first the problems that are:",
+      "o": [
+        "Most obvious",
+        "Life-threatening, such as bleeding or shock",
+        "Easiest",
+        "Painless"
+      ],
+      "a": 1,
+      "e": ""
+    },
+    {
+      "q": "If a person may have a spinal injury, you should:",
+      "o": [
+        "Move them quickly",
+        "Sit them up",
+        "Not move them unless danger is great",
+        "Carry them home"
+      ],
+      "a": 2,
+      "e": ""
+    },
+    {
+      "q": "A benefit of CRC for health facilities is:",
+      "o": [
+        "More lawsuits",
+        "Lower malpractice suits",
+        "Less loyalty",
+        "More staff turnover"
+      ],
+      "a": 1,
+      "e": ""
+    },
+    {
+      "q": "A terminal patient asks, \"Why is this happening to me?\" The nurse should attend to the patient's:",
+      "o": [
+        "Spiritual needs",
+        "Bill",
+        "Schedule",
+        "Visitors"
+      ],
+      "a": 0,
+      "e": ""
+    }
+  ]
+}
