@@ -150,7 +150,7 @@
   .btn.primary:hover { background: var(--primary-hover); }
   .btn.ghost { border-color: transparent; background: transparent; }
   .btn.ghost:hover { background: #f1f5f9; }
-  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn:disabled { opacity: 0.55; cursor: not-allowed; }
 
   .rtop {
     display: flex;
@@ -189,6 +189,16 @@
     padding: 0.6rem 1.2rem;
     border-radius: 99px;
     font-size: 0.9rem;
+    z-index: 999;
+  }
+  .warning-badge {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    background: #fee2e2;
+    color: #991b1b;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 600;
   }
 </style>
 </head>
@@ -216,7 +226,7 @@ window.setStatus = window.setStatus || ((id, m, c) => {
 
 const ALLOWED_IDS = Array.from({length: 10}, (_, i) => 'vac' + (i + 1));
 const RESULTS_URL = '';
-const TAGLINE = 'Practice quizzes. Your questions are arranged just for you.';
+const TAGLINE = 'Only one attempt is allowed per student ID. Questions are arranged uniquely for you.';
 const normId = s => s.replace(/\s+/g, '').toLowerCase();
 const isAllowed = id => ALLOWED_IDS.includes(normId(id));
 
@@ -299,6 +309,7 @@ function personalize(questions, key, quizId) {
 
 /* ---- stats & sync ---- */
 const bkey = id => (me.get()?.key || '') + ':' + id;
+const hasAttempted = id => (lsJSON('qm-att', {})[bkey(id)] || 0) >= 1;
 const bump = k => { const a = lsJSON('qm-att', {}); a[k] = (a[k] || 0) + 1; lsSet('qm-att', JSON.stringify(a)); return a[k]; };
 const setBest = (id, r, t) => { id = bkey(id); const b = lsJSON('qm-best', {}), o = b[id]; if (!o || r / t >= o.r / o.t) b[id] = { r, t }; lsSet('qm-best', JSON.stringify(b)); };
 const prefs = { get: () => lsJSON('qm-prefs', {}), set(p) { lsSet('qm-prefs', JSON.stringify({ ...this.get(), ...p })); } };
@@ -311,7 +322,7 @@ function submitResult(right, total) {
   outbox.set([...outbox.get(), {
     sid: Math.random().toString(36).slice(2) + Date.now().toString(36),
     quizId: R.id, title: R.title, studentId: st.id, name: st.name,
-    attempt: R.counted, score: right, total, secs: Math.round((Date.now() - R.t0) / 1000),
+    attempt: 1, score: right, total, secs: Math.round((Date.now() - R.t0) / 1000),
     answers: R.Q.map((q, k) => ({ qi: q.qi, oi: R.picks[k] == null ? -1 : q.om[R.picks[k]] }))
   }]);
   flushOutbox(true);
@@ -348,7 +359,7 @@ const SZ = { s: '.95rem', m: '1.05rem', l: '1.25rem' };
 
 function viewRegister() {
   $('#app').innerHTML = `<div class="reg panel"><h1>Welcome</h1>
-  <p class="lede">Enter your student ID and name to begin.</p>
+  <p class="lede">Enter your student ID and name to begin. Note: Each student ID receives <strong>only 1 attempt</strong> per quiz.</p>
   <form id="reg" novalidate>
     <label class="f" for="r-id">Student ID</label><input type="text" id="r-id" maxlength="30" autocomplete="off" placeholder="e.g. vac1">
     <label class="f" for="r-name">Full name</label><input type="text" id="r-name" maxlength="60" autocomplete="name" placeholder="e.g. Hanna Bekele">
@@ -372,7 +383,7 @@ async function viewLibrary() {
   $('#app').innerHTML = '<p class="muted">Loading quizzes…</p>';
   const list = await loadIndex(), p = prefs.get(), b = lsJSON('qm-best', {});
   $('#app').innerHTML = `
-  <div class="row between"><h1 style="margin:0">Hi, ${esc(st.name.split(' ')[0])}</h1>
+  <div class="row between"><h1 style="margin:0">Hi, ${esc(st.name.split(' ')[0])} (${esc(st.id)})</h1>
     <button class="btn ghost sm" id="logout">Logout</button></div>
   <p class="lede">${esc(TAGLINE)}</p>
   ${indexErr ? '<p class="notice">No published quizzes found yet. Showing sample quiz.</p>' : ''}
@@ -385,10 +396,18 @@ async function viewLibrary() {
 
   const draw = () => {
     $('#cards').innerHTML = list.length ? list.map(x => {
+      const alreadyDone = hasAttempted(x.id);
       const s = b[bkey(x.id)], pct = s && Math.round(s.r / s.t * 100);
       return `<article class="qc" style="margin-bottom:1.5rem;padding:1rem;border:1px solid #e2e8f0;border-radius:8px"><h3>${esc(x.title)}</h3>
-      <div class="meta" style="margin:0.5rem 0"><span>${x.count} question${x.count === 1 ? '' : 's'}</span>${s ? ` · <span class="chip">Best ${pct}%</span>` : ''}</div>
-      <div class="row"><button class="btn primary" data-start="${esc(x.id)}">Start quiz</button></div></article>`;
+      <div class="meta" style="margin:0.5rem 0">
+        <span>${x.count} question${x.count === 1 ? '' : 's'}</span>
+        ${alreadyDone ? ` · <span class="warning-badge">Completed (${s ? `${s.r}/${s.t}` : 'Attempted'})</span>` : ''}
+      </div>
+      <div class="row">
+        ${alreadyDone
+          ? `<button class="btn" disabled>Completed (No re-takes allowed)</button>`
+          : `<button class="btn primary" data-start="${esc(x.id)}">Start quiz</button>`}
+      </div></article>`;
     }).join('') : '<p class="empty">No quizzes available yet.</p>';
   };
   draw();
@@ -403,12 +422,17 @@ async function viewLibrary() {
   $('#cards').onclick = async e => {
     const btn = e.target.closest('[data-start]');
     if (!btn) return;
+    const qid = btn.dataset.start;
+    if (hasAttempted(qid)) {
+      toast('You have already taken this quiz. No second attempts are allowed.');
+      return;
+    }
     btn.disabled = true;
     try {
-      const quiz = await loadQuiz(btn.dataset.start);
+      const quiz = await loadQuiz(qid);
       if (!quiz.questions?.length) throw new Error('This quiz is empty.');
-      const Q = personalize(quiz.questions, st.key, btn.dataset.start);
-      R = { t0: Date.now(), id: btn.dataset.start, title: quiz.title, Q, mode: 'quiz', i: 0, picks: Array(Q.length).fill(null) };
+      const Q = personalize(quiz.questions, st.key, qid);
+      R = { t0: Date.now(), id: qid, title: quiz.title, Q, mode: 'quiz', i: 0, picks: Array(Q.length).fill(null) };
       drawRun();
     } catch (err) {
       toast(err.message || 'Could not open quiz.');
@@ -446,14 +470,19 @@ function drawResult() {
   window.scrollTo({ top: 0 });
   R.mode = 'result';
   const { Q, picks } = R, n = Q.filter(q => q.a > -1).length, right = Q.filter((q, k) => picks[k] === q.a).length, skipped = picks.filter(p => p == null).length, pct = n ? Math.round(right / n * 100) : 0, st = me.get();
+  
+  // Permanently burn/record attempt for this student ID
+  bump(bkey(R.id));
   if (n) setBest(R.id, right, n);
-  const attempt = R.counted || (R.counted = bump(bkey(R.id)));
-  R.slip = `Quiz: ${R.title}\nStudent: ${st.name} (${st.id})\nScore: ${right} / ${n} (${pct}%)\nAttempt: ${attempt}\nDate: ${new Date().toLocaleString()}`;
+  
+  R.slip = `Quiz: ${R.title}\nStudent: ${st.name} (${st.id})\nScore: ${right} / ${n} (${pct}%)\nAttempt: 1 (Final)\nDate: ${new Date().toLocaleString()}`;
   queueMicrotask(() => submitResult(right, n));
   
   $('#app').innerHTML = `
   <div class="panel score" style="text-align:center;margin:1.5rem 0;"><div class="big" style="font-size:2.5rem;font-weight:700;">${right}<small style="font-size:1.2rem;color:var(--text-muted)"> / ${n}</small></div>
-    <p>${n ? `${pct}% correct${skipped ? `, ${skipped} unanswered` : ''}. ${pct >= 80 ? 'Strong result!' : pct >= 50 ? 'Good progress. Review misses below.' : 'Review answers below.'}` : 'This quiz has no answer key.'}</p></div>
+    <p>${n ? `${pct}% correct${skipped ? `, ${skipped} unanswered` : ''}.` : 'This quiz has no answer key.'}</p>
+    <p style="color:var(--text-muted);font-size:0.9rem;">Your attempt has been submitted and recorded. No retakes are permitted.</p>
+  </div>
   <div class="panel" style="padding:1rem;background:#f8fafc;border-radius:8px"><h2>Result slip</h2><pre style="background:#fff;padding:1rem;border:1px solid #e2e8f0;border-radius:4px">${esc(R.slip)}</pre>
     <div class="row" style="margin-top:.8rem;display:flex;gap:0.5rem"><button class="btn sm" data-act="copy">Copy</button></div>
     <p class="status info" id="sub-st" aria-live="polite"></p></div>
