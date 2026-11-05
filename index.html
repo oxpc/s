@@ -6,252 +6,573 @@
 <title>Practice Quizzes</title>
 <meta name="description" content="Practice quizzes and flashcards.">
 <link rel="stylesheet" href="style.css">
+<style>
+  :root {
+    --osz: 1.05rem;
+    --primary: #1b7a43;
+    --primary-hover: #156336;
+    --danger: #dc2626;
+    --text: #1e293b;
+    --text-muted: #64748b;
+    --bg-badge: #e9ecef;
+  }
+
+  body {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: var(--text);
+    margin: 0;
+    padding: 1.5rem 1rem;
+    display: flex;
+    justify-content: center;
+    background-color: #fdfdfd;
+  }
+
+  main {
+    width: 100%;
+    max-width: 680px;
+  }
+
+  /* Question Header */
+  .q {
+    font-size: var(--osz);
+    font-weight: 600;
+    line-height: 1.5;
+    margin: 1.25rem 0 1rem;
+  }
+  .q .no {
+    font-weight: 700;
+    margin-right: 0.25rem;
+  }
+
+  /* --- Option Styling matching the sample --- */
+  .opts {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    margin: 1.25rem 0;
+  }
+
+  .opt {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 8px;
+    cursor: pointer;
+    user-select: none;
+    font-size: var(--osz);
+    color: var(--text);
+    outline: none;
+    transition: background-color 0.15s ease;
+  }
+
+  .opt:hover:not(.lock) {
+    background-color: #f8fafc;
+  }
+
+  .opt:focus-visible {
+    box-shadow: 0 0 0 2px var(--primary);
+  }
+
+  /* Circular Badge (Unselected) */
+  .opt .ltr {
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background-color: var(--bg-badge);
+    color: var(--text-muted);
+    font-weight: 700;
+    font-size: 0.95rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.15s ease, color 0.15s ease;
+  }
+
+  /* --- Selected Badge State --- */
+  .opt.sel .ltr {
+    background-color: var(--primary);
+    color: #ffffff;
+  }
+
+  .opt.sel {
+    font-weight: 500;
+    color: #0f172a;
+  }
+
+  /* Instant Feedback / Locked States */
+  .opt.lock.ok .ltr {
+    background-color: var(--primary) !important;
+    color: #ffffff !important;
+  }
+
+  .opt.lock.bad .ltr {
+    background-color: var(--danger) !important;
+    color: #ffffff !important;
+  }
+
+  /* Review / Static Options */
+  .opts.static {
+    list-style: none;
+    padding: 0;
+  }
+  .opts.static li {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.4rem 0;
+  }
+  .opts.static li b {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--bg-badge);
+    color: var(--text-muted);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .opts.static li.ok b { background: var(--primary); color: #fff; }
+  .opts.static li.bad b { background: var(--danger); color: #fff; }
+
+  /* Navigation & Utility */
+  .nav2 {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+    justify-content: flex-end;
+  }
+  .nav2 .exit { margin-right: auto; }
+  .btn {
+    padding: 0.55rem 1.1rem;
+    border-radius: 6px;
+    border: 1px solid #cbd5e1;
+    background: #fff;
+    font-size: 0.95rem;
+    cursor: pointer;
+  }
+  .btn.primary {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: #fff;
+    font-weight: 500;
+  }
+  .btn.primary:hover { background: var(--primary-hover); }
+  .btn.ghost { border-color: transparent; background: transparent; }
+  .btn.ghost:hover { background: #f1f5f9; }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .rtop {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+  }
+  .prog {
+    flex: 1;
+    height: 6px;
+    background: #e2e8f0;
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .prog i {
+    display: block;
+    height: 100%;
+    background: var(--primary);
+  }
+  .exp {
+    margin-top: 1rem;
+    padding: 0.85rem;
+    background: #f8fafc;
+    border-left: 4px solid var(--primary);
+    border-radius: 4px;
+  }
+  .toast {
+    position: fixed;
+    bottom: 1.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1e293b;
+    color: #fff;
+    padding: 0.6rem 1.2rem;
+    border-radius: 99px;
+    font-size: 0.9rem;
+  }
+</style>
 </head>
 <body>
 <main id="app"></main>
 <div class="toast" id="toast" role="status" hidden></div>
+
 <script src="common.js"></script>
 <script>
-const ALLOWED_IDS=Array.from({length:10},(_,i)=>'vac'+(i+1));
-const RESULTS_URL='';
-const TAGLINE='Practice quizzes and flashcards. Your questions are arranged just for you.';
-const normId=s=>s.replace(/\s+/g,'').toLowerCase();
-const isAllowed=id=>ALLOWED_IDS.includes(normId(id));
+// Fallback helpers in case common.js doesn't provide them
+window.$ = window.$ || (s => document.querySelector(s));
+window.L = window.L || ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+window.esc = window.esc || (s => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'));
+window.lsJSON = window.lsJSON || ((k, d) => { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch { return d; } });
+window.lsSet = window.lsSet || ((k, v) => localStorage.setItem(k, v));
+window.lsDel = window.lsDel || (k => localStorage.removeItem(k));
+window.toast = window.toast || (m => {
+  const t = $('#toast'); if (!t) return;
+  t.textContent = m; t.hidden = false;
+  clearTimeout(t._t); t._t = setTimeout(() => (t.hidden = true), 2600);
+});
+window.setStatus = window.setStatus || ((id, m, c) => {
+  const el = $('#' + id); if (!el) return;
+  el.textContent = m; el.className = 'status ' + (c || '');
+});
+
+const ALLOWED_IDS = Array.from({length: 10}, (_, i) => 'vac' + (i + 1));
+const RESULTS_URL = '';
+const TAGLINE = 'Practice quizzes and flashcards. Your questions are arranged just for you.';
+const normId = s => s.replace(/\s+/g, '').toLowerCase();
+const isAllowed = id => ALLOWED_IDS.includes(normId(id));
 
 /* ---- data ---- */
-const SAMPLE=[{q:'Which Gradle property generates the package for the R class and BuildConfig?',o:['applicationId','namespace','versionName','packageName'],a:1,e:'namespace controls where R and BuildConfig are generated.'},
-{q:'What uniquely identifies your app on a device and on Google Play?',o:['Namespace','Source package folder','Application ID','App label'],a:2,e:'The application ID is the identity of the app.'}];
-const DEMO={id:'demo',title:'Sample quiz',count:SAMPLE.length};
-let index=null,indexErr=false;
-async function loadIndex(){
-  try{const r=await fetch('quizzes/index.json?v='+Date.now(),{cache:'no-store'});if(!r.ok)throw 0;index=(await r.json()).quizzes||[];indexErr=false}
-  catch{index=[DEMO];indexErr=true}
+const SAMPLE = [
+  { q: 'Compassion means deep sympathy for suffering plus a strong desire to:', o: ['Ignore it', 'Transfer the patient', 'Alleviate it', 'Record it'], a: 2, e: 'Compassion involves both feeling empathy and taking action to help.' },
+  { q: 'Which Gradle property generates the package for the R class and BuildConfig?', o: ['applicationId', 'namespace', 'versionName', 'packageName'], a: 1, e: 'namespace controls where R and BuildConfig are generated.' },
+  { q: 'What uniquely identifies your app on a device and on Google Play?', o: ['Namespace', 'Source package folder', 'Application ID', 'App label'], a: 2, e: 'The application ID is the identity of the app.' }
+];
+const DEMO = { id: 'demo', title: 'Sample quiz', count: SAMPLE.length };
+let index = null, indexErr = false;
+
+async function loadIndex() {
+  try {
+    const r = await fetch('quizzes/index.json?v=' + Date.now(), { cache: 'no-store' });
+    if (!r.ok) throw 0;
+    index = (await r.json()).quizzes || [];
+    indexErr = false;
+  } catch {
+    index = [DEMO];
+    indexErr = true;
+  }
   return index;
 }
-async function loadQuiz(id){
-  if(id==='demo')return{title:DEMO.title,questions:SAMPLE};
-  const r=await fetch(`quizzes/${encodeURIComponent(id)}.json?v=${Date.now()}`,{cache:'no-store'});
-  if(!r.ok)throw new Error('Could not load that quiz.');
+
+async function loadQuiz(id) {
+  if (id === 'demo') return { title: DEMO.title, questions: SAMPLE };
+  const r = await fetch(`quizzes/${encodeURIComponent(id)}.json?v=${Date.now()}`, { cache: 'no-store' });
+  if (!r.ok) throw new Error('Could not load that quiz.');
   return r.json();
 }
 
-/* ---- student identity + per-student shuffle ---- */
-const me={
-  get(){const o=lsJSON('qm-student',null);return o&&o.id&&o.name&&isAllowed(o.id)?o:null},
-  set(id,name){id=id.trim();lsSet('qm-student',JSON.stringify({id,name:name.trim().replace(/\s+/g,' '),key:normId(id)}))},
-  clear(){lsDel('qm-student')}
+/* ---- identity & shuffle ---- */
+const me = {
+  get() { const o = lsJSON('qm-student', null); return o && o.id && o.name && isAllowed(o.id) ? o : null; },
+  set(id, name) { id = id.trim(); lsSet('qm-student', JSON.stringify({ id, name: name.trim().replace(/\s+/g, ' '), key: normId(id) })); },
+  clear() { lsDel('qm-student'); }
 };
-function hash32(s){let h=1779033703^s.length;for(let i=0;i<s.length;i++){h=Math.imul(h^s.charCodeAt(i),3432918353);h=h<<13|h>>>19}
-  h=Math.imul(h^h>>>16,2246822507);h=Math.imul(h^h>>>13,3266489909);return(h^=h>>>16)>>>0}
-function seeded(seed){let a=hash32(seed);return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
-function shuffleWith(arr,rand){const a=[...arr];for(let n=a.length-1;n>0;n--){const j=Math.floor(rand()*(n+1));[a[n],a[j]]=[a[j],a[n]]}return a}
-const FIXED=/\b(?:all|none|both|neither)\s+(?:of\s+)?(?:the\s+)?(?:above|these|them)\b|\b(?:both\s+)?\(?[A-D]\)?\s+(?:and|&|or)\s+\(?[A-D]\)?\b|\bany of the above\b/i;
-function personalize(questions,key,quizId){
-  const rand=seeded(key+'|'+quizId);
-  return shuffleWith(questions.map((q,i)=>({...q,qi:i})),rand).map(q=>{
-    if(q.o.some(t=>FIXED.test(t)))return{...q,om:q.o.map((_,i)=>i)};
-    const perm=shuffleWith(q.o.map((_,i)=>i),rand);
-    return{...q,o:perm.map(i=>q.o[i]),a:q.a>-1?perm.indexOf(q.a):-1,om:perm};
+
+function hash32(s) {
+  let h = 1779033703 ^ s.length;
+  for (let i = 0; i < s.length; i++) {
+    h = Math.imul(h ^ s.charCodeAt(i), 3432918353);
+    h = h << 13 | h >>> 19;
+  }
+  h = Math.imul(h ^ h >>> 16, 2246822507);
+  h = Math.imul(h ^ h >>> 13, 3266489909);
+  return (h ^= h >>> 16) >>> 0;
+}
+
+function seeded(seed) {
+  let a = hash32(seed);
+  return () => {
+    a |= 0; a = a + 0x6D2B79F5 | 0;
+    let t = Math.imul(a ^ a >>> 15, 1 | a);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+
+function shuffleWith(arr, rand) {
+  const a = [...arr];
+  for (let n = a.length - 1; n > 0; n--) {
+    const j = Math.floor(rand() * (n + 1));
+    [a[n], a[j]] = [a[j], a[n]];
+  }
+  return a;
+}
+
+const FIXED = /\b(?:all|none|both|neither)\s+(?:of\s+)?(?:the\s+)?(?:above|these|them)\b|\b(?:both\s+)?\(?[A-D]\)?\s+(?:and|&|or)\s+\(?[A-D]\)?\b|\bany of the above\b/i;
+
+function personalize(questions, key, quizId) {
+  const rand = seeded(key + '|' + quizId);
+  return shuffleWith(questions.map((q, i) => ({ ...q, qi: i })), rand).map(q => {
+    if (q.o.some(t => FIXED.test(t))) return { ...q, om: q.o.map((_, i) => i) };
+    const perm = shuffleWith(q.o.map((_, i) => i), rand);
+    return { ...q, o: perm.map(i => q.o[i]), a: q.a > -1 ? perm.indexOf(q.a) : -1, om: perm };
   });
 }
 
-/* ---- local stats ---- */
-const bkey=id=>(me.get()?.key||'')+':'+id;
-const bump=k=>{const a=lsJSON('qm-att',{});a[k]=(a[k]||0)+1;lsSet('qm-att',JSON.stringify(a));return a[k]};
-const setBest=(id,r,t)=>{id=bkey(id);const b=lsJSON('qm-best',{}),o=b[id];if(!o||r/t>=o.r/o.t)b[id]={r,t};lsSet('qm-best',JSON.stringify(b))};
-const prefs={get:()=>lsJSON('qm-prefs',{}),set(p){lsSet('qm-prefs',JSON.stringify({...this.get(),...p}))}};
+/* ---- stats & sync ---- */
+const bkey = id => (me.get()?.key || '') + ':' + id;
+const bump = k => { const a = lsJSON('qm-att', {}); a[k] = (a[k] || 0) + 1; lsSet('qm-att', JSON.stringify(a)); return a[k]; };
+const setBest = (id, r, t) => { id = bkey(id); const b = lsJSON('qm-best', {}), o = b[id]; if (!o || r / t >= o.r / o.t) b[id] = { r, t }; lsSet('qm-best', JSON.stringify(b)); };
+const prefs = { get: () => lsJSON('qm-prefs', {}), set(p) { lsSet('qm-prefs', JSON.stringify({ ...this.get(), ...p })); } };
+const outbox = { get: () => lsJSON('qm-outbox', []), set(a) { lsSet('qm-outbox', JSON.stringify(a)); } };
 
-/* ---- result sync (only when RESULTS_URL is set) ---- */
-const outbox={get:()=>lsJSON('qm-outbox',[]),set(a){lsSet('qm-outbox',JSON.stringify(a))}};
-function submitResult(right,total){
-  if(!RESULTS_URL||!total||R.sent)return;R.sent=true;
-  const st=me.get();
-  outbox.set([...outbox.get(),{sid:Math.random().toString(36).slice(2)+Date.now().toString(36),quizId:R.id,title:R.title,studentId:st.id,name:st.name,
-    attempt:R.counted,score:right,total,secs:Math.round((Date.now()-R.t0)/1000),
-    answers:R.Q.map((q,k)=>({qi:q.qi,oi:R.picks[k]==null?-1:q.om[R.picks[k]]}))}]);
+function submitResult(right, total) {
+  if (!RESULTS_URL || !total || R.sent) return;
+  R.sent = true;
+  const st = me.get();
+  outbox.set([...outbox.get(), {
+    sid: Math.random().toString(36).slice(2) + Date.now().toString(36),
+    quizId: R.id, title: R.title, studentId: st.id, name: st.name,
+    attempt: R.counted, score: right, total, secs: Math.round((Date.now() - R.t0) / 1000),
+    answers: R.Q.map((q, k) => ({ qi: q.qi, oi: R.picks[k] == null ? -1 : q.om[R.picks[k]] }))
+  }]);
   flushOutbox(true);
 }
-let flushing=false;
-async function flushOutbox(show){
-  if(!RESULTS_URL||flushing)return;flushing=true;
-  for(const p of outbox.get()){
-    try{
-      const j=await(await fetch(RESULTS_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(p)})).json();
-      if(!j.ok&&j.error!=='unknown student')throw 0;
-      outbox.set(outbox.get().filter(x=>x.sid!==p.sid));
-    }catch{if(show)setStatus('sub-st','Result saved locally. It will sync automatically next time.','err');flushing=false;return}
+
+let flushing = false;
+async function flushOutbox(show) {
+  if (!RESULTS_URL || flushing) return;
+  flushing = true;
+  try {
+    while (outbox.get().length > 0) {
+      const p = outbox.get()[0];
+      const r = await fetch(RESULTS_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(p)
+      });
+      if (!r.ok) throw 0;
+      const j = await r.json();
+      if (!j.ok && j.error !== 'unknown student') throw 0;
+      outbox.set(outbox.get().filter(x => x.sid !== p.sid));
+    }
+    if (show) setStatus('sub-st', 'Result submitted successfully.', 'ok');
+  } catch {
+    if (show) setStatus('sub-st', 'Result saved locally. It will sync automatically next time.', 'err');
+  } finally {
+    flushing = false;
   }
-  if(show)setStatus('sub-st','Result submitted successfully.','ok');
-  flushing=false;
 }
 
 /* ---- views ---- */
-let R=null;
-const SZ={s:'.95rem',m:'1.1rem',l:'1.3rem'};
+let R = null;
+const SZ = { s: '.95rem', m: '1.05rem', l: '1.25rem' };
 
-function viewRegister(){
-  $('#app').innerHTML=`<div class="reg panel"><h1>Welcome</h1>
-  <p class="lede">Enter your student ID and name to begin. Every student receives questions in a unique arrangement, so always use your own ID.</p>
+function viewRegister() {
+  $('#app').innerHTML = `<div class="reg panel"><h1>Welcome</h1>
+  <p class="lede">Enter your student ID and name to begin.</p>
   <form id="reg" novalidate>
     <label class="f" for="r-id">Student ID</label><input type="text" id="r-id" maxlength="30" autocomplete="off" placeholder="e.g. vac1">
     <label class="f" for="r-name">Full name</label><input type="text" id="r-name" maxlength="60" autocomplete="name" placeholder="e.g. Hanna Bekele">
     <p class="status err" id="r-err" aria-live="polite"></p>
     <button class="btn primary">Continue</button></form></div>`;
   $('#r-id').focus();
-  $('#reg').onsubmit=e=>{
+  $('#reg').onsubmit = e => {
     e.preventDefault();
-    const id=$('#r-id').value.trim(),name=$('#r-name').value.trim(),err=m=>setStatus('r-err',m,'err');
-    if(!id)return err('Enter your student ID.');
-    if(!isAllowed(id))return err('This student ID is not registered. Please check and try again.');
-    if(name.length<2)return err('Enter your full name.');
-    me.set(id,name);route();
+    const id = $('#r-id').value.trim(), name = $('#r-name').value.trim(), err = m => setStatus('r-err', m, 'err');
+    if (!id) return err('Enter your student ID.');
+    if (!isAllowed(id)) return err('This student ID is not registered. Please check and try again.');
+    if (name.length < 2) return err('Enter your full name.');
+    me.set(id, name);
+    route();
   };
 }
 
-async function viewLibrary(){
-  const st=me.get();if(!st)return viewRegister();
-  $('#app').innerHTML='<p class="muted">Loading quizzes…</p>';
-  const list=await loadIndex(),p=prefs.get(),b=lsJSON('qm-best',{});
-  $('#app').innerHTML=`
+async function viewLibrary() {
+  const st = me.get();
+  if (!st) return viewRegister();
+  $('#app').innerHTML = '<p class="muted">Loading quizzes…</p>';
+  const list = await loadIndex(), p = prefs.get(), b = lsJSON('qm-best', {});
+  $('#app').innerHTML = `
   <div class="row between"><h1 style="margin:0">Hi, ${esc(st.name.split(' ')[0])}</h1>
     <button class="btn ghost sm" id="logout">Switch student (${esc(st.id)})</button></div>
   <p class="lede">${esc(TAGLINE)}</p>
-  ${indexErr?'<p class="notice">No published quizzes found yet. Showing sample quiz.</p>':''}
+  ${indexErr ? '<p class="notice">No published quizzes found yet. Showing sample quiz.</p>' : ''}
   <div class="tools">
     <input class="search" type="search" id="find" placeholder="Search quizzes" aria-label="Search quizzes">
-    <label class="chk"><input type="checkbox" id="inst" ${p.inst?'checked':''}> Show answer after each question</label>
-    <label class="chk">Text size <select id="osz">${Object.entries({s:'Small',m:'Medium',l:'Large'}).map(([k,v])=>`<option value="${k}" ${(p.osz||'m')===k?'selected':''}>${v}</option>`).join('')}</select></label>
+    <label class="chk"><input type="checkbox" id="inst" ${p.inst ? 'checked' : ''}> Show answer after each question</label>
+    <label class="chk">Text size <select id="osz">${Object.entries({ s: 'Small', m: 'Medium', l: 'Large' }).map(([k, v]) => `<option value="${k}" ${(p.osz || 'm') === k ? 'selected' : ''}>${v}</option>`).join('')}</select></label>
   </div>
   <div class="cards" id="cards"></div>`;
-  $('#logout').onclick=()=>{me.clear();R=null;route()};
+  
+  $('#logout').onclick = () => { me.clear(); R = null; route(); };
 
-  const draw=()=>{
-    const f=$('#find').value.trim().toLowerCase(),items=list.filter(x=>x.title.toLowerCase().includes(f));
-    $('#cards').innerHTML=items.length?items.map(x=>{
-      const s=b[bkey(x.id)],pct=s&&Math.round(s.r/s.t*100);
-      return `<article class="qc"><h3>${esc(x.title)}</h3>
-      <div class="meta"><span>${x.count} question${x.count===1?'':'s'}</span>${x.updated?`<span>· ${esc(x.updated)}</span>`:''}${s?`<span class="chip ${pct>=80?'ok':pct>=50?'':'warn'}">Best ${pct}%</span>`:''}</div>
-      <div class="row"><button class="btn primary" data-start="${esc(x.id)}" data-mode="quiz">Start quiz</button><button class="btn" data-start="${esc(x.id)}" data-mode="cards">Flashcards</button></div></article>`}).join('')
-      :`<p class="empty">${list.length?'No matching quizzes.':'No quizzes available yet.'}</p>`;
+  const draw = () => {
+    const f = $('#find').value.trim().toLowerCase(), items = list.filter(x => x.title.toLowerCase().includes(f));
+    $('#cards').innerHTML = items.length ? items.map(x => {
+      const s = b[bkey(x.id)], pct = s && Math.round(s.r / s.t * 100);
+      return `<article class="qc" style="margin-bottom:1.5rem;padding:1rem;border:1px solid #e2e8f0;border-radius:8px"><h3>${esc(x.title)}</h3>
+      <div class="meta" style="margin:0.5rem 0"><span>${x.count} question${x.count === 1 ? '' : 's'}</span>${s ? ` · <span class="chip">Best ${pct}%</span>` : ''}</div>
+      <div class="row"><button class="btn primary" data-start="${esc(x.id)}" data-mode="quiz">Start quiz</button> <button class="btn" data-start="${esc(x.id)}" data-mode="cards">Flashcards</button></div></article>`;
+    }).join('') : `<p class="empty">${list.length ? 'No matching quizzes.' : 'No quizzes available yet.'}</p>`;
   };
-  draw();$('#find').oninput=draw;
-  const save=()=>{prefs.set({inst:$('#inst').checked,osz:$('#osz').value});document.documentElement.style.setProperty('--osz',SZ[$('#osz').value])};
-  $('#inst').onchange=$('#osz').onchange=save;save();
+  draw();
+  $('#find').oninput = draw;
+  
+  const save = () => {
+    prefs.set({ inst: $('#inst').checked, osz: $('#osz').value });
+    document.documentElement.style.setProperty('--osz', SZ[$('#osz').value]);
+  };
+  $('#inst').onchange = $('#osz').onchange = save;
+  save();
 
-  $('#cards').onclick=async e=>{
-    const btn=e.target.closest('[data-start]');if(!btn)return;
-    btn.disabled=true;
-    try{
-      const quiz=await loadQuiz(btn.dataset.start);
-      if(!quiz.questions?.length)throw new Error('This quiz is empty.');
-      const Q=personalize(quiz.questions,st.key,btn.dataset.start);
-      R={t0:Date.now(),id:btn.dataset.start,title:quiz.title,Q,mode:btn.dataset.mode,i:0,picks:Array(Q.length).fill(null),flip:false,instant:$('#inst').checked};
+  $('#cards').onclick = async e => {
+    const btn = e.target.closest('[data-start]');
+    if (!btn) return;
+    btn.disabled = true;
+    try {
+      const quiz = await loadQuiz(btn.dataset.start);
+      if (!quiz.questions?.length) throw new Error('This quiz is empty.');
+      const Q = personalize(quiz.questions, st.key, btn.dataset.start);
+      R = { t0: Date.now(), id: btn.dataset.start, title: quiz.title, Q, mode: btn.dataset.mode, i: 0, picks: Array(Q.length).fill(null), flip: false, instant: $('#inst').checked };
       drawRun();
-    }catch(err){toast(err.message||'Could not open quiz.');btn.disabled=false}
+    } catch (err) {
+      toast(err.message || 'Could not open quiz.');
+      btn.disabled = false;
+    }
   };
 }
 
-const head=()=>`<div class="rtop"><strong>${esc(R.title)}</strong><div class="prog" aria-hidden="true"><i style="width:${Math.round((R.i+1)/R.Q.length*100)}%"></i></div><span class="cnt">${R.i+1} / ${R.Q.length}</span></div>`;
-const staticOpts=(q,mark)=>`<ul class="opts static">${q.o.map((t,k)=>`<li${mark?` class="${mark(k)}"`:''}><b>${L[k]}</b><span>${esc(t)}</span></li>`).join('')}</ul>`;
-const drawRun=()=>{window.scrollTo({top:0});R.mode==='quiz'?drawQuiz():drawCard()};
+const head = () => `<div class="rtop"><strong>${esc(R.title)}</strong><div class="prog" aria-hidden="true"><i style="width:${Math.round((R.i + 1) / R.Q.length * 100)}%"></i></div><span class="cnt">${R.i + 1} / ${R.Q.length}</span></div>`;
+const staticOpts = (q, mark) => `<ul class="opts static">${q.o.map((t, k) => `<li${mark ? ` class="${mark(k)}"` : ''}><b>${L[k]}</b><span>${esc(t)}</span></li>`).join('')}</ul>`;
+const drawRun = () => { window.scrollTo({ top: 0 }); R.mode === 'quiz' ? drawQuiz() : drawCard(); };
 
-function drawQuiz(){
-  const q=R.Q[R.i],p=R.picks[R.i],locked=R.instant&&p!=null&&q.a>-1,last=R.i===R.Q.length-1;
-  $('#app').innerHTML=`${head()}
-  <h2 class="q"><span class="no">${R.i+1}.</span> ${esc(q.q)}</h2>
-  <div class="opts" role="radiogroup" aria-label="Answers">${q.o.map((t,k)=>{
-    const c='opt'+(p===k?' sel':'')+(locked?' lock'+(k===q.a?' ok':p===k?' bad':''):'');
-    return `<div class="${c}" data-k="${k}" role="radio" aria-checked="${p===k}" tabindex="0"><span class="ltr">${L[k]}</span><span>${esc(t)}</span></div>`}).join('')}</div>
-  ${locked?`<p class="exp" aria-live="polite"><strong>${p===q.a?'Correct.':'The answer is '+L[q.a]+'.'}</strong> ${esc(q.e||'')}</p>`:''}
+function drawQuiz() {
+  const q = R.Q[R.i], p = R.picks[R.i], locked = R.instant && p != null && q.a > -1, last = R.i === R.Q.length - 1;
+  $('#app').innerHTML = `${head()}
+  <h2 class="q"><span class="no">${R.i + 1}.</span> ${esc(q.q)}</h2>
+  <div class="opts" role="radiogroup" aria-label="Answers">${q.o.map((t, k) => {
+    const c = 'opt' + (p === k ? ' sel' : '') + (locked ? ' lock' + (k === q.a ? ' ok' : p === k ? ' bad' : '') : '');
+    const isFocusable = p === k || (p == null && k === 0);
+    return `<div class="${c}" data-k="${k}" role="radio" aria-checked="${p === k}" tabindex="${isFocusable ? 0 : -1}"><span class="ltr">${L[k]}</span><span>${esc(t)}</span></div>`;
+  }).join('')}</div>
+  ${locked ? `<p class="exp" aria-live="polite"><strong>${p === q.a ? 'Correct.' : 'The answer is ' + L[q.a] + '.'}</strong> ${esc(q.e || '')}</p>` : ''}
   <div class="nav2"><button class="btn ghost exit" data-act="exit">Exit</button>
-    <button class="btn ghost" data-act="prev" ${R.i?'':'disabled'}>Previous</button>
-    <button class="btn primary" data-act="next">${last?'Finish':'Next'}</button></div>`;
+    <button class="btn ghost" data-act="prev" ${R.i ? '' : 'disabled'}>Previous</button>
+    <button class="btn primary" data-act="next">${last ? 'Finish' : 'Next'}</button></div>`;
 }
-function pick(k){
-  const q=R.Q[R.i];
-  if(k<0||k>=q.o.length||(R.instant&&R.picks[R.i]!=null&&q.a>-1))return;
-  R.picks[R.i]=k;drawQuiz();$('.opt.sel')?.focus();
+
+function pick(k) {
+  const q = R.Q[R.i];
+  if (k < 0 || k >= q.o.length || (R.instant && R.picks[R.i] != null && q.a > -1)) return;
+  R.picks[R.i] = k;
+  drawQuiz();
+  $('.opt.sel')?.focus();
 }
-function drawCard(){
-  const q=R.Q[R.i],last=R.i===R.Q.length-1;
-  $('#app').innerHTML=`${head()}
-  <div class="wrap"><div class="card ${R.flip?'flipped':''}" id="card" tabindex="0" role="button" aria-pressed="${R.flip}" aria-label="Flip card">
-    <div class="face front"><h2 class="q"><span class="no">${R.i+1}.</span> ${esc(q.q)}</h2>${staticOpts(q)}<p class="hint">Tap card to see the answer</p></div>
-    <div class="face back"><p class="qno">Question ${R.i+1}</p>
-      ${q.a>-1?`<div class="ans"><b>${L[q.a]}</b><span>${esc(q.o[q.a])}</span></div>`:'<p class="ans"><span>No answer provided for this question.</span></p>'}
-      ${q.e?`<p class="exp">${esc(q.e)}</p>`:''}<p class="hint">Tap card to flip back</p></div></div></div>
+
+function drawCard() {
+  const q = R.Q[R.i], last = R.i === R.Q.length - 1;
+  $('#app').innerHTML = `${head()}
+  <div class="wrap"><div class="card ${R.flip ? 'flipped' : ''}" id="card" tabindex="0" role="button" aria-pressed="${R.flip}" aria-label="Flip card">
+    <div class="face front"><h2 class="q"><span class="no">${R.i + 1}.</span> ${esc(q.q)}</h2>${staticOpts(q)}<p class="hint">Tap card to see the answer</p></div>
+    <div class="face back"><p class="qno">Question ${R.i + 1}</p>
+      ${q.a > -1 ? `<div class="ans"><b>${L[q.a]}</b><span>${esc(q.o[q.a])}</span></div>` : '<p class="ans"><span>No answer provided for this question.</span></p>'}
+      ${q.e ? `<p class="exp">${esc(q.e)}</p>` : ''}<p class="hint">Tap card to flip back</p></div></div></div>
   <div class="nav2"><button class="btn ghost exit" data-act="exit">Exit</button>
-    <button class="btn ghost" data-act="prev" ${R.i?'':'disabled'}>Previous</button>
+    <button class="btn ghost" data-act="prev" ${R.i ? '' : 'disabled'}>Previous</button>
     <button class="btn" data-act="flip">Flip card</button>
-    <button class="btn primary" data-act="next">${last?'Restart':'Next'}</button></div>`;
+    <button class="btn primary" data-act="next">${last ? 'Restart' : 'Next'}</button></div>`;
   syncCard();
 }
-function syncCard(){const c=$('#card');if(c){c.querySelector('.front').inert=R.flip;c.querySelector('.back').inert=!R.flip}}
-function doFlip(){R.flip=!R.flip;const c=$('#card');c.classList.toggle('flipped',R.flip);c.setAttribute('aria-pressed',R.flip);syncCard()}
 
-function drawResult(){
-  window.scrollTo({top:0});
-  const {Q,picks}=R,n=Q.filter(q=>q.a>-1).length,right=Q.filter((q,k)=>picks[k]===q.a).length,skipped=picks.filter(p=>p==null).length,pct=n?Math.round(right/n*100):0,st=me.get();
-  if(n)setBest(R.id,right,n);
-  const attempt=R.counted||(R.counted=bump(bkey(R.id)));
-  R.slip=`Quiz: ${R.title}\nStudent: ${st.name} (${st.id})\nScore: ${right} / ${n} (${pct}%)\nAttempt: ${attempt}\nDate: ${new Date().toLocaleString()}`;
-  queueMicrotask(()=>submitResult(right,n));
-  $('#app').innerHTML=`
-  <div class="panel score"><div class="big">${right}<small> / ${n}</small></div>
-    <p>${n?`${pct}% correct${skipped?`, ${skipped} unanswered`:''}. ${pct>=80?'Strong result!':pct>=50?'Good progress. Review the misses below.':'Worth another pass. Review the answers below.'}`:'This quiz has no answer key.'}</p></div>
-  <div class="actions"><button class="btn primary" data-act="retry">Try again</button><button class="btn" data-act="flash">Study as flashcards</button><button class="btn ghost" data-act="exit">All quizzes</button></div>
-  <div class="panel"><h2>Result slip</h2><p class="muted" style="margin:0">Send this to your teacher or take a screenshot.</p><pre>${esc(R.slip)}</pre>
-    <div class="row" style="margin-top:.8rem"><button class="btn sm" data-act="copy">Copy</button><button class="btn sm" data-act="save">Download</button></div>
-    <p class="status info" id="sub-st" aria-live="polite"></p></div>
-  <h2 style="margin:2rem 0 1rem">Answer key</h2>
-  ${Q.map((q,k)=>{const p=picks[k],nk=q.a<0,ok=p===q.a;
-    return `<article class="rev ${p==null||nk?'skip':ok?'ok':'bad'}"><div class="rh"><span>Question ${k+1}</span><span>${nk?'No answer':p==null?'Skipped':ok?'Correct':'Incorrect'}</span></div>
-    <p class="q sm">${esc(q.q)}</p>
-    <ul class="opts static">${q.o.map((t,j)=>`<li class="${j===q.a?'ok':j===p&&!nk?'bad':''}"><b>${L[j]}</b><span>${esc(t)}</span>${j===q.a?'<em>Correct answer</em>':j===p?'<em>Your answer</em>':''}</li>`).join('')}</ul>
-    ${q.e?`<p class="exp">${esc(q.e)}</p>`:''}</article>`}).join('')}`;
+function syncCard() {
+  const c = $('#card');
+  if (c) {
+    c.querySelector('.front').inert = R.flip;
+    c.querySelector('.back').inert = !R.flip;
+  }
 }
 
-const ACTIONS={
-  exit(){R=null;route()},
-  prev(){R.i--;R.flip=false;drawRun()},
-  next(){
-    if(R.mode==='quiz'&&R.i===R.Q.length-1)return drawResult();
-    if(R.mode==='cards'&&R.i===R.Q.length-1)toast('Completed deck. Starting over.');
-    R.i=(R.i+1)%R.Q.length;R.flip=false;drawRun();
+function doFlip() {
+  R.flip = !R.flip;
+  const c = $('#card');
+  if (c) {
+    c.classList.toggle('flipped', R.flip);
+    c.setAttribute('aria-pressed', R.flip);
+    syncCard();
+  }
+}
+
+function drawResult() {
+  window.scrollTo({ top: 0 });
+  R.mode = 'result'; // Prevent quiz keydown shortcuts
+  const { Q, picks } = R, n = Q.filter(q => q.a > -1).length, right = Q.filter((q, k) => picks[k] === q.a).length, skipped = picks.filter(p => p == null).length, pct = n ? Math.round(right / n * 100) : 0, st = me.get();
+  if (n) setBest(R.id, right, n);
+  const attempt = R.counted || (R.counted = bump(bkey(R.id)));
+  R.slip = `Quiz: ${R.title}\nStudent: ${st.name} (${st.id})\nScore: ${right} / ${n} (${pct}%)\nAttempt: ${attempt}\nDate: ${new Date().toLocaleString()}`;
+  queueMicrotask(() => submitResult(right, n));
+  
+  $('#app').innerHTML = `
+  <div class="panel score" style="text-align:center;margin:1.5rem 0;"><div class="big" style="font-size:2.5rem;font-weight:700;">${right}<small style="font-size:1.2rem;color:var(--text-muted)"> / ${n}</small></div>
+    <p>${n ? `${pct}% correct${skipped ? `, ${skipped} unanswered` : ''}. ${pct >= 80 ? 'Strong result!' : pct >= 50 ? 'Good progress. Review misses below.' : 'Review answers below.'}` : 'This quiz has no answer key.'}</p></div>
+  <div class="actions" style="display:flex;gap:0.5rem;justify-content:center;margin-bottom:2rem;">
+    <button class="btn primary" data-act="retry">Try again</button>
+    <button class="btn" data-act="flash">Study as flashcards</button>
+    <button class="btn ghost" data-act="exit">All quizzes</button>
+  </div>
+  <div class="panel" style="padding:1rem;background:#f8fafc;border-radius:8px"><h2>Result slip</h2><pre style="background:#fff;padding:1rem;border:1px solid #e2e8f0;border-radius:4px">${esc(R.slip)}</pre>
+    <div class="row" style="margin-top:.8rem;display:flex;gap:0.5rem"><button class="btn sm" data-act="copy">Copy</button></div>
+    <p class="status info" id="sub-st" aria-live="polite"></p></div>
+  <h2 style="margin:2rem 0 1rem">Answer key</h2>
+  ${Q.map((q, k) => {
+    const p = picks[k], nk = q.a < 0, ok = p === q.a;
+    return `<article class="rev" style="margin-bottom:1.5rem;padding:1rem;border-left:4px solid ${nk || p == null ? '#94a3b8' : ok ? 'var(--primary)' : 'var(--danger)'};background:#fdfdfd;border-radius:4px">
+    <div class="rh" style="display:flex;justify-content:space-between;color:var(--text-muted);font-size:0.85rem"><span>Question ${k + 1}</span><span>${nk ? 'No answer' : p == null ? 'Skipped' : ok ? 'Correct' : 'Incorrect'}</span></div>
+    <p class="q sm">${esc(q.q)}</p>
+    <ul class="opts static">${q.o.map((t, j) => `<li class="${j === q.a ? 'ok' : j === p && !nk ? 'bad' : ''}"><b>${L[j]}</b><span>${esc(t)}</span></li>`).join('')}</ul>
+    ${q.e ? `<p class="exp">${esc(q.e)}</p>` : ''}</article>`;
+  }).join('')}`;
+}
+
+const ACTIONS = {
+  exit() { R = null; route(); },
+  prev() { R.i--; R.flip = false; drawRun(); },
+  next() {
+    if (R.mode === 'quiz' && R.i === R.Q.length - 1) return drawResult();
+    if (R.mode === 'cards' && R.i === R.Q.length - 1) toast('Completed deck. Starting over.');
+    R.i = (R.i + 1) % R.Q.length;
+    R.flip = false;
+    drawRun();
   },
-  flip:()=>doFlip(),
-  copy(){navigator.clipboard?.writeText(R.slip).then(()=>toast('Copied'),()=>toast('Select the text above to copy.'))},
-  save:()=>download(slug(R.title+' '+me.get().id)+'.txt',R.slip+'\n','text/plain'),
-  retry(){R={...R,mode:'quiz',i:0,picks:Array(R.Q.length).fill(null),flip:false,counted:null,sent:false,t0:Date.now()};drawRun()},
-  flash(){R={...R,mode:'cards',i:0,flip:false};drawRun()}
+  flip: () => doFlip(),
+  copy() { navigator.clipboard?.writeText(R.slip).then(() => toast('Copied'), () => toast('Select text to copy.')); },
+  retry() { R = { ...R, mode: 'quiz', i: 0, picks: Array(R.Q.length).fill(null), flip: false, counted: null, sent: false, t0: Date.now() }; drawRun(); },
+  flash() { R = { ...R, mode: 'cards', i: 0, flip: false }; drawRun(); }
 };
-const route=()=>R?drawRun():viewLibrary();
+
+const route = () => R ? drawRun() : viewLibrary();
 
 /* ---- events ---- */
-$('#app').addEventListener('click',e=>{
-  if(!R)return;
-  const o=e.target.closest('.opts .opt[data-k]');
-  if(o&&R.mode==='quiz')return pick(+o.dataset.k);
-  if(e.target.closest('#card'))return doFlip();
-  const a=e.target.closest('[data-act]');if(a)ACTIONS[a.dataset.act]?.();
+$('#app').addEventListener('click', e => {
+  if (!R) return;
+  const o = e.target.closest('.opts .opt[data-k]');
+  if (o && R.mode === 'quiz') return pick(+o.dataset.k);
+  if (e.target.closest('#card')) return doFlip();
+  const a = e.target.closest('[data-act]');
+  if (a) ACTIONS[a.dataset.act]?.();
 });
-$('#app').addEventListener('keydown',e=>{
-  if(!R||(e.key!==' '&&e.key!=='Enter'))return;
-  if(e.target.id==='card'){e.preventDefault();doFlip()}
-  else if(R.mode==='quiz'&&e.target.matches('.opts .opt[data-k]')){e.preventDefault();pick(+e.target.dataset.k)}
+
+$('#app').addEventListener('keydown', e => {
+  if (!R || (e.key !== ' ' && e.key !== 'Enter')) return;
+  if (e.target.id === 'card') { e.preventDefault(); doFlip(); }
+  else if (R.mode === 'quiz' && e.target.matches('.opts .opt[data-k]')) { e.preventDefault(); pick(+e.target.dataset.k); }
 });
-addEventListener('keydown',e=>{
-  if(!R||e.target.matches('textarea,input,select')||e.ctrlKey||e.metaKey||e.altKey)return;
-  if(e.key==='ArrowRight')return ACTIONS.next();
-  if(e.key==='ArrowLeft'&&R.i>0)return ACTIONS.prev();
-  if(R.mode==='quiz'){
-    const d=/^[1-8]$/.test(e.key)?+e.key-1:e.key.length===1?'abcdefgh'.indexOf(e.key.toLowerCase()):-1;
-    if(d>-1)pick(d);
-  }else if(e.key===' '&&!e.target.closest('button,#card')){e.preventDefault();doFlip()}
+
+addEventListener('keydown', e => {
+  if (!R || R.mode === 'result' || e.target.matches('textarea,input,select') || e.ctrlKey || e.metaKey || e.altKey) return;
+  if (e.key === 'ArrowRight') return ACTIONS.next();
+  if (e.key === 'ArrowLeft' && R.i > 0) return ACTIONS.prev();
+  if (R.mode === 'quiz') {
+    const d = /^[1-8]$/.test(e.key) ? +e.key - 1 : e.key.length === 1 ? 'abcdefgh'.indexOf(e.key.toLowerCase()) : -1;
+    if (d > -1) pick(d);
+  } else if (e.key === ' ' && !e.target.closest('button,#card')) {
+    e.preventDefault();
+    doFlip();
+  }
 });
 
 route();
-if(me.get())flushOutbox(false);
+if (me.get()) flushOutbox(false);
 </script>
 </body>
 </html>
