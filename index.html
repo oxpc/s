@@ -1,873 +1,41 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Quiz Hub · Smart practice</title>
-<meta name="description" content="Practice quizzes and flashcards with questions arranged just for you. Teacher studio included.">
-<meta name="theme-color" content="#0d9488">
-<link rel="manifest" href="manifest.webmanifest">
-<link rel="apple-touch-icon" href="icon.svg">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop stop-color='%230d9488'/%3E%3Cstop offset='1' stop-color='%234f46e5'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='16' fill='url(%23g)'/%3E%3Ctext x='32' y='44' font-family='system-ui' font-size='34' font-weight='800' fill='white' text-anchor='middle'%3EQ%3C/text%3E%3C/svg%3E">
-<script>
-(function(){try{var p=localStorage.getItem('qm-theme')||'auto';var d=p==='dark'||(p==='auto'&&window.matchMedia&&matchMedia('(prefers-color-scheme:dark)').matches);document.documentElement.dataset.theme=d?'dark':'light';}catch(e){}})();
-</script>
-<style>
-/* ============================================================
-   Quiz Hub — single-file modern UI
-   ============================================================ */
-:root{
-  color-scheme:light;
-  --bg:#f1f6f5;
-  --bg-1:rgba(13,148,136,.11);
-  --bg-2:rgba(79,70,229,.09);
-  --panel:#ffffff;
-  --panel-2:#f7fbfa;
-  --ink:#0d1f1c;
-  --muted:#5a706c;
-  --line:#dbe7e4;
-  --line-strong:#c4d6d2;
-  --accent:#0d9488;
-  --accent-2:#4f46e5;
-  --accent-soft:#e2f5f1;
-  --on-accent:#ffffff;
-  --ok:#15803d;
-  --ok-soft:#e9f8ef;
-  --bad:#dc2626;
-  --bad-soft:#fdeeee;
-  --warn:#a16207;
-  --warn-soft:#fdf4d9;
-  --ring:rgba(13,148,136,.22);
-  --shadow-sm:0 1px 2px rgba(10,30,26,.05);
-  --shadow:0 1px 2px rgba(10,30,26,.05),0 18px 40px -24px rgba(10,30,26,.35);
-  --shadow-lg:0 22px 60px -26px rgba(10,30,26,.45);
-  --grad:linear-gradient(135deg,var(--accent),var(--accent-2));
-  --topbar:rgba(241,246,245,.82);
-  --radius:20px;
-  --radius-sm:13px;
-}
-:root[data-theme="dark"]{
-  color-scheme:dark;
-  --bg:#071210;
-  --bg-1:rgba(45,212,191,.10);
-  --bg-2:rgba(129,140,248,.11);
-  --panel:#0e1e1c;
-  --panel-2:#112624;
-  --ink:#e8f3f0;
-  --muted:#94aaa6;
-  --line:#1e3733;
-  --line-strong:#2b4a45;
-  --accent:#2dd4bf;
-  --accent-2:#818cf8;
-  --accent-soft:#12332f;
-  --on-accent:#03201c;
-  --ok:#4ade80;
-  --ok-soft:#102a1c;
-  --bad:#f87171;
-  --bad-soft:#2c1515;
-  --warn:#fbbf24;
-  --warn-soft:#2a2110;
-  --ring:rgba(45,212,191,.2);
-  --shadow-sm:0 1px 2px rgba(0,0,0,.3);
-  --shadow:0 1px 2px rgba(0,0,0,.3),0 18px 40px -24px rgba(0,0,0,.8);
-  --shadow-lg:0 22px 60px -26px rgba(0,0,0,.9);
-  --topbar:rgba(7,18,16,.8);
-}
-*{box-sizing:border-box}
-[hidden]{display:none!important}
-html{scroll-behavior:smooth}
-body{
-  margin:0;min-height:100vh;background:var(--bg);color:var(--ink);
-  font:400 1rem/1.55 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
-  background-image:radial-gradient(900px 520px at 8% -12%,var(--bg-1),transparent 62%),radial-gradient(820px 520px at 102% -4%,var(--bg-2),transparent 58%);
-  background-attachment:fixed;
-  -webkit-text-size-adjust:100%;
-}
-::selection{background:color-mix(in srgb,var(--accent) 28%,transparent)}
-a{color:var(--accent);text-decoration:none}
-a:hover{text-decoration:underline}
-button,input,select,textarea{font:inherit;color:inherit}
-img,svg{display:block}
-:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-input:focus-visible,select:focus-visible,textarea:focus-visible{outline:none}
-.skip{position:fixed;left:-999px;top:.6rem;z-index:200;background:var(--panel);color:var(--ink);padding:.55rem .85rem;border-radius:9px;border:1px solid var(--line);box-shadow:var(--shadow)}
-.skip:focus{left:.6rem}
-.sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
-
-/* top bar */
-.topbar{
-  position:sticky;top:0;z-index:40;display:flex;align-items:center;gap:clamp(.55rem,2vw,1.2rem);
-  padding:.55rem clamp(1rem,4vw,2rem);
-  background:var(--topbar);
-  -webkit-backdrop-filter:saturate(1.3) blur(14px);backdrop-filter:saturate(1.3) blur(14px);
-  border-bottom:1px solid color-mix(in srgb,var(--line) 70%,transparent);
-}
-.brand{display:flex;align-items:center;gap:.65rem;color:var(--ink);font-weight:700;letter-spacing:-.02em;text-decoration:none;flex:none}
-.brand:hover{text-decoration:none}
-.logo{display:grid;place-items:center;width:38px;height:38px;border-radius:12px;background:var(--grad);color:#fff;font-weight:800;font-size:1.15rem;flex:none;box-shadow:0 10px 22px -12px var(--accent)}
-.brand strong{display:block;font-size:1.01rem;line-height:1.15}
-.brand small{display:block;font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:700}
-.nav{display:flex;gap:.15rem;padding:.24rem;border:1px solid var(--line);border-radius:12px;background:var(--panel);box-shadow:var(--shadow-sm);margin-left:auto}
-.nav a{padding:.46rem .9rem;border-radius:9px;font-weight:600;font-size:.88rem;color:var(--muted);text-decoration:none;transition:background .16s,color .16s}
-.nav a:hover{color:var(--ink);background:var(--accent-soft);text-decoration:none}
-.nav a.active{color:var(--on-accent);background:var(--grad);box-shadow:0 8px 18px -12px var(--accent)}
-.top-actions{display:flex;gap:.4rem;align-items:center}
-.icon-btn{display:grid;place-items:center;width:38px;height:38px;border:1px solid var(--line);border-radius:11px;background:var(--panel);cursor:pointer;font-size:1.02rem;color:var(--muted);transition:color .16s,border-color .16s,background .16s;flex:none}
-.icon-btn:hover{color:var(--accent);border-color:var(--accent);background:var(--accent-soft)}
-
-/* layout */
-.app{max-width:1040px;margin:0 auto;padding:clamp(1.35rem,4vw,2.6rem) clamp(1rem,4vw,1.6rem) 3.5rem}
-.view{animation:rise .38s cubic-bezier(.2,.7,.2,1) both}
-h1{font-size:clamp(1.8rem,5.6vw,2.55rem);line-height:1.08;letter-spacing:-.035em;margin:0 0 .45rem;font-weight:750}
-h2{font-size:1.2rem;margin:0 0 .6rem;letter-spacing:-.015em}
-h3{margin:0}
-.lede{color:var(--muted);margin:0 0 1.4rem;max-width:62ch;line-height:1.6}
-.eyebrow{margin:0 0 .35rem;font-size:.72rem;font-weight:750;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
-.muted{color:var(--muted)}
-.foot{margin:2rem auto 0;max-width:1040px;padding:0 1.2rem;color:var(--muted);font-size:.8rem;text-align:center}
-.foot .sep{margin:0 .45rem;opacity:.5}
-.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:clamp(1rem,3vw,1.4rem);box-shadow:var(--shadow);margin-bottom:1rem}
-.row{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
-.between{justify-content:space-between}
-.right{justify-content:flex-end}
-.center{text-align:center}
-.end{justify-content:flex-end}
-
-/* buttons */
-.btn{
-  display:inline-flex;align-items:center;justify-content:center;gap:.42rem;
-  border:1px solid var(--line);background:var(--panel);color:var(--ink);
-  font-weight:600;font-size:.94rem;padding:.6rem 1.02rem;border-radius:11px;
-  cursor:pointer;white-space:nowrap;text-decoration:none;
-  transition:background .16s,transform .12s,border-color .16s,box-shadow .16s,filter .16s;
-}
-.btn:hover{background:var(--accent-soft);border-color:color-mix(in srgb,var(--accent) 42%,var(--line));text-decoration:none}
-.btn:active{transform:scale(.98)}
-.btn.primary{background:var(--grad);border-color:transparent;color:var(--on-accent);box-shadow:0 10px 24px -15px var(--accent)}
-.btn.primary:hover{filter:brightness(1.06) saturate(1.05);background:var(--grad);transform:translateY(-1px)}
-.btn.ghost{background:transparent;border-color:transparent;color:var(--muted)}
-.btn.ghost:hover{background:var(--accent-soft);color:var(--ink);border-color:transparent}
-.btn.danger{color:var(--bad)}
-.btn.danger:hover{border-color:color-mix(in srgb,var(--bad) 45%,var(--line));background:var(--bad-soft)}
-.btn.sm{padding:.4rem .74rem;font-size:.85rem;border-radius:9px}
-.btn:disabled{opacity:.45;cursor:not-allowed;transform:none;filter:none}
-.btn:disabled:hover{background:var(--panel);border-color:var(--line)}
-.btn.primary:disabled:hover{background:var(--grad);border-color:transparent}
-
-/* form controls */
-label.f{display:block;font-weight:600;font-size:.85rem;margin:.85rem 0 .3rem;color:var(--ink)}
-label.f small{font-weight:400;color:var(--muted)}
-input[type=text],input[type=password],input[type=search],textarea,select{
-  width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:11px;
-  padding:.6rem .8rem;color:var(--ink);transition:border-color .15s,box-shadow .15s,background .15s;
-}
-input[type=text]:focus,input[type=password]:focus,input[type=search]:focus,textarea:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 4px var(--ring)}
-select{width:auto;cursor:pointer}
-textarea{min-height:190px;resize:vertical;font:.88rem/1.55 ui-monospace,SFMono-Regular,Consolas,"Liberation Mono",monospace}
-textarea.drag{border-color:var(--accent);background:var(--accent-soft)}
-.chk{display:flex;gap:.5rem;align-items:center;cursor:pointer;font-size:.9rem;color:var(--muted);user-select:none}
-.chk input{accent-color:var(--accent);width:1.05rem;height:1.05rem;flex:none}
-.chip{display:inline-flex;align-items:center;padding:.12rem .55rem;border-radius:99px;background:var(--accent-soft);color:var(--ink);font-weight:650;font-size:.75rem;white-space:nowrap}
-.chip.ok{background:color-mix(in srgb,var(--ok) 17%,transparent);color:var(--ok)}
-.chip.warn{background:color-mix(in srgb,var(--warn) 17%,transparent);color:var(--warn)}
-.chip.bad{background:color-mix(in srgb,var(--bad) 17%,transparent);color:var(--bad)}
-.pill{display:inline-flex;align-items:center;gap:.35rem;padding:.16rem .6rem;border-radius:99px;background:var(--accent-soft);color:var(--accent);font-size:.74rem;font-weight:700;letter-spacing:.03em;text-transform:uppercase}
-.status{font-size:.9rem;margin:.55rem 0 0;min-height:1.2em}
-.status.ok{color:var(--ok)}
-.status.err{color:var(--bad)}
-.status.info{color:var(--muted)}
-.spinner{width:18px;height:18px;border:2px solid var(--line);border-top-color:var(--accent);border-radius:50%;display:inline-block;animation:spin .7s linear infinite;vertical-align:-4px}
-.loading{display:flex;align-items:center;justify-content:center;gap:.6rem;padding:4rem 1rem;color:var(--muted)}
-
-/* auth */
-.auth{display:grid;grid-template-columns:1.05fr .95fr;gap:1.1rem;align-items:stretch;max-width:920px;margin:clamp(.4rem,4vh,2rem) auto 0}
-.auth.single{grid-template-columns:1fr;max-width:470px}
-.auth-side{position:relative;overflow:hidden;border-radius:24px;background:var(--grad);color:#fff;padding:clamp(1.4rem,4vw,2.2rem);display:flex;flex-direction:column;justify-content:center;box-shadow:var(--shadow-lg);min-height:430px}
-.auth-side::after{content:"";position:absolute;width:330px;height:330px;border-radius:50%;background:rgba(255,255,255,.14);right:-105px;top:-95px}
-.auth-side::before{content:"";position:absolute;width:230px;height:230px;border-radius:50%;background:rgba(255,255,255,.08);left:-90px;bottom:-100px}
-.auth-side>*{position:relative;z-index:1}
-.auth-side .logo{background:rgba(255,255,255,.17);box-shadow:none;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,.22)}
-.auth-side h1{color:#fff;font-size:clamp(1.7rem,4vw,2.35rem);max-width:15ch;margin:.95rem 0 .55rem}
-.auth-side p{color:rgba(255,255,255,.88);margin:0;max-width:36ch;font-size:.96rem}
-.ticks{list-style:none;margin:1.35rem 0 0;padding:0;display:grid;gap:.5rem;font-size:.9rem;color:rgba(255,255,255,.94)}
-.ticks li{display:flex;gap:.55rem;align-items:flex-start}
-.ticks li::before{content:"✓";display:grid;place-items:center;width:1.2rem;height:1.2rem;border-radius:50%;background:rgba(255,255,255,.18);font-size:.7rem;flex:none;margin-top:.12rem}
-.auth-card{margin:0;display:flex;flex-direction:column;justify-content:center;padding:clamp(1.3rem,4vw,2rem)}
-.auth-card h2{font-size:1.5rem;margin:0 0 .3rem}
-.auth-card .lede{font-size:.9rem;margin-bottom:.4rem}
-.auth-card .btn{width:100%;margin-top:1rem}
-.hintline{margin:.65rem 0 0;font-size:.78rem;color:var(--muted);line-height:1.45}
-
-/* hero + stats */
-.hero{display:flex;flex-wrap:wrap;gap:1rem;align-items:flex-end;justify-content:space-between;margin-bottom:1.25rem}
-.hero h1{margin:0 0 .4rem}
-.hero .lede{margin:0}
-.hero-side{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap}
-.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.8rem;margin-bottom:1.05rem}
-.stat{display:flex;gap:.75rem;align-items:center;padding:.9rem 1rem;background:var(--panel);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow-sm);min-width:0}
-.stat-ico{width:38px;height:38px;border-radius:11px;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;flex:none}
-.stat-ico svg{width:19px;height:19px}
-.stat strong{display:block;font-size:1.28rem;line-height:1.05;letter-spacing:-.025em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.stat span{display:block;font-size:.74rem;color:var(--muted);margin-top:.15rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-
-/* smart review */
-.smart{display:flex;flex-wrap:wrap;gap:.9rem 1.2rem;align-items:center;justify-content:space-between;margin-bottom:1rem;border-color:color-mix(in srgb,var(--accent) 32%,var(--line));background:linear-gradient(120deg,var(--accent-soft),var(--panel) 58%)}
-.smart-main{display:flex;gap:.8rem;align-items:center;min-width:0;flex:1 1 260px}
-.smart-ico{display:grid;place-items:center;width:42px;height:42px;border-radius:13px;background:var(--grad);color:#fff;font-size:1.2rem;line-height:1;flex:none;box-shadow:0 10px 22px -14px var(--accent)}
-.smart-copy{min-width:0}
-.smart-copy strong{display:block;font-size:1.02rem;letter-spacing:-.015em}
-.smart-copy p{margin:.12rem 0 0;color:var(--muted);font-size:.83rem;line-height:1.45}
-.smart-actions{display:flex;flex-wrap:wrap;gap:.42rem;align-items:center}
-.smart-pill{display:inline-flex;align-items:center;gap:.5rem;max-width:100%;padding:.42rem .72rem;border:1px solid var(--line);border-radius:10px;background:var(--panel);color:var(--ink);font-size:.84rem;font-weight:650;cursor:pointer;transition:border-color .16s,background .16s,transform .12s}
-.smart-pill span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.smart-pill b{display:inline-grid;place-items:center;min-width:1.4rem;height:1.4rem;padding:0 .3rem;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-size:.74rem;flex:none}
-.smart-pill:hover{border-color:color-mix(in srgb,var(--accent) 45%,var(--line));background:var(--accent-soft);transform:translateY(-1px)}
-.smart-pill:active{transform:scale(.98)}
-
-/* toolbar + cards */
-.toolbar{display:flex;flex-wrap:wrap;gap:.7rem 1rem;align-items:center;margin-bottom:1.15rem;padding:.7rem .85rem;border-radius:16px}
-.searchwrap{position:relative;flex:1 1 220px;min-width:170px;display:flex;align-items:center}
-.searchwrap svg{position:absolute;left:.72rem;width:17px;height:17px;color:var(--muted);pointer-events:none}
-.searchwrap input{padding-left:2.25rem;border-radius:11px;background:var(--bg)}
-.field{display:flex;align-items:center;gap:.42rem;font-size:.8rem;color:var(--muted);font-weight:650;white-space:nowrap}
-.field select{padding:.4rem .55rem;border-radius:9px;font-size:.85rem}
-.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(275px,1fr));gap:1rem}
-.qc{position:relative;display:flex;flex-direction:column;gap:.5rem;padding:1.1rem;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;transition:transform .18s,border-color .18s,box-shadow .18s;animation:rise .45s both;animation-delay:calc(var(--i,0)*45ms)}
-.qc::after{content:"";position:absolute;inset:0;border-radius:inherit;background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 8%,transparent),transparent 46%);opacity:0;transition:opacity .2s;pointer-events:none}
-.qc:hover{transform:translateY(-3px);border-color:color-mix(in srgb,var(--accent) 55%,var(--line));box-shadow:var(--shadow-lg)}
-.qc:hover::after{opacity:1}
-.qc>*{position:relative;z-index:1}
-.qc-top{display:flex;align-items:flex-start;justify-content:space-between;gap:.6rem}
-.qtile{width:42px;height:42px;border-radius:12px;background:var(--grad);color:#fff;display:grid;place-items:center;font-weight:800;font-size:1.08rem;flex:none;box-shadow:0 10px 20px -12px var(--accent)}
-.qc-badges{display:flex;flex-wrap:wrap;gap:.3rem;justify-content:flex-end}
-.qc h3{font-size:1.1rem;line-height:1.35;letter-spacing:-.01em;overflow-wrap:anywhere;margin:.15rem 0 0}
-.qc .meta{display:flex;flex-wrap:wrap;gap:.2rem .45rem;color:var(--muted);font-size:.78rem}
-.qc-bar{height:5px;background:var(--line);border-radius:99px;overflow:hidden;margin-top:.15rem}
-.qc-bar i{display:block;height:100%;background:var(--grad);border-radius:99px;transition:width .55s}
-.qc-actions{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:auto;padding-top:.6rem}
-.qc-actions .btn{flex:1;min-width:105px}
-.empty{text-align:center;padding:2.5rem 1.2rem;color:var(--muted)}
-.empty h3{color:var(--ink);margin:.3rem 0 .25rem}
-.empty p{margin:0;font-size:.9rem}
-
-/* resume banner */
-.resume{display:flex;flex-wrap:wrap;align-items:center;gap:.85rem;border-left:4px solid var(--accent);background:linear-gradient(110deg,var(--accent-soft),var(--panel) 55%)}
-.resume-ico{width:44px;height:44px;border-radius:12px;background:var(--grad);color:#fff;display:grid;place-items:center;font-size:1rem;flex:none;box-shadow:0 8px 18px -12px var(--accent)}
-.resume-body{flex:1 1 220px;min-width:0}
-.resume-body strong{display:block;overflow-wrap:anywhere;font-size:.98rem}
-.resume-body span{font-size:.78rem;color:var(--muted)}
-.minibar{height:4px;background:var(--line);border-radius:99px;margin-top:.45rem;overflow:hidden;max-width:420px}
-.minibar i{display:block;height:100%;background:var(--grad);border-radius:99px}
-
-/* run */
-.runhead{display:flex;align-items:center;gap:.7rem;margin-bottom:1rem}
-.runhead-main{min-width:0;flex:0 1 auto;max-width:46%}
-.runhead strong{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:.96rem}
-.runhead span{display:block;font-size:.72rem;color:var(--muted)}
-.prog{flex:1;height:7px;background:var(--line);border-radius:99px;overflow:hidden;min-width:64px}
-.prog i{display:block;height:100%;background:var(--grad);border-radius:99px;transition:width .3s}
-.cnt{font-size:.78rem;font-weight:700;color:var(--muted);white-space:nowrap}
-.qpanel{padding:clamp(1.1rem,3.5vw,1.8rem)}
-.qmeta{display:flex;justify-content:space-between;gap:.55rem;align-items:center;margin-bottom:.7rem;font-size:.78rem;color:var(--muted)}
-.q{font-size:clamp(1.16rem,3.6vw,1.48rem);line-height:1.4;font-weight:650;margin:0 0 1.2rem;white-space:pre-wrap;overflow-wrap:anywhere;letter-spacing:-.012em}
-.q.sm{font-size:1rem;margin-bottom:.7rem;line-height:1.45}
-.opts{display:grid;gap:.55rem;font-size:var(--osz,1.04rem)}
-.opt{display:flex;align-items:center;gap:.8rem;padding:.72rem .85rem;border:1.5px solid var(--line);border-radius:13px;background:var(--panel);cursor:pointer;user-select:none;transition:border-color .15s,background .15s,transform .12s,box-shadow .15s}
-.opt:hover{border-color:color-mix(in srgb,var(--accent) 55%,var(--line));background:var(--accent-soft);transform:translateX(2px)}
-.opt>span:last-child{flex:1;overflow-wrap:anywhere;line-height:1.45;padding-top:.05em}
-.opt.sel{border-color:var(--accent);background:var(--accent-soft);box-shadow:0 0 0 3px var(--ring)}
-.opt.lock{cursor:default}
-.opt.lock:hover{transform:none}
-.opt.lock:not(.ok):not(.bad):hover{background:var(--panel);border-color:var(--line)}
-.opt.ok{border-color:var(--ok);background:var(--ok-soft)}
-.opt.ok:hover{background:var(--ok-soft);border-color:var(--ok);transform:none}
-.opt.bad{border-color:var(--bad);background:var(--bad-soft)}
-.opt.bad:hover{background:var(--bad-soft);border-color:var(--bad);transform:none}
-.ltr{flex:none;display:grid;place-items:center;width:1.85em;height:1.85em;border-radius:50%;font-size:.86em;font-weight:700;color:var(--muted);border:1.5px solid var(--line);background:var(--panel);transition:color .15s,border-color .15s,background .15s}
-.opt:hover .ltr,.ed .ltr:hover{color:var(--accent);border-color:var(--accent)}
-.opt.sel .ltr{border-color:var(--accent);color:var(--accent);background:var(--panel)}
-.opt.ok .ltr{border-color:var(--ok);background:var(--ok);color:#fff}
-.opt.bad .ltr{border-color:var(--bad);background:var(--bad);color:#fff}
-.exp{margin:1rem 0 0;padding:.85rem 1rem;border-left:3px solid var(--accent);background:var(--accent-soft);border-radius:0 12px 12px 0;font-size:.94rem;line-height:1.55;overflow-wrap:anywhere;animation:rise .25s both}
-.exp.ok{border-color:var(--ok);background:var(--ok-soft)}
-.exp.bad{border-color:var(--bad);background:var(--bad-soft)}
-.exp strong{display:block;margin-bottom:.12rem}
-.runnav{position:sticky;bottom:0;display:flex;align-items:center;justify-content:space-between;gap:.6rem;margin-top:1.2rem;padding:.7rem 0 calc(.7rem + env(safe-area-inset-bottom));background:linear-gradient(to top,var(--bg) 62%,transparent);z-index:5}
-.runnav .row{gap:.5rem;margin-left:auto}
-
-/* flashcards */
-.wrap{perspective:1500px}
-.card3d{display:grid;transform-style:preserve-3d;transition:transform .55s cubic-bezier(.3,.7,.2,1);cursor:pointer;border-radius:var(--radius)}
-.card3d.flipped{transform:rotateY(180deg)}
-.face{grid-area:1/1;display:flex;flex-direction:column;min-height:330px;padding:clamp(1.1rem,3.5vw,1.8rem);background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);backface-visibility:hidden;-webkit-backface-visibility:hidden}
-.back{transform:rotateY(180deg);background:linear-gradient(160deg,var(--accent-soft),var(--panel))}
-.back .exp{background:var(--panel)}
-.qno{margin:0 0 .7rem;color:var(--muted);font-weight:650;font-size:.82rem}
-.hint{margin:auto 0 0;padding-top:1rem;color:var(--muted);font-size:.82rem;text-align:center}
-.ans{display:flex;gap:.8rem;align-items:center;font-size:1.1rem;font-weight:650;line-height:1.4}
-.ans b{flex:none;width:2.3rem;height:2.3rem;display:grid;place-items:center;border-radius:11px;background:var(--ok);color:#fff}
-.ans span{overflow-wrap:anywhere}
-.static{list-style:none;margin:0;padding:0;display:grid;gap:.3rem}
-.static li{display:flex;gap:.55rem;align-items:baseline;padding:.28rem .15rem;border-radius:8px}
-.static b{flex:none;min-width:1.35em;color:var(--muted)}
-.static b::after{content:"."}
-.static span{flex:1;overflow-wrap:anywhere}
-.static .ok,.static .ok b{color:var(--ok);font-weight:700}
-.static .bad,.static .bad b{color:var(--bad);font-weight:700}
-.static em{font-style:normal;font-size:.68rem;font-weight:700;white-space:nowrap;text-transform:uppercase;letter-spacing:.045em;color:var(--muted)}
-
-/* results */
-.score-panel{text-align:center;padding:clamp(1.5rem,4vw,2.4rem);display:flex;flex-direction:column;align-items:center;gap:.2rem;overflow:hidden;position:relative}
-.score-panel::before{content:"";position:absolute;width:340px;height:340px;border-radius:50%;background:radial-gradient(circle,var(--accent-soft),transparent 70%);top:-180px;pointer-events:none}
-.ring{width:172px;height:172px;border-radius:50%;background:conic-gradient(var(--accent) calc(var(--p)*1%),var(--line) 0);display:grid;place-items:center;position:relative;margin-bottom:.65rem;box-shadow:inset 0 0 0 1px var(--line);flex:none}
-.ring::before{content:"";position:absolute;inset:11px;border-radius:50%;background:var(--panel)}
-.ring-in{position:relative;display:flex;flex-direction:column;align-items:center;line-height:1}
-.ring .big{font-size:2.55rem;font-weight:800;letter-spacing:-.045em;line-height:1}
-.ring small{color:var(--muted);font-weight:650;margin-top:.3rem;font-size:.8rem}
-.score-panel h2{margin:.35rem 0 .15rem;font-size:1.4rem}
-.score-panel>p{color:var(--muted);margin:.15rem 0 0;max-width:54ch;position:relative}
-.result-stats{display:flex;gap:.5rem;flex-wrap:wrap;justify-content:center;margin:1.05rem 0 .15rem;position:relative}
-.result-stats div{min-width:92px;padding:.55rem .8rem;border-radius:12px;background:var(--panel-2);border:1px solid var(--line)}
-.result-stats strong{display:block;font-size:1.18rem;letter-spacing:-.02em}
-.result-stats span{font-size:.72rem;color:var(--muted)}
-.actions{display:flex;flex-wrap:wrap;gap:.55rem;justify-content:center;margin:1.05rem 0 .1rem;position:relative}
-.actions.end{justify-content:flex-end}
-.sec-title{font-size:1.1rem;margin:1.5rem 0 .8rem}
-.rev{padding:1rem 1.1rem;border-left-width:4px}
-.rev.ok{border-left-color:var(--ok)}
-.rev.bad{border-left-color:var(--bad)}
-.rev.skip{border-left-color:var(--muted)}
-.rh{display:flex;justify-content:space-between;gap:.5rem;color:var(--muted);font-weight:700;font-size:.71rem;margin-bottom:.35rem;text-transform:uppercase;letter-spacing:.05em}
-.rev.ok .rh span:last-child{color:var(--ok)}
-.rev.bad .rh span:last-child{color:var(--bad)}
-pre{background:var(--bg);border:1px solid var(--line);border-radius:11px;padding:.8rem 1rem;overflow-x:auto;font:.83rem/1.55 ui-monospace,SFMono-Regular,Consolas,"Liberation Mono",monospace;white-space:pre-wrap;margin:.5rem 0 0}
-code{font:.88em ui-monospace,SFMono-Regular,Consolas,monospace;background:var(--bg);padding:.1em .35em;border-radius:5px}
-details{color:var(--muted);font-size:.9rem;margin-top:.75rem}
-summary{cursor:pointer;font-weight:650;color:var(--ink)}
-details p{margin:.5rem 0 0;line-height:1.55}
-.no{color:var(--accent);font-weight:800}
-
-/* teacher */
-.teacher-head{margin-bottom:1.15rem;align-items:flex-end}
-.steps{counter-reset:s}
-.steps>.panel>h2::before{counter-increment:s;content:counter(s);display:inline-grid;place-items:center;width:1.66rem;height:1.66rem;margin-right:.55rem;border-radius:50%;background:var(--grad);color:#fff;font-size:.82rem;vertical-align:2px;font-weight:700}
-.steps>.panel.nonum>h2::before{display:none}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}
-.ed{border:1px solid var(--line);border-radius:13px;padding:.85rem .95rem;margin-top:.7rem;background:var(--bg);transition:border-color .15s}
-.ed.miss{border-color:var(--warn);background:color-mix(in srgb,var(--warn) 5%,var(--bg))}
-.edh{display:flex;gap:.55rem;align-items:flex-start;font-weight:650;overflow-wrap:anywhere}
-.edh .no{flex:none}
-.edh span{flex:1;white-space:pre-wrap}
-.ed .opt{display:flex;gap:.6rem;align-items:center;padding:.2rem 0;border:0;background:none;cursor:default;font-size:.94rem;transform:none}
-.ed .opt:hover{background:none;border:0;transform:none}
-.ed .opt.ok .ltr{background:var(--ok);border-color:var(--ok);color:#fff}
-.ed .ltr{cursor:pointer;width:1.65em;height:1.65em;border-radius:50%;border:1.5px solid var(--line);background:var(--panel);display:grid;place-items:center;font-weight:700;color:var(--muted);font-size:.85em}
-.ed input{margin-top:.45rem;font-size:.88rem;padding:.4rem .7rem}
-.list{list-style:none;margin:0;padding:0}
-.list li{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;padding:.7rem 0;border-top:1px solid var(--line)}
-.list li:first-child{border-top:0}
-.list .t{flex:1 1 200px;min-width:0;overflow-wrap:anywhere}
-.list small{display:block;color:var(--muted);font-size:.76rem;margin-top:.1rem}
-.listhead{display:flex;align-items:center;justify-content:space-between;gap:.7rem;flex-wrap:wrap;margin-bottom:.3rem}
-.sticky{position:sticky;bottom:0;background:var(--panel);padding:.8rem 0 .2rem;margin-top:1rem;border-top:1px solid var(--line);z-index:3}
-
-/* feature switches */
-.feature-list{display:grid;gap:.55rem;margin:.9rem 0}
-.feature-row{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.8rem .95rem;border:1px solid var(--line);border-radius:14px;background:color-mix(in srgb,var(--panel) 86%,var(--bg));transition:border-color .16s,background .16s}
-.feature-row:hover{border-color:color-mix(in srgb,var(--accent) 32%,var(--line))}
-.feature-row .fcopy{min-width:0}
-.feature-row strong{display:block;font-size:.95rem}
-.feature-row .fdesc{display:block;color:var(--muted);font-size:.82rem;line-height:1.45;margin-top:.12rem}
-.feature-control{display:flex;align-items:center;gap:.55rem;flex:none}
-.feature-state{min-width:1.9em;text-align:right;font-size:.7rem;font-weight:750;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
-.feature-state.on{color:var(--accent)}
-.switch{position:relative;display:inline-flex;flex:none;align-items:center;cursor:pointer}
-.switch input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
-.switch .track{position:relative;display:block;width:46px;height:27px;border-radius:99px;background:color-mix(in srgb,var(--muted) 24%,transparent);border:1px solid var(--line);transition:background .18s,border-color .18s}
-.switch .track::after{content:"";position:absolute;top:3px;left:3px;width:19px;height:19px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.35);transition:transform .18s}
-.switch input:checked+.track{background:var(--accent);border-color:var(--accent)}
-.switch input:checked+.track::after{transform:translateX(19px)}
-.switch input:focus-visible+.track{outline:2px solid var(--accent);outline-offset:2px}
-.feature-bar{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;justify-content:space-between;margin-top:.2rem}
-.feature-meta{font-size:.79rem;color:var(--muted);min-height:1em}
-.feature-count{flex:none}
-
-/* toast + modal */
-.toast{position:fixed;left:50%;bottom:1.25rem;transform:translate(-50%,12px);background:var(--ink);color:var(--bg);padding:.68rem 1.1rem;border-radius:12px;font-weight:650;font-size:.9rem;box-shadow:0 18px 44px rgba(0,0,0,.32);z-index:90;max-width:min(92vw,520px);opacity:0;pointer-events:none;transition:opacity .22s,transform .22s}
-.toast.show{opacity:1;transform:translate(-50%,0)}
-.modal{position:fixed;inset:0;z-index:85;display:grid;place-items:center;padding:1rem;background:rgba(3,14,12,.55);-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px)}
-.modal-card{width:min(520px,100%);background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:1.3rem;box-shadow:var(--shadow-lg);max-height:86vh;overflow:auto;animation:rise .24s both}
-.modal-head{display:flex;justify-content:space-between;align-items:center;gap:1rem;margin-bottom:.75rem}
-.modal-head h2{margin:0}
-.kbd{display:inline-grid;place-items:center;min-width:1.7rem;padding:.12rem .4rem;border:1px solid var(--line);border-bottom-width:2px;border-radius:6px;background:var(--bg);font:.78rem ui-monospace,SFMono-Regular,Consolas,monospace;font-weight:650;color:var(--ink)}
-.shortcuts{display:grid;gap:0;margin:0;padding:0;list-style:none}
-.shortcuts li{display:flex;justify-content:space-between;gap:1rem;align-items:center;font-size:.9rem;padding:.5rem 0;border-top:1px solid var(--line);color:var(--muted)}
-.shortcuts li:first-child{border-top:0}
-.shortcuts .keys{display:flex;gap:.25rem;flex-wrap:wrap;justify-content:flex-end}
-.note{padding:.7rem .9rem;border-radius:12px;background:var(--accent-soft);border:1px solid color-mix(in srgb,var(--accent) 22%,var(--line));font-size:.86rem;line-height:1.5;margin:.7rem 0}
-.note strong{color:var(--ink)}
-.fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:80}
-
-/* flag + question navigator */
-.qmeta-r{display:flex;align-items:center;gap:.5rem}
-.flagbtn{padding:.28rem .62rem;font-size:.78rem}
-.flagbtn.on{color:var(--warn);background:var(--warn-soft);border-color:color-mix(in srgb,var(--warn) 40%,var(--line))}
-.navgrid{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:1rem}
-.nv{position:relative;width:2.2rem;height:2.2rem;border-radius:10px;border:1.5px solid var(--line);background:var(--panel);color:var(--muted);font-size:.78rem;font-weight:700;cursor:pointer;transition:border-color .15s,background .15s,transform .12s}
-.nv:hover{border-color:var(--accent);color:var(--ink)}
-.nv:active{transform:scale(.94)}
-.nv.done{background:var(--accent-soft);border-color:color-mix(in srgb,var(--accent) 45%,var(--line));color:var(--ink)}
-.nv.ok{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
-.nv.bad{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
-.nv.cur{border-color:var(--accent);box-shadow:0 0 0 3px var(--ring);color:var(--accent)}
-.nv.flag::after{content:"";position:absolute;top:-4px;right:-4px;width:10px;height:10px;border-radius:50%;background:var(--warn);border:2px solid var(--bg)}
-.navhint{margin:.6rem 0 0;font-size:.74rem;color:var(--muted)}
-@media(max-width:430px){.nv{width:2.05rem;height:2.05rem}}
-@keyframes rise{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:translateY(0)}}
-@keyframes spin{to{transform:rotate(360deg)}}
-
-@media(max-width:760px){
-  .auth{grid-template-columns:1fr;max-width:520px}
-  .auth-side{min-height:auto;padding:1.35rem 1.4rem}
-  .auth-side .ticks{display:none}
-  .auth-side h1{max-width:none}
-  .stats{grid-template-columns:1fr 1fr}
-  .stats .stat:last-child{grid-column:1/-1}
-}
-@media(max-width:560px){
-  .grid2{grid-template-columns:1fr}
-  .nav a{padding:.42rem .65rem;font-size:.84rem}
-  .brand small{display:none}
-  .runhead-main{max-width:40%}
-  .runhead .cnt{display:none}
-  .runnav .btn{padding:.55rem .75rem;font-size:.88rem}
-  .qc-actions .btn{flex:1 1 auto}
-  .result-stats div{min-width:78px;padding:.5rem .6rem}
-  .ring{width:150px;height:150px}
-  .ring .big{font-size:2.2rem}
-}
-@media(max-width:430px){
-  .brand strong{font-size:.92rem}
-  .logo{width:34px;height:34px;border-radius:10px;font-size:1rem}
-  .nav a{padding:.4rem .52rem;font-size:.8rem}
-  .icon-btn{width:34px;height:34px}
-  .stats{grid-template-columns:1fr}
-  .stats .stat:last-child{grid-column:auto}
-  .hero-side{width:100%}
-  .hero-side .btn{width:100%}
-}
-@media(max-width:390px){
-  .brand>span:last-child{display:none}
-  .topbar{gap:.45rem;padding-inline:.7rem}
-}
-@media(max-height:800px){
-  .runnav{position:static;background:none;padding-bottom:0;margin-top:1.35rem}
-}
-@media(prefers-reduced-motion:reduce){
-  *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
-}
-@media print{
-  .topbar,.foot,.actions,.runnav,.icon-btn,.no-print{display:none!important}
-  body{background:#fff;color:#000}
-  .app{padding:0}
-  .panel,.rev{box-shadow:none;break-inside:avoid;border-color:#ccc}
-  .score-panel::before{display:none}
-}
-</style>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Practice Quizzes</title>
+<meta name="description" content="Practice quizzes and flashcards.">
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-<a class="skip" href="#app">Skip to content</a>
-
-<header class="topbar">
-  <a class="brand" href="#/practice">
-    <span class="logo" aria-hidden="true">Q</span>
-    <span><strong>Quiz Hub</strong><small>Smart practice</small></span>
-  </a>
-  <nav class="nav" aria-label="Sections">
-    <a href="#/practice" data-nav="practice">Practice</a>
-    <a href="#/teacher" data-nav="teacher">Teacher</a>
-  </nav>
-  <div class="top-actions">
-    <button class="icon-btn" id="theme-btn" type="button" aria-label="Change theme" title="Change theme"><span id="theme-icon" aria-hidden="true">◐</span></button>
-    <button class="icon-btn" id="help-btn" type="button" aria-label="Keyboard shortcuts" title="Keyboard shortcuts (?)"><span aria-hidden="true">?</span></button>
-  </div>
-</header>
-
-<main id="app" class="app"></main>
-
-<footer class="foot">
-  <span>Quiz Hub</span><span class="sep">·</span><span>Your questions, arranged just for you</span>
-</footer>
-
-<div class="toast" id="toast" role="status" aria-live="polite"></div>
-
-<div class="modal" id="help" hidden>
-  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="help-title">
-    <div class="modal-head">
-      <h2 id="help-title">Keyboard shortcuts</h2>
-      <button class="icon-btn" type="button" data-close="1" aria-label="Close" style="width:34px;height:34px"><span aria-hidden="true">✕</span></button>
-    </div>
-    <ul class="shortcuts">
-      <li><span>Choose answer A–H</span><span class="keys"><span class="kbd">A</span>…<span class="kbd">H</span><span class="kbd">1</span>…<span class="kbd">8</span></span></li>
-      <li><span>Next question</span><span class="keys"><span class="kbd">→</span></span></li>
-      <li><span>Previous question</span><span class="keys"><span class="kbd">←</span></span></li>
-      <li><span>Flag question to revisit</span><span class="keys"><span class="kbd">M</span></span></li>
-      <li data-feature="flashcards"><span>Flip a flashcard</span><span class="keys"><span class="kbd">Space</span></span></li>
-      <li data-feature="search"><span>Focus search</span><span class="keys"><span class="kbd">/</span></span></li>
-      <li><span>Open this panel</span><span class="keys"><span class="kbd">?</span></span></li>
-      <li><span>Close a panel</span><span class="keys"><span class="kbd">Esc</span></span></li>
-    </ul>
-    <p class="note" data-feature="resume">Tip: your progress is saved on this device, so you can leave a quiz and pick it up later.</p>
-  </div>
-</div>
-
+<main id="app"></main>
+<div class="toast" id="toast" role="status" hidden></div>
+<script src="common.js"></script>
 <script>
-/* ============================================================
-   1 · Shared helpers
-   ============================================================ */
-const $=s=>document.querySelector(s);
-const $$=s=>Array.from(document.querySelectorAll(s));
-const L='ABCDEFGH';
-const esc=s=>String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
-const store=s=>s?sessionStorage:localStorage;
-const lsGet=(k,s)=>{try{return store(s).getItem(k)}catch{return null}};
-const lsSet=(k,v,s)=>{try{store(s).setItem(k,v)}catch{}};
-const lsDel=k=>{try{localStorage.removeItem(k);sessionStorage.removeItem(k)}catch{}};
-const lsJSON=(k,d)=>{try{return JSON.parse(lsGet(k))??d}catch{return d}};
-const slug=s=>s.toLowerCase().normalize('NFKD').replace(/[^\p{L}\p{N}]+/gu,'-').replace(/^-+|-+$/g,'').slice(0,60)||'quiz';
-let toastT;
-function toast(m){
-  const t=$('#toast'); if(!t) return;
-  t.textContent=m; t.classList.add('show');
-  clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('show'),3400);
-}
-function setStatus(id,msg,type='info'){const e=$('#'+id);if(e){e.textContent=msg;e.className='status '+type}}
-function download(name,text,type){
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(new Blob([text],{type}));
-  a.download=name; a.click();
-  setTimeout(()=>URL.revokeObjectURL(a.href),1000);
-}
-function spinner(){return '<span class="spinner" aria-hidden="true"></span>'}
-
-/* ============================================================
-   2 · Theme, help, confetti
-   ============================================================ */
-const themes=['auto','light','dark'];
-let themePref=lsGet('qm-theme')||'auto';
-function applyTheme(){
-  const dark=themePref==='dark'||(themePref==='auto'&&matchMedia('(prefers-color-scheme:dark)').matches);
-  document.documentElement.dataset.theme=dark?'dark':'light';
-  const btn=$('#theme-btn'),icon=$('#theme-icon');
-  if(btn){
-    if(icon) icon.textContent=themePref==='auto'?'◐':themePref==='dark'?'☾':'☀';
-    const label=themePref==='auto'?'Theme: follow system':themePref==='dark'?'Theme: dark':'Theme: light';
-    btn.title=label+' (click to change)'; btn.setAttribute('aria-label',label);
-  }
-}
-$('#theme-btn').onclick=()=>{
-  themePref=themes[(themes.indexOf(themePref)+1)%themes.length];
-  lsSet('qm-theme',themePref); applyTheme();
-  toast(themePref==='auto'?'Theme follows your system':themePref==='dark'?'Dark theme':'Light theme');
-};
-try{matchMedia('(prefers-color-scheme:dark)').addEventListener('change',()=>{if(themePref==='auto')applyTheme()})}catch{}
-
-function openHelp(){
-  const m=$('#help'); if(!m||!m.hidden) return;
-  m.hidden=false;
-  m.querySelector('[data-close]')?.focus();
-}
-function closeHelp(){const m=$('#help');if(m)m.hidden=true}
-$('#help-btn').onclick=openHelp;
-$('#help').addEventListener('click',e=>{
-  if(e.target===$('#help')||e.target.closest('[data-close]')) closeHelp();
-});
-
-function confetti(){
-  if(matchMedia('(prefers-reduced-motion:reduce)').matches) return;
-  const canvas=document.createElement('canvas');
-  canvas.className='fx';
-  const dpr=Math.min(2,devicePixelRatio||1);
-  const w=innerWidth,h=innerHeight;
-  canvas.width=w*dpr; canvas.height=h*dpr;
-  document.body.append(canvas);
-  const ctx=canvas.getContext('2d'); ctx.scale(dpr,dpr);
-  const colors=['#0d9488','#4f46e5','#f59e0b','#ec4899','#22c55e','#38bdf8'];
-  const parts=Array.from({length:120},()=>({
-    x:w*.5+(Math.random()-.5)*w*.55, y:h*.34,
-    vx:(Math.random()-.5)*10, vy:-Math.random()*11-3,
-    g:.3, s:4+Math.random()*7, r:Math.random()*Math.PI,
-    vr:(Math.random()-.5)*.28, c:colors[Math.floor(Math.random()*colors.length)]
-  }));
-  let last=performance.now();
-  function frame(t){
-    const step=Math.min(2,(t-last)/16.7)||1; last=t;
-    ctx.clearRect(0,0,w,h);
-    let alive=false;
-    for(const p of parts){
-      p.vy+=p.g*step; p.x+=p.vx*step; p.y+=p.vy*step; p.r+=p.vr*step;
-      if(p.y<h+30) alive=true;
-      ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.r);
-      ctx.globalAlpha=Math.max(0,1-(t-canvas._t0)/2800);
-      ctx.fillStyle=p.c; ctx.fillRect(-p.s/2,-p.s/2,p.s,p.s*.62); ctx.restore();
-    }
-    if(alive && t-canvas._t0<2800) requestAnimationFrame(frame);
-    else canvas.remove();
-  }
-  canvas._t0=performance.now();
-  requestAnimationFrame(frame);
-}
-
-/* ============================================================
-   3 · Embedded quiz data (works fully offline)
-   ============================================================ */
-const SEED_INDEX={
-  "quizzes": [
-    {
-      "id": "crc-20-mcq",
-      "title": "CRC 20 MCQ",
-      "count": 20,
-      "updated": "2026-11-05"
-    }
-  ]
-};
-const SEED_QUIZZES={
-  "crc-20-mcq": {
-    "title": "CRC 20 MCQ",
-    "questions": [
-      {
-        "q": "Compassion means deep sympathy for suffering plus a strong desire to:",
-        "o": [
-          "Ignore it",
-          "Transfer the patient",
-          "Alleviate it",
-          "Record it"
-        ],
-        "a": 2,
-        "e": ""
-      },
-      {
-        "q": "A benefit of CRC for patients is that they will be:",
-        "o": [
-          "More anxious",
-          "Less anxious",
-          "Angry",
-          "Silent"
-        ],
-        "a": 1,
-        "e": ""
-      },
-      {
-        "q": "Florence Nightingale established her nursing school in:",
-        "o": [
-          "1760",
-          "1860",
-          "1925",
-          "1965"
-        ],
-        "a": 1,
-        "e": ""
-      },
-      {
-        "q": "Nightingale's environment theory addressed:",
-        "o": [
-          "Salary",
-          "Drug dosage",
-          "Sanitation for patients",
-          "Surgery"
-        ],
-        "a": 2,
-        "e": ""
-      },
-      {
-        "q": "The traditional role of the nurse is:",
-        "o": [
-          "Manager",
-          "Researcher",
-          "Caregiver",
-          "Lawyer"
-        ],
-        "a": 2,
-        "e": ""
-      },
-      {
-        "q": "The four central concepts of nursing theories are person, environment, health and:",
-        "o": [
-          "Money",
-          "Nursing",
-          "Law",
-          "Drugs"
-        ],
-        "a": 1,
-        "e": ""
-      },
-      {
-        "q": "Non-malfeasance means:",
-        "o": [
-          "Avoiding and preventing harm",
-          "Doing good",
-          "Being honest",
-          "Being fair"
-        ],
-        "a": 0,
-        "e": ""
-      },
-      {
-        "q": "A nurse at a health center serves all clients equally and fairly. This is the principle of:",
-        "o": [
-          "Justice",
-          "Beneficence",
-          "Autonomy",
-          "Morality"
-        ],
-        "a": 0,
-        "e": ""
-      },
-      {
-        "q": "A patient concern is:",
-        "o": [
-          "A drug",
-          "A diagnosis",
-          "A complaint or grievance about care",
-          "A bill"
-        ],
-        "a": 2,
-        "e": ""
-      },
-      {
-        "q": "\"Reflecting back\" means:",
-        "o": [
-          "Ignoring the patient",
-          "Writing a report",
-          "Giving advice",
-          "Repeating what the patient said to show understanding"
-        ],
-        "a": 3,
-        "e": ""
-      },
-      {
-        "q": "Which communication type is perhaps the most important, since we cannot engage without it?",
-        "o": [
-          "Active listening",
-          "Texting",
-          "Drawing",
-          "Shouting"
-        ],
-        "a": 0,
-        "e": ""
-      },
-      {
-        "q": "A good work relationship requires:",
-        "o": [
-          "Competition",
-          "Secrecy",
-          "Trust and respect",
-          "Blame"
-        ],
-        "a": 2,
-        "e": ""
-      },
-      {
-        "q": "Valid consent must be voluntary, informed and given by a person with:",
-        "o": [
-          "Money",
-          "Capacity",
-          "A relative",
-          "A uniform"
-        ],
-        "a": 1,
-        "e": ""
-      },
-      {
-        "q": "Informed consent should be taken:",
-        "o": [
-          "After treatment",
-          "During surgery",
-          "Before any medical treatment",
-          "Next week"
-        ],
-        "a": 2,
-        "e": ""
-      },
-      {
-        "q": "A threat to respectful care in a facility is:",
-        "o": [
-          "Adequate staffing",
-          "Privacy",
-          "Lack of privacy",
-          "Kindness"
-        ],
-        "a": 2,
-        "e": ""
-      },
-      {
-        "q": "Which staff behavior threatens respectful care?",
-        "o": [
-          "Kindness",
-          "Courtesy",
-          "Harshness",
-          "Listening"
-        ],
-        "a": 2,
-        "e": ""
-      },
-      {
-        "q": "Covering up a mistake is:",
-        "o": [
-          "Ethical",
-          "Required",
-          "Unethical",
-          "Kind"
-        ],
-        "a": 2,
-        "e": ""
-      },
-      {
-        "q": "Working while impaired by alcohol or drugs is:",
-        "o": [
-          "Acceptable",
-          "Unethical",
-          "Professional",
-          "Compassionate"
-        ],
-        "a": 1,
-        "e": ""
-      },
-      {
-        "q": "In an emergency, you should first check for:",
-        "o": [
-          "Danger",
-          "Money",
-          "Relatives",
-          "Paperwork"
-        ],
-        "a": 0,
-        "e": ""
-      },
-      {
-        "q": "If a person may have a spinal injury, you should:",
-        "o": [
-          "Move them quickly",
-          "Sit them up",
-          "Not move them unless danger is great",
-          "Carry them home"
-        ],
-        "a": 2,
-        "e": ""
-      }
-    ]
-  }
-};
-
-/* ============================================================
-   4 · Student identity + personalized order
-   ============================================================ */
 const ALLOWED_IDS=Array.from({length:10},(_,i)=>'vac'+(i+1));
 const RESULTS_URL='';
 const TAGLINE='Practice quizzes and flashcards. Your questions are arranged just for you.';
 const normId=s=>s.replace(/\s+/g,'').toLowerCase();
 const isAllowed=id=>ALLOWED_IDS.includes(normId(id));
 
+/* ---- data ---- */
+const SAMPLE=[{q:'Which Gradle property generates the package for the R class and BuildConfig?',o:['applicationId','namespace','versionName','packageName'],a:1,e:'namespace controls where R and BuildConfig are generated.'},
+{q:'What uniquely identifies your app on a device and on Google Play?',o:['Namespace','Source package folder','Application ID','App label'],a:2,e:'The application ID is the identity of the app.'}];
+const DEMO={id:'demo',title:'Sample quiz',count:SAMPLE.length};
+let index=null,indexErr=false;
+async function loadIndex(){
+  try{const r=await fetch('quizzes/index.json?v='+Date.now(),{cache:'no-store'});if(!r.ok)throw 0;index=(await r.json()).quizzes||[];indexErr=false}
+  catch{index=[DEMO];indexErr=true}
+  return index;
+}
+async function loadQuiz(id){
+  if(id==='demo')return{title:DEMO.title,questions:SAMPLE};
+  const r=await fetch(`quizzes/${encodeURIComponent(id)}.json?v=${Date.now()}`,{cache:'no-store'});
+  if(!r.ok)throw new Error('Could not load that quiz.');
+  return r.json();
+}
+
+/* ---- student identity + per-student shuffle ---- */
 const me={
   get(){const o=lsJSON('qm-student',null);return o&&o.id&&o.name&&isAllowed(o.id)?o:null},
   set(id,name){id=id.trim();lsSet('qm-student',JSON.stringify({id,name:name.trim().replace(/\s+/g,' '),key:normId(id)}))},
@@ -881,148 +49,25 @@ const FIXED=/\b(?:all|none|both|neither)\s+(?:of\s+)?(?:the\s+)?(?:above|these|t
 function personalize(questions,key,quizId){
   const rand=seeded(key+'|'+quizId);
   return shuffleWith(questions.map((q,i)=>({...q,qi:i})),rand).map(q=>{
-    if(!Array.isArray(q.o)||!q.o.length) return {...q,o:[],a:-1,om:[]};
-    if(q.o.some(t=>FIXED.test(t))) return {...q,om:q.o.map((_,i)=>i)};
+    if(q.o.some(t=>FIXED.test(t)))return{...q,om:q.o.map((_,i)=>i)};
     const perm=shuffleWith(q.o.map((_,i)=>i),rand);
-    return {...q,o:perm.map(i=>q.o[i]),a:q.a>-1?perm.indexOf(q.a):-1,om:perm};
+    return{...q,o:perm.map(i=>q.o[i]),a:q.a>-1?perm.indexOf(q.a):-1,om:perm};
   });
 }
 
-/* ============================================================
-   5 · Stats, prefs, local + cloud quiz library
-   ============================================================ */
+/* ---- local stats ---- */
 const bkey=id=>(me.get()?.key||'')+':'+id;
 const bump=k=>{const a=lsJSON('qm-att',{});a[k]=(a[k]||0)+1;lsSet('qm-att',JSON.stringify(a));return a[k]};
 const setBest=(id,r,t)=>{id=bkey(id);const b=lsJSON('qm-best',{}),o=b[id];if(!o||r/t>=o.r/o.t)b[id]={r,t};lsSet('qm-best',JSON.stringify(b))};
 const prefs={get:()=>lsJSON('qm-prefs',{}),set(p){lsSet('qm-prefs',JSON.stringify({...this.get(),...p}))}};
 
-/* ---- teacher-controlled student features ----
-   Add a new item here and it automatically appears in the teacher panel and
-   in the student visibility checks below. `on` is the factory default. */
-const FEATURES=[
-  {id:'instant',label:'Instant feedback',on:true,desc:'Students can check the answer and explanation right after choosing an option.'},
-  {id:'textsize',label:'Text-size control',on:true,desc:'Show the Small, Medium and Large question-text selector.'},
-  {id:'search',label:'Search & sort',on:true,desc:'Show the search box and sorting menu in the quiz library.'},
-  {id:'flashcards',label:'Flashcard mode',on:true,desc:'Let students flip through the same questions as study cards.'},
-  {id:'resume',label:'Resume progress',on:true,desc:'Keep unfinished attempts on the device and offer a resume banner.'},
-  {id:'smartreview',label:'Smart review',on:true,desc:'Turn missed questions into a focused review deck students can retry.'}
-];
-const TEXT_SIZES={s:'.95rem',m:'1.05rem',l:1.22+'rem'};
-const FEATURE_KEY='qm-features';
-const featureDefaults=()=>Object.fromEntries(FEATURES.map(f=>[f.id,f.on]));
-function readFeatureState(){
-  const s=lsJSON(FEATURE_KEY,null),features=featureDefaults();
-  if(s&&s.features) for(const k in features) if(typeof s.features[k]==='boolean') features[k]=s.features[k];
-  return{features,updated:Number(s?.updated)||0};
-}
-let featureState=readFeatureState();
-const featureOn=id=>featureState.features[id]!==false;
-function persistFeatures(){lsSet(FEATURE_KEY,JSON.stringify(featureState))}
-function applyFeaturePrefs(){
-  const root=document.documentElement;
-  if(featureOn('textsize')){
-    const p=prefs.get();
-    root.style.setProperty('--osz',TEXT_SIZES[p.osz]||TEXT_SIZES.m);
-  }else root.style.removeProperty('--osz');
-  $$('#help [data-feature]').forEach(li=>{li.hidden=!featureOn(li.dataset.feature)});
-}
-function setFeature(id,on){
-  if(!(id in featureState.features)) return;
-  featureState.features[id]=!!on;
-  featureState.updated=Date.now();
-  persistFeatures(); applyFeaturePrefs();
-}
-async function syncFeatureSettings(){
-  try{
-    const r=await fetch('quizzes/settings.json?v='+Date.now(),{cache:'no-store'});
-    if(!r.ok) return;
-    const j=await r.json(),t=Date.parse(j.updated||'');
-    if(!j.features||!Number.isFinite(t)||t<=featureState.updated) return;
-    const features=featureDefaults();
-    for(const k in features) if(typeof j.features[k]==='boolean') features[k]=j.features[k];
-    featureState={features,updated:t};
-    persistFeatures(); applyFeaturePrefs();
-    if(me.get()&&!R&&currentRoute()==='practice') renderPractice();
-    if($('#p-features')) drawFeatures();
-  }catch{}
-}
-addEventListener('storage',e=>{
-  if(e.key!==FEATURE_KEY) return;
-  featureState=readFeatureState(); applyFeaturePrefs();
-  if(me.get()&&!R&&currentRoute()==='practice') renderPractice();
-  if($('#p-features')) drawFeatures();
-});
-
-/* ---- smart review deck ---- */
-const REVIEW_KEY='qm-review';
-const reviews=()=>lsJSON(REVIEW_KEY,{});
-const reviewFor=id=>reviews()[bkey(id)]||null;
-function setReview(id,title,qis){
-  const all=reviews(),next=[...new Set(qis.filter(n=>Number.isInteger(n)))];
-  if(next.length) all[bkey(id)]={id,title,qis:next,updated:Date.now()};
-  else delete all[bkey(id)];
-  lsSet(REVIEW_KEY,JSON.stringify(all));
-}
-
-const LOCALQ='qm-local-quizzes';
-const localQuizzes=()=>lsJSON(LOCALQ,{});
-const saveLocalQuizzes=o=>lsSet(LOCALQ,JSON.stringify(o));
-
-async function getLibrary(){
-  const map=new Map();
-  (SEED_INDEX.quizzes||[]).forEach(q=>map.set(q.id,{...q,source:'seed'}));
-  Object.values(localQuizzes()).forEach(q=>map.set(q.id,{...q,source:'device'}));
-  try{
-    const r=await fetch('quizzes/index.json?v='+Date.now(),{cache:'no-store'});
-    if(r.ok){
-      const j=await r.json();
-      (j.quizzes||[]).forEach(q=>{if(!map.has(q.id))map.set(q.id,{...q,source:'cloud'})});
-    }
-  }catch{}
-  return [...map.values()];
-}
-async function loadQuiz(id){
-  const local=localQuizzes()[id];
-  if(local&&Array.isArray(local.questions)&&local.questions.length) return local;
-  if(SEED_QUIZZES[id]) return SEED_QUIZZES[id];
-  const r=await fetch(`quizzes/${encodeURIComponent(id)}.json?v=${Date.now()}`,{cache:'no-store'});
-  if(!r.ok) throw new Error('Could not load that quiz.');
-  return r.json();
-}
-
-/* ============================================================
-   6 · Run state, resume + result sync
-   ============================================================ */
-let R=null;
-let viewToken=0;
-const runStoreKey=()=>{const st=me.get();return st?('qm-run:'+st.key):null};
-function saveRun(){
-  if(!R||R.done||!featureOn('resume')) return;
-  const k=runStoreKey(); if(!k) return;
-  try{localStorage.setItem(k,JSON.stringify({...R,savedAt:Date.now()}))}catch{}
-}
-function readSavedRun(){
-  if(!featureOn('resume')) return null;
-  const k=runStoreKey(); if(!k) return null;
-  const o=lsJSON(k,null);
-  if(!o||!Array.isArray(o.Q)||!o.Q.length) return null;
-  if(!Array.isArray(o.picks)||o.picks.length!==o.Q.length) return null;
-  if(typeof o.i!=='number'||o.i<0||o.i>=o.Q.length) o.i=0;
-  if(!Array.isArray(o.flags)||o.flags.length!==o.Q.length) o.flags=Array(o.Q.length).fill(false);
-  o.mode=o.mode==='cards'&&featureOn('flashcards')?'cards':'quiz';
-  o.instant=featureOn('instant')&&!!o.instant; o.review=featureOn('smartreview')&&!!o.review; o.flip=false; o.done=false; o.res=null; o.counted=null; o.sent=false;
-  if(typeof o.t0!=='number') o.t0=Date.now();
-  return o;
-}
-function clearSavedRun(){const k=runStoreKey();if(k)lsDel(k)}
-
+/* ---- result sync (only when RESULTS_URL is set) ---- */
 const outbox={get:()=>lsJSON('qm-outbox',[]),set(a){lsSet('qm-outbox',JSON.stringify(a))}};
 function submitResult(right,total){
-  if(!RESULTS_URL||!total||!R||R.sent)return;
-  R.sent=true;
-  const st=me.get(); if(!st) return;
+  if(!RESULTS_URL||!total||R.sent)return;R.sent=true;
+  const st=me.get();
   outbox.set([...outbox.get(),{sid:Math.random().toString(36).slice(2)+Date.now().toString(36),quizId:R.id,title:R.title,studentId:st.id,name:st.name,
-    attempt:R.res?.attempt??1,score:right,total,secs:R.res?.secs||0,
+    attempt:R.counted,score:right,total,secs:Math.round((Date.now()-R.t0)/1000),
     answers:R.Q.map((q,k)=>({qi:q.qi,oi:R.picks[k]==null?-1:q.om[R.picks[k]]}))}]);
   flushOutbox(true);
 }
@@ -1040,1090 +85,173 @@ async function flushOutbox(show){
   flushing=false;
 }
 
-/* ============================================================
-   7 · Student views
-   ============================================================ */
+/* ---- views ---- */
+let R=null;
+const SZ={s:'.95rem',m:'1.1rem',l:'1.3rem'};
+
 function viewRegister(){
-  viewToken++;
-  $('#app').innerHTML=`
-  <section class="auth view">
-    <div class="auth-side">
-      <span class="logo" aria-hidden="true">Q</span>
-      <h1>Practice that adapts to you.</h1>
-      <p>Every student gets the same questions in a different order — so your practice stays yours.</p>
-      <ul class="ticks">
-        <li>Personalized question and option order</li>
-        ${featureOn('instant')?'<li>Quiz mode with instant feedback</li>':'<li>Quiz mode with answers at the end</li>'}
-        <li>${featureOn('flashcards')?'Flashcards, best scores':'Best scores'}${featureOn('resume')?' and progress saved here':' saved on this device'}</li>
-      </ul>
-    </div>
-    <div class="panel auth-card">
-      <p class="eyebrow">Student access</p>
-      <h2>Let’s get started</h2>
-      <p class="lede">Use the student ID your teacher gave you.</p>
-      <form id="reg" novalidate>
-        <label class="f" for="r-id">Student ID</label>
-        <input type="text" id="r-id" maxlength="30" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="e.g. vac1">
-        <label class="f" for="r-name">Full name</label>
-        <input type="text" id="r-name" maxlength="60" autocomplete="name" placeholder="e.g. Hanna Bekele">
-        <p class="status err" id="r-err" aria-live="polite"></p>
-        <button class="btn primary" type="submit">Continue →</button>
-      </form>
-      <p class="hintline">Registered IDs: <strong>vac1</strong> – <strong>vac10</strong>. Your answers and best scores stay on this device.</p>
-    </div>
-  </section>`;
-  const idEl=$('#r-id');
-  idEl.focus();
+  $('#app').innerHTML=`<div class="reg panel"><h1>Welcome</h1>
+  <p class="lede">Enter your student ID and name to begin. Every student receives questions in a unique arrangement, so always use your own ID.</p>
+  <form id="reg" novalidate>
+    <label class="f" for="r-id">Student ID</label><input type="text" id="r-id" maxlength="30" autocomplete="off" placeholder="e.g. vac1">
+    <label class="f" for="r-name">Full name</label><input type="text" id="r-name" maxlength="60" autocomplete="name" placeholder="e.g. Hanna Bekele">
+    <p class="status err" id="r-err" aria-live="polite"></p>
+    <button class="btn primary">Continue</button></form></div>`;
+  $('#r-id').focus();
   $('#reg').onsubmit=e=>{
     e.preventDefault();
-    const id=idEl.value.trim(),name=$('#r-name').value.trim(),err=m=>setStatus('r-err',m,'err');
+    const id=$('#r-id').value.trim(),name=$('#r-name').value.trim(),err=m=>setStatus('r-err',m,'err');
     if(!id)return err('Enter your student ID.');
-    if(!isAllowed(id))return err('This student ID is not registered. Use your teacher-issued ID (vac1–vac10).');
+    if(!isAllowed(id))return err('This student ID is not registered. Please check and try again.');
     if(name.length<2)return err('Enter your full name.');
-    me.set(id,name);
-    R=null;
-    if(location.hash!=='#/practice') history.replaceState(null,'','#/practice');
-    renderPractice();
-    toast('Welcome, '+name.split(' ')[0]+'!');
+    me.set(id,name);route();
   };
-}
-
-function statsFrom(list){
-  const b=lsJSON('qm-best',{}),att=lsJSON('qm-att',{}),prefix=(me.get()?.key||'')+':';
-  const pcts=list.map(x=>{const s=b[bkey(x.id)];return s&&s.t?Math.round(s.r/s.t*100):null}).filter(v=>v!=null);
-  return{
-    count:list.length,
-    avg:pcts.length?Math.round(pcts.reduce((a,c)=>a+c,0)/pcts.length):null,
-    best:pcts.length?Math.max(...pcts):null,
-    attempts:Object.entries(att).filter(([k])=>k.startsWith(prefix)).reduce((a,[,c])=>a+(Number(c)||0),0)
-  };
-}
-
-function pendingReviews(list){
-  const all=reviews(),out=[];
-  list.forEach(x=>{
-    const rv=all[bkey(x.id)];
-    if(rv&&Array.isArray(rv.qis)&&rv.qis.length) out.push({...rv,id:x.id,title:rv.title||x.title});
-  });
-  return out.sort((a,b)=>(b.updated||0)-(a.updated||0));
-}
-function smartReviewPanel(items){
-  const total=items.reduce((n,x)=>n+x.qis.length,0);
-  return `<section class="panel smart" aria-label="Smart review">
-    <div class="smart-main">
-      <span class="smart-ico" aria-hidden="true">✦</span>
-      <div class="smart-copy"><strong>Smart review</strong><p>${total} missed question${total===1?'':'s'} from ${items.length} quiz${items.length===1?'':'zes'} — retry just what needs work.</p></div>
-    </div>
-    <div class="smart-actions">${items.map(x=>`<button class="smart-pill" type="button" data-review="${esc(x.id)}"><span>${esc(x.title)}</span><b>${x.qis.length}</b></button>`).join('')}</div>
-  </section>`;
-}
-
-function resumeBanner(s){
-  const pct=Math.round(((s.i+1)/s.Q.length)*100);
-  return `<div class="panel resume">
-    <div class="resume-ico" aria-hidden="true">▶</div>
-    <div class="resume-body">
-      <strong>Continue: ${esc(s.title)}</strong>
-      <span>${s.mode==='cards'?'Flashcards':'Quiz'} · question ${s.i+1} of ${s.Q.length}</span>
-      <div class="minibar" aria-hidden="true"><i style="width:${pct}%"></i></div>
-    </div>
-    <div class="row">
-      <button class="btn primary sm" id="resume-go" type="button">Resume</button>
-      <button class="btn ghost sm" id="resume-x" type="button">Discard</button>
-    </div>
-  </div>`;
 }
 
 async function viewLibrary(){
-  const st=me.get();
-  if(!st) return viewRegister();
-  const token=++viewToken;
-  $('#app').innerHTML=`<div class="loading">${spinner()} Loading quizzes…</div>`;
-  const list=await getLibrary();
-  if(token!==viewToken) return;
-  applyFeaturePrefs();
-  const p=prefs.get(),b=lsJSON('qm-best',{}),stats=statsFrom(list),saved=readSavedRun(),firstName=st.name.split(' ')[0];
-  const showSearch=featureOn('search'),showText=featureOn('textsize'),showInstant=featureOn('instant'),showTools=showSearch||showText||showInstant;
-  const pending=featureOn('smartreview')?pendingReviews(list):[];
-
+  const st=me.get();if(!st)return viewRegister();
+  $('#app').innerHTML='<p class="muted">Loading quizzes…</p>';
+  const list=await loadIndex(),p=prefs.get(),b=lsJSON('qm-best',{});
   $('#app').innerHTML=`
-  <div class="view">
-    <section class="hero">
-      <div>
-        <p class="eyebrow">Ready when you are</p>
-        <h1>Hi, ${esc(firstName)}</h1>
-        <p class="lede">${featureOn('flashcards')?esc(TAGLINE):'Practice quizzes. Your questions are arranged just for you.'}</p>
-      </div>
-      <div class="hero-side">
-        <button class="btn ghost sm" id="logout" type="button">Switch student · ${esc(st.id)}</button>
-      </div>
-    </section>
-
-    ${saved?resumeBanner(saved):''}
-
-    <div class="stats">
-      <div class="stat">
-        <span class="stat-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5V5a2 2 0 0 1 2-2h13v18H6.5A2.5 2.5 0 0 1 4 18.5Z"/><path d="M8 7h7M8 11h7"/></svg></span>
-        <div><strong>${stats.count}</strong><span>quiz${stats.count===1?'':'zes'} available</span></div>
-      </div>
-      <div class="stat">
-        <span class="stat-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4"/><path d="M7 4h10v5a5 5 0 0 1-10 0V4Z"/><path d="M17 5h3a3 3 0 0 1-3 4M7 5H4a3 3 0 0 0 3 4"/></svg></span>
-        <div><strong>${stats.best!=null?stats.best+'%':'—'}</strong><span>best score</span></div>
-      </div>
-      <div class="stat">
-        <span class="stat-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4.5 13.5H11l-1 8.5L19.5 10H13l1-8Z"/></svg></span>
-        <div><strong>${stats.attempts}</strong><span>attempt${stats.attempts===1?'':'s'} recorded</span></div>
-      </div>
-    </div>
-
-    ${pending.length?smartReviewPanel(pending):''}
-
-    ${showTools?`<div class="panel toolbar">
-      ${showSearch?`<div class="searchwrap">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/></svg>
-        <input type="search" id="find" placeholder="Search quizzes  ( / )" aria-label="Search quizzes" autocomplete="off">
-      </div>
-      <label class="field">Sort
-        <select id="sort" aria-label="Sort quizzes">
-          <option value="default">Featured</option>
-          <option value="az">A–Z</option>
-          <option value="best">Best score</option>
-          <option value="size">Question count</option>
-        </select>
-      </label>`:''}
-      ${showText?`<label class="field">Text
-        <select id="osz" aria-label="Question text size">
-          <option value="s" ${(p.osz||'m')==='s'?'selected':''}>Small</option>
-          <option value="m" ${(p.osz||'m')==='m'?'selected':''}>Medium</option>
-          <option value="l" ${(p.osz||'m')==='l'?'selected':''}>Large</option>
-        </select>
-      </label>`:''}
-      ${showInstant?`<label class="chk"><input type="checkbox" id="inst" ${p.inst?'checked':''}> Instant feedback</label>`:''}
-    </div>`:''}
-
-    <h2 class="sr">Quizzes</h2>
-    <div class="cards" id="cards"></div>
-  </div>`;
-
-  const instEl=$('#inst'),oszEl=$('#osz');
-  const applyPrefs=()=>{
-    const next={};
-    if(instEl) next.inst=instEl.checked;
-    if(oszEl) next.osz=oszEl.value;
-    if(Object.keys(next).length) prefs.set(next);
-    applyFeaturePrefs();
-  };
-  [instEl,oszEl].filter(Boolean).forEach(el=>el.onchange=applyPrefs);
-  applyPrefs();
+  <div class="row between"><h1 style="margin:0">Hi, ${esc(st.name.split(' ')[0])}</h1>
+    <button class="btn ghost sm" id="logout">Switch student (${esc(st.id)})</button></div>
+  <p class="lede">${esc(TAGLINE)}</p>
+  ${indexErr?'<p class="notice">No published quizzes found yet. Showing sample quiz.</p>':''}
+  <div class="tools">
+    <input class="search" type="search" id="find" placeholder="Search quizzes" aria-label="Search quizzes">
+    <label class="chk"><input type="checkbox" id="inst" ${p.inst?'checked':''}> Show answer after each question</label>
+    <label class="chk">Text size <select id="osz">${Object.entries({s:'Small',m:'Medium',l:'Large'}).map(([k,v])=>`<option value="${k}" ${(p.osz||'m')===k?'selected':''}>${v}</option>`).join('')}</select></label>
+  </div>
+  <div class="cards" id="cards"></div>`;
+  $('#logout').onclick=()=>{me.clear();R=null;route()};
 
   const draw=()=>{
-    const f=$('#find')?.value.trim().toLowerCase()||'',sort=$('#sort')?.value||'default';
-    let items=list.filter(x=>String(x.title||'').toLowerCase().includes(f));
-    if(sort==='az') items.sort((a,b)=>String(a.title).localeCompare(String(b.title)));
-    else if(sort==='size') items.sort((a,b)=>(b.count||0)-(a.count||0));
-    else if(sort==='best'){
-      const val=x=>{const s=b[bkey(x.id)];return s&&s.t?s.r/s.t:-1};
-      items.sort((a,b)=>val(b)-val(a));
-    }
-    $('#cards').innerHTML=items.length?items.map((x,i)=>{
-      const s=b[bkey(x.id)],pct=s&&s.t?Math.round(s.r/s.t*100):null;
-      const rv=featureOn('smartreview')?reviewFor(x.id):null;
-      const letter=String(x.title||'Q').trim().charAt(0).toUpperCase()||'Q';
-      return `<article class="qc" style="--i:${i}">
-        <div class="qc-top">
-          <span class="qtile" aria-hidden="true">${esc(letter)}</span>
-          <div class="qc-badges">
-            ${x.source==='device'?'<span class="chip">On this device</span>':''}
-            ${pct!=null?`<span class="chip ${pct>=80?'ok':pct<50?'warn':''}">Best ${pct}%</span>`:''}
-            ${rv?`<span class="chip warn">${rv.qis.length} to review</span>`:''}
-          </div>
-        </div>
-        <h3>${esc(x.title)}</h3>
-        <div class="meta"><span>${x.count??'?'} question${(x.count??0)===1?'':'s'}</span>${x.updated?`<span>· ${esc(x.updated)}</span>`:''}</div>
-        <div class="qc-bar" aria-hidden="true"><i style="width:${pct??0}%"></i></div>
-        <div class="qc-actions">
-          <button class="btn primary sm" type="button" data-start="${esc(x.id)}" data-mode="quiz">Start quiz</button>
-          ${featureOn('flashcards')?`<button class="btn sm" type="button" data-start="${esc(x.id)}" data-mode="cards">Flashcards</button>`:''}
-          ${rv?`<button class="btn sm" type="button" data-review="${esc(x.id)}">Review</button>`:''}
-        </div>
-      </article>`;
-    }).join(''):`<div class="panel empty" style="grid-column:1/-1"><h3>${list.length?'No matching quizzes':'No quizzes yet'}</h3><p>${list.length?'Try a different search.':'Your teacher has not published a quiz yet.'}</p></div>`;
+    const f=$('#find').value.trim().toLowerCase(),items=list.filter(x=>x.title.toLowerCase().includes(f));
+    $('#cards').innerHTML=items.length?items.map(x=>{
+      const s=b[bkey(x.id)],pct=s&&Math.round(s.r/s.t*100);
+      return `<article class="qc"><h3>${esc(x.title)}</h3>
+      <div class="meta"><span>${x.count} question${x.count===1?'':'s'}</span>${x.updated?`<span>· ${esc(x.updated)}</span>`:''}${s?`<span class="chip ${pct>=80?'ok':pct>=50?'':'warn'}">Best ${pct}%</span>`:''}</div>
+      <div class="row"><button class="btn primary" data-start="${esc(x.id)}" data-mode="quiz">Start quiz</button><button class="btn" data-start="${esc(x.id)}" data-mode="cards">Flashcards</button></div></article>`}).join('')
+      :`<p class="empty">${list.length?'No matching quizzes.':'No quizzes available yet.'}</p>`;
   };
-  draw();
-  if($('#find')) $('#find').oninput=draw;
-  if($('#sort')) $('#sort').onchange=draw;
+  draw();$('#find').oninput=draw;
+  const save=()=>{prefs.set({inst:$('#inst').checked,osz:$('#osz').value});document.documentElement.style.setProperty('--osz',SZ[$('#osz').value])};
+  $('#inst').onchange=$('#osz').onchange=save;save();
 
-  $('#logout').onclick=()=>{
-    me.clear(); R=null;
-    if(location.hash!=='#/practice') history.replaceState(null,'','#/practice');
-    viewRegister();
-    toast('Student switched');
-  };
-
-  if($('#resume-go')) $('#resume-go').onclick=()=>{
-    const s=readSavedRun(); if(!s) return;
-    R=s; drawRun();
-  };
-  if($('#resume-x')) $('#resume-x').onclick=()=>{
-    clearSavedRun(); toast('Saved progress discarded'); viewLibrary();
+  $('#cards').onclick=async e=>{
+    const btn=e.target.closest('[data-start]');if(!btn)return;
+    btn.disabled=true;
+    try{
+      const quiz=await loadQuiz(btn.dataset.start);
+      if(!quiz.questions?.length)throw new Error('This quiz is empty.');
+      const Q=personalize(quiz.questions,st.key,btn.dataset.start);
+      R={t0:Date.now(),id:btn.dataset.start,title:quiz.title,Q,mode:btn.dataset.mode,i:0,picks:Array(Q.length).fill(null),flip:false,instant:$('#inst').checked};
+      drawRun();
+    }catch(err){toast(err.message||'Could not open quiz.');btn.disabled=false}
   };
 }
 
-/* ---- run head / navigation ---- */
-function runHead(){
-  const pct=Math.round(((R.i+1)/R.Q.length)*100);
-  return `<div class="runhead">
-    <button class="icon-btn" type="button" data-act="exit" aria-label="Exit quiz" title="Exit quiz"><span aria-hidden="true">←</span></button>
-    <div class="runhead-main">
-      <strong>${esc(R.title)}</strong>
-      <span>${R.review?'Smart review · ':''}${R.mode==='cards'?'Flashcards':'Quiz'} · ${R.i+1} of ${R.Q.length}</span>
-    </div>
-    <div class="prog" aria-hidden="true"><i style="width:${pct}%"></i></div>
-    <span class="cnt">${R.i+1} / ${R.Q.length}</span>
-  </div>`;
-}
-function navGrid(){
-  if(R.Q.length<2) return '';
-  const fl=R.flags||[];
-  return `<nav class="navgrid" aria-label="Question navigator">${R.Q.map((q,k)=>{
-    const p=R.picks[k],st=p==null?'':(R.instant&&q.a>-1?(p===q.a?' ok':' bad'):' done');
-    return `<button type="button" class="nv${st}${k===R.i?' cur':''}${fl[k]?' flag':''}" data-go="${k}" aria-label="Go to question ${k+1}${p==null?'':', answered'}${fl[k]?', flagged':''}"${k===R.i?' aria-current="true"':''}>${k+1}</button>`;
-  }).join('')}</nav><p class="navhint">Tap a number to jump · ⚑ marks questions you flagged · swipe or use ← → to move</p>`;
-}
-function runNav(last,isCard){
-  return `<div class="runnav">
-    <button class="btn ghost" type="button" data-act="exit">Exit</button>
-    <div class="row">
-      <button class="btn ghost" type="button" data-act="prev" ${R.i?'':'disabled'}>Previous</button>
-      ${isCard?'<button class="btn" type="button" data-act="flip">Flip card</button>':''}
-      <button class="btn primary" type="button" data-act="next">${last?(isCard?'Restart':'Finish'):'Next'}</button>
-    </div>
-  </div>`;
-}
-function drawRun(){
-  window.scrollTo({top:0,behavior:'auto'});
-  if(!R) return renderPractice();
-  if(!featureOn('instant')) R.instant=false;
-  if(!featureOn('flashcards')&&R.mode==='cards'){R.mode='quiz';R.flip=false}
-  if(!featureOn('smartreview')) R.review=false;
-  R.mode==='quiz'?drawQuiz():drawCard();
-}
+const head=()=>`<div class="rtop"><strong>${esc(R.title)}</strong><div class="prog" aria-hidden="true"><i style="width:${Math.round((R.i+1)/R.Q.length*100)}%"></i></div><span class="cnt">${R.i+1} / ${R.Q.length}</span></div>`;
+const staticOpts=(q,mark)=>`<ul class="opts static">${q.o.map((t,k)=>`<li${mark?` class="${mark(k)}"`:''}><b>${L[k]}</b><span>${esc(t)}</span></li>`).join('')}</ul>`;
+const drawRun=()=>{window.scrollTo({top:0});R.mode==='quiz'?drawQuiz():drawCard()};
 
 function drawQuiz(){
-  if(!featureOn('instant')) R.instant=false;
   const q=R.Q[R.i],p=R.picks[R.i],locked=R.instant&&p!=null&&q.a>-1,last=R.i===R.Q.length-1;
-  $('#app').innerHTML=`<div class="view run">
-    ${runHead()}
-    <section class="panel qpanel">
-      <div class="qmeta"><span class="pill">Question ${R.i+1}</span><span class="qmeta-r"><span>${R.instant?'Instant feedback':'Answers at the end'}</span><button class="btn ghost sm flagbtn${(R.flags||[])[R.i]?' on':''}" type="button" data-act="flag" aria-pressed="${!!(R.flags||[])[R.i]}" title="Flag to revisit (M)">⚑ ${(R.flags||[])[R.i]?'Flagged':'Flag'}</button></span></div>
-      <h2 class="q"><span class="no">${R.i+1}.</span> ${esc(q.q)}</h2>
-      <div class="opts" role="radiogroup" aria-label="Answer options">${q.o.map((t,k)=>{
-        const c='opt'+(p===k?' sel':'')+(locked?' lock'+(k===q.a?' ok':p===k?' bad':''):'');
-        return `<div class="${c}" data-k="${k}" role="radio" aria-checked="${p===k}" tabindex="0"><span class="ltr">${L[k]}</span><span>${esc(t)}</span></div>`;
-      }).join('')}</div>
-      ${locked?`<div class="exp ${p===q.a?'ok':'bad'}" role="status" aria-live="polite"><strong>${p===q.a?'Correct ✓':'The answer is '+L[q.a]+'.'}</strong>${esc(q.e||'')}</div>`:''}
-    </section>
-    ${navGrid()}
-    ${runNav(last,false)}
-  </div>`;
+  $('#app').innerHTML=`${head()}
+  <h2 class="q"><span class="no">${R.i+1}.</span> ${esc(q.q)}</h2>
+  <div class="opts" role="radiogroup" aria-label="Answers">${q.o.map((t,k)=>{
+    const c='opt'+(p===k?' sel':'')+(locked?' lock'+(k===q.a?' ok':p===k?' bad':''):'');
+    return `<div class="${c}" data-k="${k}" role="radio" aria-checked="${p===k}" tabindex="0"><span class="ltr">${L[k]}</span><span>${esc(t)}</span></div>`}).join('')}</div>
+  ${locked?`<p class="exp" aria-live="polite"><strong>${p===q.a?'Correct.':'The answer is '+L[q.a]+'.'}</strong> ${esc(q.e||'')}</p>`:''}
+  <div class="nav2"><button class="btn ghost exit" data-act="exit">Exit</button>
+    <button class="btn ghost" data-act="prev" ${R.i?'':'disabled'}>Previous</button>
+    <button class="btn primary" data-act="next">${last?'Finish':'Next'}</button></div>`;
 }
 function pick(k){
-  if(!R||R.mode!=='quiz') return;
   const q=R.Q[R.i];
-  if(k<0||k>=q.o.length||(R.instant&&R.picks[R.i]!=null&&q.a>-1)) return;
-  R.picks[R.i]=k; saveRun(); drawQuiz();
-  queueMicrotask(()=>$('.opt.sel')?.focus({preventScroll:true}));
+  if(k<0||k>=q.o.length||(R.instant&&R.picks[R.i]!=null&&q.a>-1))return;
+  R.picks[R.i]=k;drawQuiz();$('.opt.sel')?.focus();
 }
-
 function drawCard(){
   const q=R.Q[R.i],last=R.i===R.Q.length-1;
-  $('#app').innerHTML=`<div class="view run">
-    ${runHead()}
-    <div class="wrap"><div class="card3d ${R.flip?'flipped':''}" id="card" tabindex="0" role="button" aria-pressed="${R.flip}" aria-label="Flip flashcard">
-      <div class="face front">
-        <div class="qno">Question ${R.i+1} of ${R.Q.length}</div>
-        <h2 class="q"><span class="no">${R.i+1}.</span> ${esc(q.q)}</h2>
-        ${staticOpts(q)}
-        <p class="hint">Tap the card or press Space to see the answer</p>
-      </div>
-      <div class="face back">
-        <p class="qno">Answer · question ${R.i+1}</p>
-        ${q.a>-1?`<div class="ans"><b>${L[q.a]}</b><span>${esc(q.o[q.a])}</span></div>`:'<p class="ans"><span>No answer provided for this question.</span></p>'}
-        ${q.e?`<div class="exp"><strong>Why</strong>${esc(q.e)}</div>`:''}
-        <p class="hint">Tap the card or press Space to flip back</p>
-      </div>
-    </div></div>
-    ${runNav(last,true)}
-  </div>`;
+  $('#app').innerHTML=`${head()}
+  <div class="wrap"><div class="card ${R.flip?'flipped':''}" id="card" tabindex="0" role="button" aria-pressed="${R.flip}" aria-label="Flip card">
+    <div class="face front"><h2 class="q"><span class="no">${R.i+1}.</span> ${esc(q.q)}</h2>${staticOpts(q)}<p class="hint">Tap card to see the answer</p></div>
+    <div class="face back"><p class="qno">Question ${R.i+1}</p>
+      ${q.a>-1?`<div class="ans"><b>${L[q.a]}</b><span>${esc(q.o[q.a])}</span></div>`:'<p class="ans"><span>No answer provided for this question.</span></p>'}
+      ${q.e?`<p class="exp">${esc(q.e)}</p>`:''}<p class="hint">Tap card to flip back</p></div></div></div>
+  <div class="nav2"><button class="btn ghost exit" data-act="exit">Exit</button>
+    <button class="btn ghost" data-act="prev" ${R.i?'':'disabled'}>Previous</button>
+    <button class="btn" data-act="flip">Flip card</button>
+    <button class="btn primary" data-act="next">${last?'Restart':'Next'}</button></div>`;
   syncCard();
 }
-const staticOpts=(q,mark)=>`<ul class="static opts staticopts">${q.o.map((t,k)=>`<li${mark?` class="${mark(k)}"`:''}><b>${L[k]}</b><span>${esc(t)}</span></li>`).join('')}</ul>`;
 function syncCard(){const c=$('#card');if(c){c.querySelector('.front').inert=R.flip;c.querySelector('.back').inert=!R.flip}}
-function doFlip(){if(!R)return;R.flip=!R.flip;const c=$('#card');if(!c)return;c.classList.toggle('flipped',R.flip);c.setAttribute('aria-pressed',R.flip);syncCard();saveRun()}
-
-/* ---- finish + results ---- */
-function finishQuiz(){
-  if(!R) return;
-  if(R.done) return drawResult();
-  const Q=R.Q,picks=R.picks;
-  const n=Q.filter(q=>q.a>-1).length;
-  const right=Q.filter((q,k)=>q.a>-1&&picks[k]===q.a).length;
-  const skipped=picks.filter(p=>p==null).length;
-  const pct=n?Math.round(right/n*100):0;
-  if(n&&!R.review) setBest(R.id,right,n);
-  if(featureOn('smartreview')){
-    const missed=Q.filter((q,k)=>q.a>-1&&picks[k]!==q.a).map(q=>q.qi);
-    setReview(R.id,R.title,missed);
-  }
-  const attempt=R.review?0:(R.counted||(R.counted=bump(bkey(R.id))));
-  const secs=Math.max(1,Math.round((Date.now()-R.t0)/1000));
-  const st=me.get()||{name:'Student',id:'—'};
-  const slip=`Quiz: ${R.title}\nStudent: ${st.name} (${st.id})\nScore: ${right} / ${n} (${pct}%)\nAttempt: ${R.review?'Smart review':attempt}\nTime: ${Math.floor(secs/60)}m ${secs%60}s\nDate: ${new Date().toLocaleString()}`;
-  R.res={right,n,skipped,pct,attempt,secs,slip};
-  R.done=true; clearSavedRun();
-  if(!R.review) queueMicrotask(()=>submitResult(right,n));
-  drawResult();
-  if(pct>=80&&n) confetti();
-}
+function doFlip(){R.flip=!R.flip;const c=$('#card');c.classList.toggle('flipped',R.flip);c.setAttribute('aria-pressed',R.flip);syncCard()}
 
 function drawResult(){
-  if(!R||!R.res) return;
-  const {right,n,skipped,pct,attempt,secs,slip}=R.res;
-  const Q=R.Q,picks=R.picks;
-  const mins=Math.floor(secs/60),secLeft=secs%60;
-  const rv=featureOn('smartreview')?reviewFor(R.id):null;
-  const headline=R.review?(pct===100?'Smart review cleared!':pct>=50?'Review progress made.':'Keep reviewing — you are closing the gap.'):(n?pct>=80?'Excellent work!':pct>=50?'Good progress.':'Keep going — review and retry.':'No answer key found.');
-  const body=R.review?(n?`${pct}% correct on this focused review. ${rv?.qis.length?`${rv.qis.length} question${rv.qis.length===1?'':'s'} still need${rv.qis.length===1?'s':''} another pass.`:'You cleared the review deck — nice work.'}`:'This review has no answer key yet.'):(n?`${pct}% correct${skipped?`, ${skipped} unanswered`:''}. ${pct>=80?'Strong result — try another quiz or help a classmate.':pct>=50?'Review the misses below, then take another pass.':'Study the answer key below and try again — you will improve fast.'}`:'This quiz has no answer key yet.');
-  $('#app').innerHTML=`<div class="view">
-    <section class="panel score-panel">
-      <div class="ring" style="--p:${pct}"><div class="ring-in"><span class="big">${n?pct+'%':'—'}</span><small>${right} / ${n} correct</small></div></div>
-      <h2>${headline}</h2>
-      <p>${body}</p>
-      <div class="result-stats">
-        <div><strong>${right}</strong><span>Correct</span></div>
-        <div><strong>${skipped}</strong><span>Unanswered</span></div>
-        <div><strong>${R.review?'—':attempt}</strong><span>${R.review?'Review':'Attempt'}</span></div>
-        <div><strong>${mins}:${String(secLeft).padStart(2,'0')}</strong><span>Time</span></div>
-      </div>
-      <div class="actions">
-        <button class="btn primary" type="button" data-act="retry">Try again</button>
-        ${rv?.qis.length?`<button class="btn" type="button" data-act="smartreview">Review ${rv.qis.length} missed</button>`:''}
-        ${featureOn('flashcards')?'<button class="btn" type="button" data-act="flash">Study as flashcards</button>':''}
-        <button class="btn ghost" type="button" data-act="exit">All quizzes</button>
-      </div>
-    </section>
-
-    <div class="panel">
-      <div class="row between" style="align-items:flex-start">
-        <div><h2 style="margin:0">Result slip</h2><p class="muted" style="margin:.15rem 0 0;font-size:.86rem">Send this to your teacher or take a screenshot.</p></div>
-        <div class="row"><button class="btn sm" type="button" data-act="copy">Copy</button><button class="btn sm" type="button" data-act="save">Download</button></div>
-      </div>
-      <pre>${esc(slip)}</pre>
-      <p class="status info" id="sub-st" aria-live="polite">${RESULTS_URL?'':'Score saved on this device.'}</p>
-    </div>
-
-    <h2 class="sec-title">Answer key</h2>
-    ${Q.map((q,k)=>{
-      const p=picks[k],nk=q.a<0,ok=p===q.a;
-      return `<article class="panel rev ${p==null||nk?'skip':ok?'ok':'bad'}">
-        <div class="rh"><span>Question ${k+1}${(R.flags||[])[k]?' · ⚑ flagged':''}</span><span>${nk?'No answer':p==null?'Skipped':ok?'Correct':'Incorrect'}</span></div>
-        <p class="q sm">${esc(q.q)}</p>
-        <ul class="static">${q.o.map((t,j)=>`<li class="${j===q.a?'ok':j===p&&!nk?'bad':''}"><b>${L[j]}</b><span>${esc(t)}</span>${j===q.a?'<em>Correct answer</em>':j===p?'<em>Your answer</em>':''}</li>`).join('')}</ul>
-        ${q.e?`<div class="exp"><strong>Why</strong>${esc(q.e)}</div>`:''}
-      </article>`;
-    }).join('')}
-    <div class="actions end"><button class="btn ghost" type="button" data-act="exit">← Back to all quizzes</button></div>
-  </div>`;
+  window.scrollTo({top:0});
+  const {Q,picks}=R,n=Q.filter(q=>q.a>-1).length,right=Q.filter((q,k)=>picks[k]===q.a).length,skipped=picks.filter(p=>p==null).length,pct=n?Math.round(right/n*100):0,st=me.get();
+  if(n)setBest(R.id,right,n);
+  const attempt=R.counted||(R.counted=bump(bkey(R.id)));
+  R.slip=`Quiz: ${R.title}\nStudent: ${st.name} (${st.id})\nScore: ${right} / ${n} (${pct}%)\nAttempt: ${attempt}\nDate: ${new Date().toLocaleString()}`;
+  queueMicrotask(()=>submitResult(right,n));
+  $('#app').innerHTML=`
+  <div class="panel score"><div class="big">${right}<small> / ${n}</small></div>
+    <p>${n?`${pct}% correct${skipped?`, ${skipped} unanswered`:''}. ${pct>=80?'Strong result!':pct>=50?'Good progress. Review the misses below.':'Worth another pass. Review the answers below.'}`:'This quiz has no answer key.'}</p></div>
+  <div class="actions"><button class="btn primary" data-act="retry">Try again</button><button class="btn" data-act="flash">Study as flashcards</button><button class="btn ghost" data-act="exit">All quizzes</button></div>
+  <div class="panel"><h2>Result slip</h2><p class="muted" style="margin:0">Send this to your teacher or take a screenshot.</p><pre>${esc(R.slip)}</pre>
+    <div class="row" style="margin-top:.8rem"><button class="btn sm" data-act="copy">Copy</button><button class="btn sm" data-act="save">Download</button></div>
+    <p class="status info" id="sub-st" aria-live="polite"></p></div>
+  <h2 style="margin:2rem 0 1rem">Answer key</h2>
+  ${Q.map((q,k)=>{const p=picks[k],nk=q.a<0,ok=p===q.a;
+    return `<article class="rev ${p==null||nk?'skip':ok?'ok':'bad'}"><div class="rh"><span>Question ${k+1}</span><span>${nk?'No answer':p==null?'Skipped':ok?'Correct':'Incorrect'}</span></div>
+    <p class="q sm">${esc(q.q)}</p>
+    <ul class="opts static">${q.o.map((t,j)=>`<li class="${j===q.a?'ok':j===p&&!nk?'bad':''}"><b>${L[j]}</b><span>${esc(t)}</span>${j===q.a?'<em>Correct answer</em>':j===p?'<em>Your answer</em>':''}</li>`).join('')}</ul>
+    ${q.e?`<p class="exp">${esc(q.e)}</p>`:''}</article>`}).join('')}`;
 }
 
-/* ---- actions ---- */
 const ACTIONS={
-  exit(){if(R&&!R.done)saveRun();R=null;document.documentElement.style.removeProperty('--osz');renderPractice()},
-  prev(){if(!R||R.i<=0)return;R.i--;R.flip=false;saveRun();drawRun()},
+  exit(){R=null;route()},
+  prev(){R.i--;R.flip=false;drawRun()},
   next(){
-    if(!R)return;
-    if(R.mode==='quiz'&&R.i===R.Q.length-1)return confirmFinish();
-    if(R.mode==='cards'&&R.i===R.Q.length-1)toast('Deck complete — starting over.');
-    R.i=(R.i+1)%R.Q.length;R.flip=false;saveRun();drawRun();
+    if(R.mode==='quiz'&&R.i===R.Q.length-1)return drawResult();
+    if(R.mode==='cards'&&R.i===R.Q.length-1)toast('Completed deck. Starting over.');
+    R.i=(R.i+1)%R.Q.length;R.flip=false;drawRun();
   },
-  flip(){doFlip()},
-  flag(){
-    if(!R||R.mode!=='quiz'||R.done)return;
-    if(!Array.isArray(R.flags)||R.flags.length!==R.Q.length)R.flags=Array(R.Q.length).fill(false);
-    R.flags[R.i]=!R.flags[R.i];
-    toast(R.flags[R.i]?'Flagged — find it in the number bar':'Flag removed');
-    saveRun();drawQuiz();
-  },
-  copy(){
-    if(!R?.res)return;
-    navigator.clipboard?.writeText(R.res.slip).then(()=>toast('Copied result slip'),()=>toast('Select the text above to copy.'));
-  },
-  save(){if(!R?.res)return;download(slug(R.title+' '+me.get().id)+'.txt',R.res.slip+'\n','text/plain')},
-  retry(){
-    if(!R)return;
-    R={t0:Date.now(),id:R.id,title:R.title,Q:R.Q,mode:'quiz',i:0,picks:Array(R.Q.length).fill(null),flags:Array(R.Q.length).fill(false),flip:false,instant:featureOn('instant')&&R.instant,review:featureOn('smartreview')&&!!R.review,done:false,res:null,counted:null,sent:false};
-    saveRun();drawRun();
-  },
-  smartreview(){
-    if(!R||!featureOn('smartreview'))return;
-    startSmartReview(R.id);
-  },
-  flash(){
-    if(!R||!featureOn('flashcards'))return;
-    R={...R,mode:'cards',i:0,flip:false,done:false,res:null};
-    saveRun();drawRun();
-  }
+  flip:()=>doFlip(),
+  copy(){navigator.clipboard?.writeText(R.slip).then(()=>toast('Copied'),()=>toast('Select the text above to copy.'))},
+  save:()=>download(slug(R.title+' '+me.get().id)+'.txt',R.slip+'\n','text/plain'),
+  retry(){R={...R,mode:'quiz',i:0,picks:Array(R.Q.length).fill(null),flip:false,counted:null,sent:false,t0:Date.now()};drawRun()},
+  flash(){R={...R,mode:'cards',i:0,flip:false};drawRun()}
 };
+const route=()=>R?drawRun():viewLibrary();
 
-async function startQuiz(id,mode,btn){
-  if(btn)btn.disabled=true;
-  try{
-    const quiz=await loadQuiz(id);
-    if(!quiz.questions||!quiz.questions.length)throw new Error('This quiz is empty.');
-    const st=me.get();if(!st)return viewRegister();
-    const Q=personalize(quiz.questions,st.key,id);
-    if(!featureOn('resume')) clearSavedRun();
-    const inst=featureOn('instant')&&($('#inst')?$('#inst').checked:!!prefs.get().inst);
-    R={t0:Date.now(),id,title:quiz.title||'Quiz',Q,mode:mode==='cards'&&featureOn('flashcards')?'cards':'quiz',i:0,picks:Array(Q.length).fill(null),flags:Array(Q.length).fill(false),flip:false,instant:inst,review:false,done:false,res:null,counted:null,sent:false};
-    saveRun();drawRun();
-  }catch(err){
-    toast(err.message||'Could not open quiz.');
-    if(btn)btn.disabled=false;
-  }
-}
-
-/* Smart review: rebuild a deck from the questions this student missed */
-async function startSmartReview(id){
-  if(!featureOn('smartreview'))return;
-  const rv=reviewFor(id);
-  if(!rv||!rv.qis.length)return toast('Nothing to review for this quiz.');
-  try{
-    const quiz=await loadQuiz(id),st=me.get();
-    if(!st)return viewRegister();
-    const keep=new Set(rv.qis),Q=personalize(quiz.questions,st.key,id).filter(q=>keep.has(q.qi));
-    if(!Q.length){setReview(id,rv.title,[]);toast('Those questions are no longer in the quiz.');return renderPractice()}
-    R={t0:Date.now(),id,title:quiz.title||rv.title||'Quiz',Q,mode:'quiz',i:0,picks:Array(Q.length).fill(null),flags:Array(Q.length).fill(false),flip:false,instant:featureOn('instant'),review:true,done:false,res:null,counted:null,sent:false};
-    saveRun();drawRun();
-  }catch(err){toast(err.message||'Could not open the review.')}
-}
-function confirmFinish(){
-  const un=R.picks.filter(p=>p==null).length,fl=(R.flags||[]).filter(Boolean).length;
-  if(un||fl){
-    const bits=[];
-    if(un)bits.push(un+' unanswered');
-    if(fl)bits.push(fl+' flagged');
-    if(!confirm('You still have '+bits.join(' and ')+'. Submit anyway?'))return;
-  }
-  finishQuiz();
-}
-
-function renderPractice(){
-  if(R){R.done?drawResult():drawRun();return}
-  if(!me.get())return viewRegister();
-  viewLibrary();
-}
-
-/* ============================================================
-   8 · Teacher studio
-   ============================================================ */
-/* Deployment target — fixed here on purpose; not a teacher-facing setting. */
-const PIN='123';
-const DEFAULT_REPO='oxpc/s',DEFAULT_BRANCH='main';
-const unlocked=()=>!PIN||lsGet('qm-t-pin',true)==='ok';
-let teacherSrc=null,connOpen=false;
-let D={title:'',id:null,qs:[]};
-let ghList=null;
-
-function viewTeacher(){
-  viewToken++;
-  if(!unlocked()){renderLockScreen();return}
-  renderTeacherDashboard();
-}
-
-function renderLockScreen(){
-  $('#app').innerHTML=`<section class="auth single view">
-    <div class="panel auth-card">
-      <span class="pill" style="align-self:flex-start">Teacher only</span>
-      <h1 style="font-size:clamp(1.6rem,5vw,2rem);margin-top:.6rem">Teacher studio</h1>
-      <p class="lede">Enter your PIN or password to add, edit and publish quizzes.</p>
-      <form id="lock" novalidate>
-        <label class="f" for="pin">Password / PIN</label>
-        <input type="password" id="pin" autocomplete="current-password" placeholder="Enter password">
-        <p class="status err" id="pin-err" aria-live="polite"></p>
-        <button class="btn primary" type="submit">Unlock →</button>
-      </form>
-      <p class="hintline">This is a convenience gate. Publishing is protected by your GitHub token.</p>
-    </div>
-  </section>`;
-  $('#pin').focus();
-  $('#lock').onsubmit=e=>{
-    e.preventDefault();
-    if($('#pin').value===PIN){lsSet('qm-t-pin','ok',true);viewTeacher()}
-    else{setStatus('pin-err','Incorrect password. Try again.','err');$('#pin').select()}
-  };
-}
-
-function renderTeacherDashboard(){
-  $('#app').innerHTML=`<div class="view teacher">
-    <div class="row between teacher-head">
-      <div>
-        <p class="eyebrow">Teacher studio</p>
-        <h1 style="margin-bottom:.35rem">Build &amp; publish quizzes</h1>
-        <p class="lede" style="margin:0">Upload a Word or text file, check the answers, then publish. Students see it on the practice page right away.</p>
-      </div>
-      ${PIN?'<button class="btn ghost sm danger" id="lock-btn" type="button">Lock</button>':''}
-    </div>
-    <div class="steps">
-      <section class="panel" id="p-conn"></section>
-      <section class="panel nonum" id="p-features"></section>
-      <section class="panel">
-        <h2>Add a quiz</h2>
-        <div class="row">
-          <button class="btn" id="up" type="button">Upload .docx or text file</button>
-          <input id="file" type="file" accept=".txt,.md,.docx,text/plain,application/vnd.openxmlformats-officedocument.wordprocessingml.document" hidden>
-          <button class="btn ghost" id="sample" type="button">Use sample</button>
-          <button class="btn ghost" id="clear" type="button">Clear</button>
-        </div>
-        <label class="f" for="src">…or paste the questions <small>(you can also drop a file here)</small></label>
-        <textarea id="src" spellcheck="false" placeholder="1. Question text&#10;A. Option&#10;B. Option&#10;Answer: B"></textarea>
-        <p class="status info" id="parse-status" aria-live="polite"></p>
-        <details><summary>Supported formats</summary>
-          <p>Numbered or plain questions, options lettered <code>A.</code> <code>A)</code> <code>(A)</code> or one per line. The answer can be <code>Answer: B</code>, the option text, a ✓ next to the option, or a key at the end like <code>1. B  2. C</code>. In Word files, bold or highlighted options count as correct.</p>
-        </details>
-      </section>
-      <section class="panel" id="p-edit" hidden></section>
-      <section class="panel nonum" id="p-list"></section>
-    </div>
-    <p class="foot">Only someone with your GitHub token can publish or delete from GitHub. Device saves stay in this browser.</p>
-  </div>`;
-
-  $('#lock-btn')&&($('#lock-btn').onclick=()=>{lsDel('qm-t-pin');viewTeacher()});
-  drawConn();
-  drawFeatures();
-  wireAdd();
-  drawTeacherList();
-}
-
-/* ---- GitHub API ---- */
-let cfg={repo:DEFAULT_REPO,branch:DEFAULT_BRANCH,token:lsGet('qm-token',true)||lsGet('qm-token')||''};
-const hasToken=()=>!!(cfg.repo&&cfg.token);
-const b64=s=>{let r='';new TextEncoder().encode(s).forEach(x=>r+=String.fromCharCode(x));return btoa(r)};
-const unb64=s=>new TextDecoder().decode(Uint8Array.from(atob(s.replace(/\s/g,'')),c=>c.charCodeAt(0)));
-
-async function gh(path,opt={}){
-  const clean=path?'/'+path.replace(/^\/+/,''):'';
-  const url=`https://api.github.com/repos/${cfg.repo}${clean}`;
-  let r;
-  try{
-    r=await fetch(url,{...opt,headers:{Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28',Authorization:'Bearer '+cfg.token.trim(),...(opt.headers||{})}});
-  }catch{throw new Error('Connection failed. If you use Brave or an ad-blocker, disable shields for this page.')}
-  if(r.status===404&&opt.allow404)return null;
-  if(!r.ok){
-    let m='';try{m=(await r.json()).message}catch{}
-    throw new Error({
-      401:'Invalid or expired GitHub token. Please create a new token.',
-      403:'Token lacks permission. It needs "Contents: Read and write" on repository '+cfg.repo,
-      404:`Repository "${cfg.repo}" or branch "${cfg.branch}" was not found.`,
-      409:'The repository changed while saving. Try again.',
-      422:'GitHub refused change: '+m
-    }[r.status]||m||'GitHub error '+r.status);
-  }
-  return r.status===204?null:r.json();
-}
-async function getFile(path){
-  const j=await gh(`contents/${path}?ref=${encodeURIComponent(cfg.branch)}`,{allow404:true,cache:'no-store'});
-  return j?{sha:j.sha,text:unb64(j.content)}:null;
-}
-const putFile=(path,text,sha,msg)=>gh(`contents/${path}`,{method:'PUT',body:JSON.stringify({message:msg,content:b64(text),branch:cfg.branch,...(sha?{sha}:{})})});
-async function readIndex(){
-  const f=await getFile('quizzes/index.json');let list=[];
-  if(f)try{list=JSON.parse(f.text).quizzes||[]}catch{}
-  return{sha:f?.sha,list};
-}
-async function writeIndex(mutate,msg){
-  const{sha,list}=await readIndex(),next=mutate(list);
-  await putFile('quizzes/index.json',JSON.stringify({quizzes:next},null,2)+'\n',sha,msg);
-  return next;
-}
-
-/* ---- connection panel ---- */
-function drawConn(){
-  const el=$('#p-conn');if(!el)return;
-  const ok=hasToken()&&!connOpen;
-  el.innerHTML=`<h2>Connect to GitHub ${ok?'<span class="chip ok" style="vertical-align:3px">connected</span>':'<span class="chip" style="vertical-align:3px">optional</span>'}</h2>`+(ok?
-    `<p class="muted" style="margin:.1rem 0 .7rem">Publishing is ready. Quizzes and student settings go to your class library.</p>
-     <div class="row"><button class="btn sm" id="c-edit" type="button">Change token</button><button class="btn sm ghost danger" id="c-out" type="button">Forget token</button></div>`:
-    `<p class="muted" style="margin:.1rem 0 .7rem">Paste a fine-grained token once. Quizzes and student settings publish to your class library automatically.</p>
-     <label class="f" for="c-tok">Access token <small>(Contents: Read and write)</small></label>
-     <input type="password" id="c-tok" value="${esc(cfg.token)}" placeholder="github_pat_…" autocomplete="off">
-     <label class="chk" style="margin-top:.7rem"><input type="checkbox" id="c-rem" ${lsGet('qm-token')?'checked':''}> Remember on this device</label>
-     <div class="row" style="margin-top:.8rem"><button class="btn primary" id="c-go" type="button">Connect</button></div>
-     <div class="note"><strong>No token yet?</strong> You can still use <em>Save on this device</em> in the editor below. It works instantly, without GitHub.</div>`)+
-    `<p class="status info" id="c-st" aria-live="polite"></p>`;
-  const g=id=>$('#'+id);
-  if(g('c-edit'))g('c-edit').onclick=()=>{connOpen=true;drawConn()};
-  if(g('c-out'))g('c-out').onclick=()=>{cfg.token='';lsDel('qm-token');ghList=null;connOpen=false;drawConn();drawTeacherList()};
-  if(g('c-go'))g('c-go').onclick=async()=>{
-    const repo=DEFAULT_REPO,branch=DEFAULT_BRANCH,token=g('c-tok').value.trim();
-    if(!token)return setStatus('c-st','Please paste your GitHub token.','err');
-    cfg={repo,branch,token};ghList=null;
-    setStatus('c-st','Connecting to GitHub…');
-    try{
-      await gh('');
-      lsDel('qm-token');lsSet('qm-token',token,!g('c-rem').checked);
-      connOpen=false;drawConn();drawTeacherList();
-      setStatus('c-st','Connected successfully.','ok');
-      toast('GitHub connected');
-    }catch(e){setStatus('c-st',e.message,'err')}
-  };
-}
-
-/* ---- student feature switches ---- */
-function featureMetaText(){
-  return featureState.updated?`Last saved ${new Date(featureState.updated).toLocaleString()}`:'Factory defaults';
-}
-function featureCount(){
-  const total=FEATURES.length;
-  return{n:FEATURES.filter(f=>featureOn(f.id)).length,total};
-}
-function drawFeatures(){
-  const el=$('#p-features');if(!el)return;
-  const {n,total}=featureCount(),cls=n===total?'ok':n?'warn':'';
-  el.innerHTML=`<div class="listhead"><h2>Student experience</h2><span class="chip ${cls} feature-count" id="f-count">${n} of ${total} on</span></div>
-    <p class="muted" style="margin:.1rem 0 .2rem;font-size:.86rem">Switch student tools on or off. Changes save here instantly; publish to apply them on every student device.</p>
-    <div class="feature-list">${FEATURES.map(f=>`<div class="feature-row">
-      <div class="fcopy"><strong>${esc(f.label)}</strong><span class="fdesc">${esc(f.desc)}</span></div>
-      <div class="feature-control"><span class="feature-state ${featureOn(f.id)?'on':''}" aria-hidden="true">${featureOn(f.id)?'On':'Off'}</span>
-        <label class="switch"><input type="checkbox" data-feature="${esc(f.id)}" ${featureOn(f.id)?'checked':''} aria-label="${esc(f.label)}"><span class="track" aria-hidden="true"></span></label>
-      </div>
-    </div>`).join('')}</div>
-    <div class="feature-bar">
-      <span class="feature-meta" id="f-meta">${featureMetaText()}</span>
-      <div class="row">
-        <button class="btn sm ghost" id="f-reset" type="button">Reset defaults</button>
-        <button class="btn sm primary" id="f-pub" type="button" ${hasToken()?'':'disabled'}>Publish to students</button>
-      </div>
-    </div>
-    <p class="status info" id="f-st" aria-live="polite">${hasToken()?'Saved here first — publish when you are ready for every student to see it.':'Connect GitHub above to publish these settings to students.'}</p>`;
-
-  const syncSummary=()=>{
-    const c=featureCount(),chip=el.querySelector('#f-count'),meta=el.querySelector('#f-meta');
-    if(chip){chip.textContent=`${c.n} of ${c.total} on`;chip.className='chip feature-count '+(c.n===c.total?'ok':c.n?'warn':'')}
-    if(meta)meta.textContent=featureMetaText();
-  };
-  el.querySelectorAll('[data-feature]').forEach(cb=>{
-    cb.onchange=()=>{
-      setFeature(cb.dataset.feature,cb.checked);
-      const row=cb.closest('.feature-row'),state=row?.querySelector('.feature-state');
-      if(state){state.textContent=cb.checked?'On':'Off';state.classList.toggle('on',cb.checked)}
-      syncSummary();
-      const f=FEATURES.find(x=>x.id===cb.dataset.feature);
-      setStatus('f-st',`${f?.label||'Feature'} turned ${cb.checked?'on':'off'} · saved on this device${hasToken()?' — publish to update students':''}.`,'info');
-    };
-  });
-  const reset=el.querySelector('#f-reset');
-  if(reset)reset.onclick=()=>{
-    featureState={features:featureDefaults(),updated:Date.now()};
-    persistFeatures();applyFeaturePrefs();drawFeatures();
-    setStatus('f-st','Defaults restored on this device. Publish to update students.','info');
-    toast('Feature defaults restored');
-  };
-  const pub=el.querySelector('#f-pub');
-  if(pub)pub.onclick=publishFeatures;
-}
-
-async function publishFeatures(){
-  if(!hasToken())return setStatus('f-st','Connect to GitHub first.','err');
-  const btn=$('#f-pub');if(btn)btn.disabled=true;
-  setStatus('f-st','Publishing student settings…');
-  try{
-    const updated=new Date().toISOString();
-    const ex=await getFile('quizzes/settings.json');
-    await putFile('quizzes/settings.json',JSON.stringify({features:featureState.features,updated},null,2)+'\n',ex?.sha,'Update student feature settings');
-    featureState.updated=Date.parse(updated);persistFeatures();
-    const meta=$('#f-meta');if(meta)meta.textContent=featureMetaText();
-    setStatus('f-st','Published. Students will see the new switches when they load or refresh the practice page.','ok');
-    toast('Student features published');
-  }catch(e){setStatus('f-st',e.message,'err')}
-  finally{if(btn)btn.disabled=false}
-}
-
-/* ---- parser (questions from pasted text / docx) ---- */
-const OPT=/^\(?([A-Ha-h])(?:\)|[.:]\s|\s[-–—]\s)\s*(.+)$/,
-  QN=/^(?:q(?:uestion)?\.?\s*)?(\d+)\s*[.):\-]\s*(.+)$/i,
-  BN=/^(?:q(?:uestion)?\.?\s*(\d+)\s*[.):\-]?|(\d+)\s*[.):])$/i,
-  ANS=/^(?:the\s+)?(?:correct(?:\s+(?:answer|option|choice))?|answer|ans\.?|key|solution)\s*(?:[:=\-–—]|\bis\b)\s*(.+)$/i,
-  ANS2=/^(?:correct\s+)?(?:answer|ans)\.?\s+\(?([A-Ha-h])\)?[.)]?$/i,
-  KEYLINE=/^(?:(?:q\s*)?\d+\s*[.):\-]?\s*\(?[A-Ha-h]\)?[\s.,;]*)+$/i,
-  EXPL=/^(?:explanation|rationale|reason|why|note)\s*[:\-]\s*/i,
-  MK=/\s*(?:[✓✔✅]|\((?:correct|answer|\*)\)|\[(?:correct|x|\*)\])\s*$/i,
-  LM=/^(?:[✓✔✅]|\[x\])\s*/i,
-  norm=s=>s.toLowerCase().replace(/[^\p{L}\p{N}]+/gu,' ').trim();
-
-function resolve(s,o){
-  s=s.trim();const ns=norm(s);
-  const k=o.findIndex(t=>{const n=norm(t);return n&&(ns===n||(n.length>3&&ns.startsWith(n+' ')))});
-  if(k>-1)return{a:k,e:ns===norm(o[k])?'':s.slice(o[k].length).replace(/^[\s.:,;\-–—)]+/,'')};
-  const m=s.match(/^\(?([A-Ha-h]|[1-9])\)?(?=[.:\-–—)\s]|$)[.:\-–—)]?\s*(.*)$/);
-  if(!m)return{a:-1,e:''};
-  const a=/\d/.test(m[1])?+m[1]-1:'abcdefgh'.indexOf(m[1].toLowerCase());
-  return{a,e:norm(m[2])===norm(o[a]||'')?'':m[2]};
-}
-
-function parse(raw){
-  const all=[],key={};let cur=null,blank=false;
-  const opts=c=>c.o.length>1?c.o.length:c.p.length;
-  const fin=()=>{
-    const c=cur;cur=null;if(!c)return;
-    let o=c.o,q=c.q;
-    if(o.length>1){if(c.p.length)q+='\n'+c.p.join('\n')}else o=c.p;
-    if(!q||o.length<2)return;
-    let a=-1,e=c.x.join(' ');
-    if(c.ar!=null){const r=resolve(c.ar,o);a=r.a;e=(r.e+' '+e).trim()}
-    if(a<0&&c.mark!=null)a=c.mark;
-    all.push({q:q.trim(),o,a,e,n:c.n});
-  };
-  const mk=(t,n)=>{fin();cur={q:t,o:[],p:[],x:[],a:-1,ar:null,mark:null,n}};
-  const add=(arr,t)=>{let c=false;t=t.replace(MK,()=>(c=true,'')).replace(LM,()=>(c=true,'')).trim();if(c)cur.mark=arr.length;arr.push(t)};
-  const isNew=n=>!cur||opts(cur)>1||n===(cur.n??0)+1||(cur.n==null&&!cur.o.length&&!cur.p.length);
-  for(let l of raw.replace(/\r/g,'').split('\n')){
-    if(/^\s*```/.test(l))continue;
-    l=l.replace(/\*\*/g,'').replace(/`/g,'').trim().replace(/^#+\s*/,'').replace(/^>\s*/,'').replace(/^[-*•–]\s+/,'');
-    if(!l||/^[-=_*]{3,}$/.test(l)){blank=true;continue}
-    blank=false;
-    if(/^(?:answer\s*key|answers|key)\s*:?$/i.test(l))continue;
-    let m;
-    if(KEYLINE.test(l)){for(const k of l.matchAll(/(\d+)\s*[.):\-]?\s*\(?([A-Ha-h])\)?/g))key[k[1]]=k[2].toLowerCase();continue}
-    if(cur&&cur.ar==null&&opts(cur)>1&&(m=l.match(ANS)||l.match(ANS2))){cur.ar=m[1];continue}
-    if(cur&&cur.ar==null&&(m=l.match(OPT))&&m[1].toUpperCase()===L[cur.o.length]){
-      const segs=cur.o.length?[l]:l.split(/\s+(?=\(?[B-Hb-h](?:\)|\.\s))/);
-      segs.forEach((s,k)=>{const x=s.match(OPT);if(x&&x[1].toUpperCase()===L[cur.o.length])add(cur.o,x[2]);else if(k)cur.o[cur.o.length-1]+=' '+s});
-      continue;
-    }
-    if((m=l.match(QN))&&isNew(+m[1])){mk(m[2],+m[1]);continue}
-    if((m=l.match(BN))&&isNew(+(m[1]||m[2]))){mk('',+(m[1]||m[2]));continue}
-    if(!cur){mk(l,null);continue}
-    if(!cur.q){cur.q=l;continue}
-    const done=cur.ar!=null;
-    const nq=done?((blank&&!EXPL.test(l))||l.endsWith('?')):(opts(cur)>1&&l.endsWith('?'))||(blank&&opts(cur)>=2);
-    if(nq){mk(l,null);continue}
-    if(done)cur.x.push(l.replace(EXPL,''));
-    else if(cur.o.length)cur.o[cur.o.length-1]+=' '+l;
-    else add(cur.p,l);
-  }
-  fin();
-  all.forEach((x,k)=>{if(x.a<0){const c=key[x.n||k+1];if(c)x.a='abcdefgh'.indexOf(c)}});
-  return all.filter(x=>x.a<x.o.length).map(({q,o,a,e})=>({q,o,a,e}));
-}
-
-/* JSZip is only fetched when a .docx is opened */
-const loadZip=()=>window.JSZip?Promise.resolve():new Promise((ok,no)=>{
-  const s=document.createElement('script');
-  s.src='https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
-  s.onload=ok;s.onerror=()=>no(new Error('Could not load the .docx reader. Check your connection.'));
-  document.head.append(s);
-});
-async function docxText(f){
-  await loadZip();
-  const zip=await JSZip.loadAsync(await f.arrayBuffer()),entry=zip.file('word/document.xml');
-  if(!entry)throw new Error('Not a valid .docx file.');
-  const xml=new DOMParser().parseFromString(await entry.async('string'),'application/xml');
-  const on=(r,tag)=>{const n=r.getElementsByTagName('w:rPr')[0]?.getElementsByTagName(tag)[0];return!!n&&!['0','false','none'].includes(n.getAttribute('w:val')||'')};
-  const lines=[];
-  for(const p of xml.getElementsByTagName('w:p')){
-    let t='',mark=true,any=false;
-    for(const r of p.getElementsByTagName('w:r')){
-      let s='';
-      for(const n of r.childNodes){
-        if(n.nodeName==='w:t')s+=n.textContent;
-        else if(n.nodeName==='w:tab')s+=' ';
-        else if(n.nodeName==='w:br')s+='\n';
-      }
-      if(!s.trim()){t+=s;continue}
-      any=true;t+=s;
-      if(!(on(r,'w:highlight')||on(r,'w:shd'))&&!on(r,'w:b'))mark=false;
-    }
-    t=t.replace(/[ \t]+/g,' ').trim();
-    if(any&&mark&&OPT.test(t))t+=' ✓';
-    lines.push(t);
-  }
-  const first=lines.findIndex(l=>QN.test(l)&&+l.match(QN)[1]===1);
-  return(first>0?lines.slice(first):lines).join('\n');
-}
-
-/* ---- add / edit / publish ---- */
-function wireAdd(){
-  teacherSrc=$('#src');if(!teacherSrc)return;
-  teacherSrc.value=lsGet('qm-draft',true)||'';
-  teacherSrc.oninput=parseSrc;
-  $('#up').onclick=()=>$('#file').click();
-  $('#file').onchange=async e=>{await loadFile(e.target.files[0]);e.target.value=''};
-  ['dragover','dragleave','drop'].forEach(t=>teacherSrc.addEventListener(t,e=>{
-    e.preventDefault();
-    teacherSrc.classList.toggle('drag',t==='dragover');
-    if(t==='drop')loadFile(e.dataTransfer.files[0]);
-  }));
-  $('#sample').onclick=()=>{
-    D.id=null;D.title='Sample quiz';
-    teacherSrc.value='1. Which property identifies your app?\nA) Namespace\nB) Application ID\nC) Version name\nAnswer: B\nExplanation: The application ID is the app\'s unique identity.';
-    parseSrc();
-  };
-  $('#clear').onclick=()=>{D={title:'',id:null,qs:[]};teacherSrc.value='';parseSrc();teacherSrc.focus()};
-  parseSrc();
-}
-async function loadFile(f){
-  if(!f)return;
-  try{
-    teacherSrc.value=/\.docx$/i.test(f.name)?await docxText(f):await f.text();
-    if(!D.title)D.title=f.name.replace(/\.[^.]+$/,'').replace(/[_-]+/g,' ').trim();
-    D.id=null;parseSrc();
-  }catch(err){setStatus('parse-status',err.message,'err')}
-}
-function parseSrc(){
-  if(!teacherSrc)return;
-  lsSet('qm-draft',teacherSrc.value,true);
-  const old=D.qs,qs=parse(teacherSrc.value);
-  qs.forEach(q=>{if(q.a<0){const m=old.find(o=>o.q===q.q&&o.o.length===q.o.length);if(m)q.a=m.a}});
-  D.qs=qs;
-  const miss=qs.filter(q=>q.a<0).length;
-  setStatus('parse-status',qs.length?`${qs.length} question(s) found${miss?`, ${miss} need an answer`:''}.`:(teacherSrc.value.trim()?'No questions recognized. Check the format below.':'Upload or paste questions to begin.'),qs.length?'ok':'info');
-  drawEditor();
-}
-function syncSrcFromD(){
-  if(!teacherSrc)return;
-  teacherSrc.value=D.qs.map((q,i)=>`${i+1}. ${q.q}\n${q.o.map((t,k)=>`${L[k]}. ${t}`).join('\n')}${q.a>-1?`\nAnswer: ${L[q.a]}`:''}${q.e?`\nExplanation: ${q.e}`:''}`).join('\n\n');
-  lsSet('qm-draft',teacherSrc.value,true);
-}
-function drawEditor(){
-  const el=$('#p-edit');if(!el)return;
-  if(!D.qs.length){el.hidden=true;return}
-  el.hidden=false;
-  const miss=D.qs.filter(q=>q.a<0).length;
-  if(!el.dataset.built){
-    el.dataset.built='1';
-    el.innerHTML=`<h2>Check and publish</h2>
-    <label class="f" for="d-title">Quiz title</label><input type="text" id="d-title" maxlength="100" placeholder="e.g. Lesson 1 Quiz">
-    <div id="d-sum" class="row" style="margin:.9rem 0 .2rem"></div><div id="d-list"></div>
-    <div class="sticky"><div class="row"><button class="btn primary" id="d-pub" type="button">Publish to GitHub</button><button class="btn" id="d-save" type="button">Save on this device</button><button class="btn ghost" id="d-dl" type="button">Download JSON</button></div><p class="status info" id="d-st" aria-live="polite"></p></div>`;
-    $('#d-title').oninput=e=>D.title=e.target.value;
-    $('#d-list').onclick=e=>{
-      const b=e.target.closest('[data-q]');if(!b)return;
-      const q=D.qs[+b.dataset.q];if(!q)return;
-      if(b.dataset.k!=null){q.a=q.a===+b.dataset.k?-1:+b.dataset.k;syncSrcFromD();drawEditor()}
-      else if(b.dataset.rm!=null){D.qs.splice(+b.dataset.q,1);syncSrcFromD();drawEditor()}
-    };
-    $('#d-list').oninput=e=>{if(e.target.dataset.e!=null&&D.qs[+e.target.dataset.e])D.qs[+e.target.dataset.e].e=e.target.value};
-    $('#d-list').addEventListener('change',e=>{if(e.target.dataset.e!=null)syncSrcFromD()});
-    $('#d-pub').onclick=publish;
-    $('#d-save').onclick=saveLocalDraft;
-    $('#d-dl').onclick=()=>{const p=quizPayload();download(slug(p.title)+'.json',JSON.stringify(p,null,2),'application/json')};
-  }
-  if(document.activeElement!==$('#d-title'))$('#d-title').value=D.title;
-  $('#d-sum').innerHTML=`<span class="chip">${D.qs.length} questions</span>${miss?`<span class="chip warn">${miss} without answer</span>`:''}${D.id?`<span class="chip ok">Editing ${esc(D.id)}</span>`:''}`;
-  $('#d-list').innerHTML=D.qs.map((q,i)=>`<div class="ed ${q.a<0?'miss':''}">
-    <div class="edh"><b class="no">${i+1}.</b><span>${esc(q.q)}</span><button class="btn ghost sm danger" type="button" data-q="${i}" data-rm="1">Remove</button></div>
-    ${q.o.map((t,k)=>`<div class="opt ${q.a===k?'ok':''}"><button class="ltr" type="button" data-q="${i}" data-k="${k}" aria-label="Mark ${L[k]} correct" aria-pressed="${q.a===k}">${L[k]}</button><span>${esc(t)}</span></div>`).join('')}
-    <input type="text" data-e="${i}" value="${esc(q.e||'')}" placeholder="Explanation (optional)">
-  </div>`).join('');
-}
-const quizPayload=()=>({title:(D.title||'').trim()||'Untitled quiz',questions:D.qs.map(({q,o,a,e})=>({q,o,a,e:e||''}))});
-
-function saveLocalDraft(){
-  if(!D.qs.length)return setStatus('d-st','Add at least one question first.','err');
-  if(!(D.title||'').trim())return setStatus('d-st','Provide a quiz title first.','err');
-  const p=quizPayload(),id=D.id||slug(p.title);
-  const all=localQuizzes();
-  all[id]={id,title:p.title,count:p.questions.length,updated:new Date().toISOString().slice(0,10),questions:p.questions};
-  saveLocalQuizzes(all);D.id=id;
-  setStatus('d-st','Saved on this device. It is available to students in this browser now.','ok');
-  drawTeacherList();toast('Saved on this device');
-}
-
-async function publish(){
-  if(!hasToken())return setStatus('d-st','Connect to GitHub first, or use "Save on this device".','err');
-  if(!(D.title||'').trim())return setStatus('d-st','Provide a quiz title first.','err');
-  const p=quizPayload(),btn=$('#d-pub');if(btn)btn.disabled=true;
-  setStatus('d-st','Publishing…');
-  try{
-    const id=D.id||slug(p.title),path=`quizzes/${id}.json`,ex=await getFile(path);
-    await putFile(path,JSON.stringify(p,null,2)+'\n',ex?.sha,`${ex?'Update':'Add'} quiz: ${p.title}`);
-    ghList=await writeIndex(l=>[{id,title:p.title,count:p.questions.length,updated:new Date().toISOString().slice(0,10)},...l.filter(x=>x.id!==id)],'Update index');
-    D.id=id;
-    const localCopy=localQuizzes();
-    if(localCopy[id]){
-      localCopy[id]={id,title:p.title,count:p.questions.length,updated:new Date().toISOString().slice(0,10),questions:p.questions};
-      saveLocalQuizzes(localCopy);
-    }
-    setStatus('d-st','Published successfully. Students will see it on the practice page.','ok');
-    drawTeacherList();toast('Published to GitHub');
-  }catch(e){setStatus('d-st',e.message,'err')}
-  if(btn)btn.disabled=false;
-}
-
-async function drawTeacherList(){
-  const el=$('#p-list');if(!el)return;
-  const local=Object.values(localQuizzes());
-  let cloud=[],err='';
-  if(hasToken()){
-    try{ghList??=(await readIndex()).list;cloud=ghList||[]}
-    catch(e){err=e.message}
-  }
-  if(!el.isConnected)return;
-  const map=new Map();
-  local.forEach(q=>map.set(q.id,{...q,device:true}));
-  cloud.forEach(q=>{
-    const cur=map.get(q.id);
-    if(cur)map.set(q.id,{...cur,cloud:true,title:q.title||cur.title,count:q.count||cur.count,updated:q.updated||cur.updated});
-    else map.set(q.id,{...q,cloud:true});
-  });
-  const items=[...map.values()];
-  el.innerHTML=`<div class="listhead"><h2>Your quizzes</h2><button class="btn sm" id="pl-refresh" type="button">Refresh</button></div>
-    <p class="muted" style="margin:.2rem 0 .4rem;font-size:.86rem">${hasToken()?'GitHub library and device saves.':(local.length?'Device saves. Connect GitHub to publish to students.':'Connect GitHub or save a quiz on this device.')}</p>
-    ${err?`<p class="status err" style="margin:.2rem 0">${esc(err)}</p>`:''}
-    ${items.length?`<ul class="list" id="pl">${items.map(x=>`<li>
-      <div class="t"><strong>${esc(x.title)}</strong><small>${x.count??'?'} question${(x.count??0)===1?'':'s'} · ${x.cloud?'GitHub':''}${x.cloud&&x.device?' + ':''}${x.device?'this device':''}${x.updated?' · '+esc(x.updated):''}</small></div>
-      <button class="btn sm" type="button" data-edit="${esc(x.id)}">Edit</button>
-      <button class="btn sm ghost danger" type="button" data-del="${esc(x.id)}">Delete</button>
-    </li>`).join('')}</ul>`:`<div class="empty" style="padding:1.4rem 1rem"><p>No quizzes yet.</p></div>`}
-    <p class="status info" id="pl-st" aria-live="polite"></p>`;
-  $('#pl-refresh').onclick=()=>{ghList=null;drawTeacherList()};
-  const listEl=$('#pl');if(!listEl)return;
-  listEl.onclick=async e=>{
-    const ed=e.target.closest('[data-edit]'),dl=e.target.closest('[data-del]');
-    if(ed)return editDraft(ed.dataset.edit);
-    if(dl)return deleteDraft(dl.dataset.del);
-  };
-}
-
-async function editDraft(id){
-  try{
-    let q=localQuizzes()[id];
-    if(!q&&hasToken()){
-      const f=await getFile(`quizzes/${id}.json`);
-      if(!f)throw new Error('Quiz file not found.');
-      q=JSON.parse(f.text);
-    }
-    if(!q)throw new Error('Quiz not found.');
-    D={title:q.title||'Untitled quiz',id,qs:(q.questions||[]).map(x=>({...x}))};
-    if(teacherSrc){
-      teacherSrc.value=D.qs.map((x,i)=>`${i+1}. ${x.q}\n${x.o.map((t,k)=>`${L[k]}. ${t}`).join('\n')}${x.a>-1?`\nAnswer: ${L[x.a]}`:''}${x.e?`\nExplanation: ${x.e}`:''}`).join('\n\n');
-      lsSet('qm-draft',teacherSrc.value,true);
-    }
-    const pe=$('#p-edit');if(pe)pe.dataset.built='';
-    parseSrc();
-    $('#p-edit')?.scrollIntoView({behavior:'smooth',block:'start'});
-    toast('Loaded "'+D.title+'" for editing');
-  }catch(err){toast(err.message||'Could not open quiz.')}
-}
-
-async function deleteDraft(id){
-  const local=localQuizzes()[id];
-  const cloud=(ghList||[]).find(x=>x.id===id);
-  if(!confirm('Delete this quiz? It will be removed from this device'+(cloud?' and GitHub':'')+'.'))return;
-  let err='';
-  if(local){
-    const all=localQuizzes();delete all[id];saveLocalQuizzes(all);
-  }
-  if(cloud&&hasToken()){
-    try{
-      const f=await getFile(`quizzes/${id}.json`);
-      if(f)await gh(`contents/quizzes/${id}.json`,{method:'DELETE',body:JSON.stringify({message:'Delete quiz',sha:f.sha,branch:cfg.branch})});
-      ghList=await writeIndex(l=>l.filter(x=>x.id!==id),'Remove quiz');
-    }catch(e){err=e.message}
-  }
-  if(err)toast(err);else toast('Quiz deleted');
-  drawTeacherList();
-}
-
-/* ============================================================
-   9 · Routing, events, init
-   ============================================================ */
-function currentRoute(){return /^#\/?teacher/.test(location.hash)?'teacher':'practice'}
-function updateChrome(route){
-  $$('[data-nav]').forEach(a=>{
-    const active=a.dataset.nav===route;
-    a.classList.toggle('active',active);
-    if(active)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');
-  });
-}
-function renderRoute(){
-  const route=currentRoute();
-  updateChrome(route);
-  if(route==='teacher')viewTeacher();else renderPractice();
-}
-
-/* student interactions (delegated) */
+/* ---- events ---- */
 $('#app').addEventListener('click',e=>{
-  if(currentRoute()!=='practice')return;
-  const start=e.target.closest('[data-start]');
-  if(start)return startQuiz(start.dataset.start,start.dataset.mode,start);
-  const rvBtn=e.target.closest('[data-review]');
-  if(rvBtn&&!R)return startSmartReview(rvBtn.dataset.review);
   if(!R)return;
-  const go=e.target.closest('[data-go]');
-  if(go&&R.mode==='quiz'&&!R.done){R.i=+go.dataset.go;R.flip=false;saveRun();return drawRun()}
   const o=e.target.closest('.opts .opt[data-k]');
-  if(o&&R.mode==='quiz'&&!R.done)return pick(+o.dataset.k);
-  if(e.target.closest('#card')&&!R.done)return doFlip();
-  const a=e.target.closest('[data-act]');
-  if(a&&ACTIONS[a.dataset.act])ACTIONS[a.dataset.act]();
+  if(o&&R.mode==='quiz')return pick(+o.dataset.k);
+  if(e.target.closest('#card'))return doFlip();
+  const a=e.target.closest('[data-act]');if(a)ACTIONS[a.dataset.act]?.();
 });
-
-/* keyboard: quiz navigation + shortcuts + search focus */
+$('#app').addEventListener('keydown',e=>{
+  if(!R||(e.key!==' '&&e.key!=='Enter'))return;
+  if(e.target.id==='card'){e.preventDefault();doFlip()}
+  else if(R.mode==='quiz'&&e.target.matches('.opts .opt[data-k]')){e.preventDefault();pick(+e.target.dataset.k)}
+});
 addEventListener('keydown',e=>{
-  const t=e.target;
-  const typing=t&&(t.matches('input,textarea,select,[contenteditable="true"]'));
-  if(e.key==='Escape')closeHelp();
-  if(typing||e.ctrlKey||e.metaKey||e.altKey)return;
-  if(e.key==='?'){e.preventDefault();openHelp();return}
-  if(currentRoute()!=='practice')return;
-  if(!R){
-    if(e.key==='/'&&featureOn('search')){const f=$('#find');if(f){e.preventDefault();f.focus()}}
-    return;
-  }
-  if(R.done)return;
-  if(t.id==='card'&&(e.key===' '||e.key==='Enter')){e.preventDefault();doFlip();return}
-  if(t.matches&&t.matches('.opt[data-k]')&&(e.key===' '||e.key==='Enter')){
-    e.preventDefault();
-    const k=+t.dataset.k;
-    if(e.key==='Enter'&&R.picks[R.i]===k){ACTIONS.next();return}
-    pick(k);return;
-  }
-  if(R.mode==='quiz'&&e.key.toLowerCase()==='m'){e.preventDefault();ACTIONS.flag();return}
-  if(e.key==='ArrowRight'){e.preventDefault();ACTIONS.next();return}
-  if(e.key==='ArrowLeft'&&R.i>0){e.preventDefault();ACTIONS.prev();return}
+  if(!R||e.target.matches('textarea,input,select')||e.ctrlKey||e.metaKey||e.altKey)return;
+  if(e.key==='ArrowRight')return ACTIONS.next();
+  if(e.key==='ArrowLeft'&&R.i>0)return ACTIONS.prev();
   if(R.mode==='quiz'){
     const d=/^[1-8]$/.test(e.key)?+e.key-1:e.key.length===1?'abcdefgh'.indexOf(e.key.toLowerCase()):-1;
-    if(d>-1&&d<R.Q[R.i].o.length){e.preventDefault();pick(d)}
-    else if(e.key==='Enter'&&R.picks[R.i]!=null){e.preventDefault();ACTIONS.next()}
-  }else if(e.key===' '){
-    e.preventDefault();doFlip();
-  }
+    if(d>-1)pick(d);
+  }else if(e.key===' '&&!e.target.closest('button,#card')){e.preventDefault();doFlip()}
 });
 
-addEventListener('hashchange',renderRoute);
-applyTheme();
-applyFeaturePrefs();
-if(!location.hash)history.replaceState(null,'','#/practice');
-renderRoute();
-syncFeatureSettings();
+route();
 if(me.get())flushOutbox(false);
-
-/* swipe left/right to move between questions (never auto-submits) */
-let sx=0,sy=0,sw0=0;
-$('#app').addEventListener('touchstart',e=>{const t=e.touches[0];sx=t.clientX;sy=t.clientY;sw0=Date.now()},{passive:true});
-$('#app').addEventListener('touchend',e=>{
-  if(!R||R.done||currentRoute()!=='practice'||e.target.closest('input,textarea,select,pre'))return;
-  const t=e.changedTouches[0],dx=t.clientX-sx,dy=t.clientY-sy;
-  if(Math.abs(dx)<70||Math.abs(dy)>Math.abs(dx)*.6||Date.now()-sw0>700)return;
-  if(dx<0){if(R.i<R.Q.length-1)ACTIONS.next()}else ACTIONS.prev();
-},{passive:true});
-
-/* offline support + background sync of saved results */
-addEventListener('online',()=>flushOutbox(false));
-if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol)){
-  addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
-}
 </script>
 </body>
 </html>
