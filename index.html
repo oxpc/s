@@ -312,7 +312,6 @@ const bkey = id => (me.get()?.key || '') + ':' + id;
 const hasAttempted = id => (lsJSON('qm-att', {})[bkey(id)] || 0) >= 1;
 const bump = k => { const a = lsJSON('qm-att', {}); a[k] = (a[k] || 0) + 1; lsSet('qm-att', JSON.stringify(a)); return a[k]; };
 const setBest = (id, r, t) => { id = bkey(id); const b = lsJSON('qm-best', {}), o = b[id]; if (!o || r / t >= o.r / o.t) b[id] = { r, t }; lsSet('qm-best', JSON.stringify(b)); };
-const prefs = { get: () => lsJSON('qm-prefs', {}), set(p) { lsSet('qm-prefs', JSON.stringify({ ...this.get(), ...p })); } };
 const outbox = { get: () => lsJSON('qm-outbox', []), set(a) { lsSet('qm-outbox', JSON.stringify(a)); } };
 
 function submitResult(right, total) {
@@ -355,7 +354,6 @@ async function flushOutbox(show) {
 
 /* ---- views ---- */
 let R = null;
-const SZ = { s: '.95rem', m: '1.05rem', l: '1.25rem' };
 
 function viewRegister() {
   $('#app').innerHTML = `<div class="reg panel"><h1>Welcome</h1>
@@ -381,15 +379,12 @@ async function viewLibrary() {
   const st = me.get();
   if (!st) return viewRegister();
   $('#app').innerHTML = '<p class="muted">Loading quizzes…</p>';
-  const list = await loadIndex(), p = prefs.get(), b = lsJSON('qm-best', {});
+  const list = await loadIndex(), b = lsJSON('qm-best', {});
   $('#app').innerHTML = `
-  <div class="row between"><h1 style="margin:0">Hi, ${esc(st.name.split(' ')[0])} (${esc(st.id)})</h1>
+  <div class="row between" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;"><h1 style="margin:0">Hi, ${esc(st.name.split(' ')[0])} (${esc(st.id)})</h1>
     <button class="btn ghost sm" id="logout">Logout</button></div>
-  <p class="lede">${esc(TAGLINE)}</p>
+  <p class="lede" style="margin-top:0.25rem;margin-bottom:1.5rem;">${esc(TAGLINE)}</p>
   ${indexErr ? '<p class="notice">No published quizzes found yet. Showing sample quiz.</p>' : ''}
-  <div class="tools" style="display:flex;justify-content:flex-end;margin:1rem 0;">
-    <label class="chk">Text size <select id="osz">${Object.entries({ s: 'Small', m: 'Medium', l: 'Large' }).map(([k, v]) => `<option value="${k}" ${(p.osz || 'm') === k ? 'selected' : ''}>${v}</option>`).join('')}</select></label>
-  </div>
   <div class="cards" id="cards"></div>`;
   
   $('#logout').onclick = () => { me.clear(); R = null; route(); };
@@ -397,7 +392,7 @@ async function viewLibrary() {
   const draw = () => {
     $('#cards').innerHTML = list.length ? list.map(x => {
       const alreadyDone = hasAttempted(x.id);
-      const s = b[bkey(x.id)], pct = s && Math.round(s.r / s.t * 100);
+      const s = b[bkey(x.id)];
       return `<article class="qc" style="margin-bottom:1.5rem;padding:1rem;border:1px solid #e2e8f0;border-radius:8px"><h3>${esc(x.title)}</h3>
       <div class="meta" style="margin:0.5rem 0">
         <span>${x.count} question${x.count === 1 ? '' : 's'}</span>
@@ -411,13 +406,6 @@ async function viewLibrary() {
     }).join('') : '<p class="empty">No quizzes available yet.</p>';
   };
   draw();
-  
-  const save = () => {
-    prefs.set({ osz: $('#osz').value });
-    document.documentElement.style.setProperty('--osz', SZ[$('#osz').value]);
-  };
-  $('#osz').onchange = save;
-  save();
 
   $('#cards').onclick = async e => {
     const btn = e.target.closest('[data-start]');
@@ -471,7 +459,7 @@ function drawResult() {
   R.mode = 'result';
   const { Q, picks } = R, n = Q.filter(q => q.a > -1).length, right = Q.filter((q, k) => picks[k] === q.a).length, skipped = picks.filter(p => p == null).length, pct = n ? Math.round(right / n * 100) : 0, st = me.get();
   
-  // Permanently burn/record attempt for this student ID
+  // Permanently mark attempt for this student ID
   bump(bkey(R.id));
   if (n) setBest(R.id, right, n);
   
