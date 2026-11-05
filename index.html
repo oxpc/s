@@ -101,30 +101,6 @@
     color: #0f172a;
   }
 
-  /* Review / Static Options on Result View */
-  .opts.static {
-    list-style: none;
-    padding: 0;
-  }
-  .opts.static li {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.4rem 0;
-  }
-  .opts.static li b {
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    background: var(--bg-badge);
-    color: var(--text-muted);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .opts.static li.ok b { background: var(--primary); color: #fff; }
-  .opts.static li.bad b { background: var(--danger); color: #fff; }
-
   /* Navigation & Utility */
   .nav2 {
     display: flex;
@@ -473,16 +449,7 @@ function drawResult() {
   </div>
   <div class="panel" style="padding:1rem;background:#f8fafc;border-radius:8px"><h2>Result slip</h2><pre style="background:#fff;padding:1rem;border:1px solid #e2e8f0;border-radius:4px">${esc(R.slip)}</pre>
     <div class="row" style="margin-top:.8rem;display:flex;gap:0.5rem"><button class="btn sm" data-act="copy">Copy</button></div>
-    <p class="status info" id="sub-st" aria-live="polite"></p></div>
-  <h2 style="margin:2rem 0 1rem">Answer key</h2>
-  ${Q.map((q, k) => {
-    const p = picks[k], nk = q.a < 0, ok = p === q.a;
-    return `<article class="rev" style="margin-bottom:1.5rem;padding:1rem;border-left:4px solid ${nk || p == null ? '#94a3b8' : ok ? 'var(--primary)' : 'var(--danger)'};background:#fdfdfd;border-radius:4px">
-    <div class="rh" style="display:flex;justify-content:space-between;color:var(--text-muted);font-size:0.85rem"><span>Question ${k + 1}</span><span>${nk ? 'No answer' : p == null ? 'Skipped' : ok ? 'Correct' : 'Incorrect'}</span></div>
-    <p class="q sm">${esc(q.q)}</p>
-    <ul class="opts static">${q.o.map((t, j) => `<li class="${j === q.a ? 'ok' : j === p && !nk ? 'bad' : ''}"><b>${L[j]}</b><span>${esc(t)}</span></li>`).join('')}</ul>
-    ${q.e ? `<p class="exp">${esc(q.e)}</p>` : ''}</article>`;
-  }).join('')}`;
+    <p class="status info" id="sub-st" aria-live="polite"></p></div>`;
 }
 
 const ACTIONS = {
